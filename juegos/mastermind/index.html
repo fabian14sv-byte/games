@@ -1,0 +1,940 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MASTERMIND</title>
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:#0a0a0f; --panel:#0f0f1a; --border:#1a1a2e;
+    --accent:#00f5ff; --accent2:#ff006e; --accent3:#ffbe0b;
+    --text:#e0e0ff; --dim:#555577;
+    --c1:#cc2233; --c2:#1a56cc; --c3:#d4a017;
+    --c4:#2a9a3f; --c5:#cc5500; --c6:#7b3fa0;
+    --c7:#1a9aaa; --c8:#a03060;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body {
+    background:var(--bg); color:var(--text);
+    font-family:'Share Tech Mono',monospace;
+    min-height:100vh; display:flex; flex-direction:column;
+    align-items:center; padding:20px;
+    background-image:
+      radial-gradient(ellipse at 20% 0%,rgba(0,245,255,0.05) 0%,transparent 50%),
+      radial-gradient(ellipse at 80% 100%,rgba(255,0,110,0.05) 0%,transparent 50%);
+  }
+  header { text-align:center; margin-bottom:24px; }
+  h1 {
+    font-family:'Orbitron',sans-serif;
+    font-size:clamp(26px,6vw,46px); font-weight:900; letter-spacing:0.15em;
+    background:linear-gradient(90deg,var(--accent2),var(--accent),var(--accent3));
+    -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;
+    filter:drop-shadow(0 0 20px rgba(0,245,255,0.4));
+  }
+  .subtitle { font-size:11px; letter-spacing:0.3em; color:var(--dim); text-transform:uppercase; margin-top:4px; }
+
+  /* ── SETUP SCREEN ── */
+  #setupScreen {
+    width:100%; max-width:440px;
+    background:var(--panel); border:1px solid var(--border);
+    border-radius:16px; padding:28px 24px;
+    box-shadow:0 0 60px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.04);
+    display:flex; flex-direction:column; gap:22px;
+  }
+  .setup-title {
+    font-family:'Orbitron',sans-serif; font-size:11px; letter-spacing:0.3em;
+    color:var(--accent); text-transform:uppercase; text-align:center;
+    padding-bottom:16px; border-bottom:1px solid var(--border);
+    display:flex; justify-content:space-between; align-items:center;
+  }
+  .setup-group { display:flex; flex-direction:column; gap:10px; }
+  .setup-label {
+    font-family:'Orbitron',sans-serif; font-size:9px; letter-spacing:0.25em;
+    color:var(--dim); text-transform:uppercase;
+  }
+  .stepper {
+    display:flex; align-items:center;
+    background:rgba(255,255,255,0.03); border:1px solid var(--border);
+    border-radius:8px; overflow:hidden; width:fit-content;
+  }
+  .stepper-btn {
+    font-family:'Orbitron',sans-serif; font-size:16px;
+    width:40px; height:40px; border:none; background:transparent;
+    color:var(--accent); cursor:pointer; transition:all 0.15s;
+    display:flex; align-items:center; justify-content:center;
+  }
+  .stepper-btn:hover { background:rgba(0,245,255,0.1); }
+  .stepper-val {
+    font-family:'Orbitron',sans-serif; font-size:20px; font-weight:700;
+    color:var(--text); width:52px; text-align:center; line-height:40px;
+    border-left:1px solid var(--border); border-right:1px solid var(--border);
+  }
+  .stepper-desc { font-size:10px; color:var(--dim); margin-top:2px; }
+  .color-preview { display:flex; gap:6px; flex-wrap:wrap; margin-top:6px; }
+  .cp-dot {
+    width:22px; height:22px; border-radius:50%;
+    border:2px solid rgba(255,255,255,0.15);
+    transition:all 0.2s; position:relative; overflow:hidden;
+  }
+  .cp-dot.active { border-color:rgba(255,255,255,0.5); transform:scale(1.1); }
+  .cp-dot.inactive { opacity:0.2; transform:scale(0.85); }
+  .cp-dot::after { content:''; position:absolute; top:3px; left:4px; width:7px; height:4px; border-radius:50%; background:rgba(255,255,255,0.3); transform:rotate(-30deg); }
+
+  /* difficulty badge */
+  .difficulty-badge {
+    display:inline-flex; align-items:center; gap:6px;
+    font-family:'Orbitron',sans-serif; font-size:9px; letter-spacing:0.2em;
+    padding:5px 12px; border-radius:20px; border:1px solid; text-transform:uppercase;
+    transition:all 0.3s;
+  }
+  .diff-easy   { color:#2ecc71; border-color:#2ecc7155; background:rgba(46,204,113,0.08); }
+  .diff-medium { color:var(--accent3); border-color:#ffbe0b55; background:rgba(255,190,11,0.08); }
+  .diff-hard   { color:var(--accent2); border-color:#ff006e55; background:rgba(255,0,110,0.08); }
+
+  .btn-start {
+    font-family:'Orbitron',sans-serif; font-size:11px; letter-spacing:0.25em;
+    padding:14px; border-radius:8px; border:1px solid var(--accent);
+    background:rgba(0,245,255,0.1); color:var(--accent);
+    cursor:pointer; transition:all 0.2s; text-transform:uppercase; width:100%;
+  }
+  .btn-start:hover { background:rgba(0,245,255,0.2); box-shadow:0 0 20px rgba(0,245,255,0.3); }
+  .toggle-btn {
+    font-family:'Orbitron',sans-serif; font-size:9px; letter-spacing:0.15em;
+    padding:9px 16px; border-radius:6px; border:1px solid var(--border);
+    background:rgba(255,255,255,0.03); color:var(--dim);
+    cursor:pointer; transition:all 0.2s; text-transform:uppercase;
+  }
+  .toggle-btn.active {
+    border-color:var(--accent); background:rgba(0,245,255,0.12);
+    color:var(--accent); box-shadow:0 0 10px rgba(0,245,255,0.15);
+  }
+
+  /* sounds toggle */
+  .sounds-row { display:flex; align-items:center; justify-content:space-between; }
+  .sound-toggle {
+    font-family:'Orbitron',sans-serif; font-size:9px; letter-spacing:0.15em;
+    padding:7px 14px; border-radius:6px; border:1px solid var(--border);
+    background:rgba(255,255,255,0.03); color:var(--dim);
+    cursor:pointer; transition:all 0.2s;
+  }
+  .sound-toggle.on { border-color:#2ecc71; background:rgba(46,204,113,0.1); color:#2ecc71; }
+
+  /* history button */
+  .btn-history {
+    font-family:'Orbitron',sans-serif; font-size:9px; letter-spacing:0.15em;
+    padding:10px; border-radius:8px; border:1px solid rgba(255,190,11,0.3);
+    background:rgba(255,190,11,0.05); color:rgba(255,190,11,0.8);
+    cursor:pointer; transition:all 0.2s; width:100%;
+  }
+  .btn-history:hover { background:rgba(255,190,11,0.12); border-color:var(--accent3); }
+
+  /* ── GAME SCREEN ── */
+  #gameScreen { display:none; width:100%; flex-direction:column; align-items:center; gap:0; }
+
+  .board {
+    background:var(--panel); border:1px solid var(--border); border-radius:12px;
+    padding:16px 20px; width:100%; max-width:520px;
+    box-shadow:0 0 40px rgba(0,0,0,0.5),inset 0 1px 0 rgba(255,255,255,0.05);
+  }
+  .board-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:14px; padding-bottom:10px; border-bottom:1px solid var(--border); flex-wrap:wrap; gap:8px; }
+  .turn-counter { font-family:'Orbitron',sans-serif; font-size:11px; color:var(--accent); letter-spacing:0.2em; }
+  .hint-legend { display:flex; align-items:center; gap:10px; font-size:10px; color:var(--dim); }
+  .hint-legend span { display:inline-flex; align-items:center; gap:4px; }
+  .rows-container { display:flex; flex-direction:column; gap:6px; }
+  .row { display:flex; align-items:center; gap:8px; padding:5px 8px; border-radius:8px; background:rgba(255,255,255,0.02); border:1px solid transparent; transition:all 0.3s; overflow:hidden; }
+  .row.active { border-color:rgba(0,245,255,0.2); background:rgba(0,245,255,0.03); box-shadow:0 0 15px rgba(0,245,255,0.05); }
+  .row-num { font-size:10px; color:var(--dim); width:14px; text-align:center; font-family:'Orbitron',sans-serif; flex-shrink:0; }
+  .pegs { display:flex; gap:5px; flex:1; min-width:0; }
+  .peg { border-radius:50%; border:2px solid rgba(255,255,255,0.1); background:rgba(255,255,255,0.03); transition:all 0.2s; position:relative; overflow:hidden; flex-shrink:0; }
+  .peg::after { content:''; position:absolute; top:25%; left:20%; width:30%; height:20%; border-radius:50%; background:rgba(255,255,255,0.3); transform:rotate(-30deg); }
+  .hints { display:grid; gap:3px; flex-shrink:0; }
+  .hint { border-radius:50%; background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.08); }
+  .hint.black { background:radial-gradient(circle at 35% 35%, #555, #111); border:1px solid #888; box-shadow:0 0 5px rgba(255,255,255,0.15), inset 0 1px 2px rgba(255,255,255,0.2); }
+  .hint.white { background:#fff; border-color:#fff; box-shadow:0 0 6px rgba(255,255,255,0.7); }
+
+  /* INPUT PANEL */
+  .input-panel {
+    width:100%; max-width:520px; margin-top:10px;
+    background:var(--panel); border:1px solid rgba(0,245,255,0.25);
+    border-radius:12px; padding:14px 16px;
+    box-shadow:0 0 30px rgba(0,245,255,0.08);
+    display:flex; flex-direction:column; gap:12px;
+  }
+  .tray-row { display:flex; align-items:center; gap:10px; overflow:hidden; }
+  .tray-label { font-family:'Orbitron',sans-serif; font-size:8px; letter-spacing:0.2em; color:var(--dim); text-transform:uppercase; white-space:nowrap; line-height:1.6; flex-shrink:0; }
+  .tray-pegs { display:flex; gap:5px; flex:1; min-width:0; }
+  .tray-peg {
+    border-radius:50%; border:2px dashed rgba(0,245,255,0.25);
+    background:rgba(0,245,255,0.03);
+    cursor:pointer; transition:all 0.2s; position:relative; overflow:hidden; flex-shrink:0;
+  }
+  .tray-peg::after { content:''; position:absolute; top:25%; left:20%; width:30%; height:20%; border-radius:50%; background:rgba(255,255,255,0.25); transform:rotate(-30deg); opacity:0; transition:opacity 0.2s; }
+  .tray-peg.filled::after { opacity:1; }
+  .tray-peg.filled { border-style:solid; }
+  .tray-peg:hover { border-color:rgba(0,245,255,0.5); transform:scale(1.08); }
+  .tray-peg.filled:hover { filter:brightness(1.2); transform:scale(1.08); }
+  .tray-buttons { display:flex; flex-direction:column; gap:5px; margin-left:auto; flex-shrink:0; }
+  .btn-ok {
+    font-family:'Orbitron',sans-serif; font-size:9px; letter-spacing:0.15em;
+    padding:8px 14px; border-radius:6px; border:1px solid #2ecc71;
+    background:rgba(46,204,113,0.15); color:#2ecc71; cursor:pointer; transition:all 0.2s; white-space:nowrap;
+  }
+  .btn-ok:hover:not(:disabled) { background:rgba(46,204,113,0.28); box-shadow:0 0 12px rgba(46,204,113,0.4); }
+  .btn-ok:disabled { opacity:0.3; cursor:not-allowed; }
+  .btn-clr {
+    font-family:'Orbitron',sans-serif; font-size:9px; letter-spacing:0.1em;
+    padding:6px 14px; border-radius:6px; border:1px solid rgba(255,0,110,0.3);
+    background:rgba(255,0,110,0.05); color:rgba(255,0,110,0.7); cursor:pointer; transition:all 0.2s; white-space:nowrap;
+  }
+  .btn-clr:hover { background:rgba(255,0,110,0.15); border-color:var(--accent2); color:var(--accent2); }
+  .btn-blue {
+    font-family:'Orbitron',sans-serif; font-size:9px; letter-spacing:0.1em;
+    padding:6px 14px; border-radius:6px; border:1px solid rgba(41,128,185,0.5);
+    background:rgba(41,128,185,0.1); color:rgba(100,180,255,0.85); cursor:pointer; transition:all 0.2s; white-space:nowrap;
+  }
+  .btn-blue:hover { background:rgba(41,128,185,0.22); border-color:#3498db; color:#5dade2; box-shadow:0 0 10px rgba(52,152,219,0.3); }
+  .palette-row { display:flex; align-items:center; gap:8px; padding-top:10px; border-top:1px solid var(--border); flex-wrap:wrap; }
+  .palette-label { font-family:'Orbitron',sans-serif; font-size:8px; letter-spacing:0.2em; color:var(--dim); text-transform:uppercase; white-space:nowrap; }
+  .palette-colors { display:flex; gap:6px; flex-wrap:nowrap; }
+  .color-btn {
+    border-radius:50%; border:3px solid transparent; cursor:pointer;
+    transition:all 0.2s; position:relative; overflow:hidden; flex-shrink:0;
+  }
+  .color-btn::after { content:''; position:absolute; top:25%; left:20%; width:30%; height:20%; border-radius:50%; background:rgba(255,255,255,0.3); transform:rotate(-30deg); }
+  .color-btn:hover { transform:scale(1.12); }
+  .color-btn.selected { border-color:white; box-shadow:0 0 12px currentColor,0 0 3px white; transform:scale(1.18); }
+
+  /* SOLUTION BAR */
+  #solutionBar { display:none; width:100%; max-width:520px; margin-top:10px; }
+  .solution-bar {
+    border-radius:12px; padding:14px 16px;
+    display:flex; align-items:center; gap:14px;
+    animation:pop-in 0.35s ease-out; flex-wrap:wrap;
+  }
+  .solution-bar.won { background:var(--panel); border:1px solid rgba(0,245,255,0.4); box-shadow:0 0 24px rgba(0,245,255,0.12); }
+  .solution-bar.lost { background:var(--panel); border:1px solid rgba(255,0,110,0.4); box-shadow:0 0 24px rgba(255,0,110,0.12); }
+  .solution-info { display:flex; flex-direction:column; gap:4px; flex-shrink:0; }
+  .solution-result { font-family:'Orbitron',sans-serif; font-size:11px; font-weight:700; letter-spacing:0.15em; text-transform:uppercase; white-space:nowrap; }
+  .solution-result.won { color:var(--accent); }
+  .solution-result.lost { color:var(--accent2); }
+  .solution-time { font-family:'Orbitron',sans-serif; font-size:18px; font-weight:700; color:var(--text); letter-spacing:0.08em; }
+  .solution-best { font-size:10px; color:#2ecc71; letter-spacing:0.05em; margin-top:2px; }
+  .solution-pegs { display:flex; gap:7px; flex:1; flex-wrap:nowrap; align-items:center; }
+  .solution-peg { width:36px; height:36px; border-radius:50%; position:relative; overflow:hidden; box-shadow:0 0 10px rgba(0,0,0,0.4); flex-shrink:0; }
+  .solution-peg::after { content:''; position:absolute; top:4px; left:5px; width:9px; height:5px; border-radius:50%; background:rgba(255,255,255,0.3); transform:rotate(-30deg); }
+
+  .scanline { position:fixed; inset:0; background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,0.03) 2px,rgba(0,0,0,0.03) 4px); pointer-events:none; z-index:1000; }
+  @keyframes pop-in { 0%{transform:scale(0.4);opacity:0} 70%{transform:scale(1.12)} 100%{transform:scale(1);opacity:1} }
+  .peg-anim { animation:pop-in 0.2s ease-out; }
+  @keyframes bounce { 0%,100%{transform:translateY(0)} 30%{transform:translateY(-12px)} 60%{transform:translateY(-5px)} }
+  .peg-bounce { animation:bounce 0.5s ease-out; }
+
+  /* TIMER */
+  .timer-row { display:flex; align-items:center; justify-content:center; width:100%; max-width:520px; margin-top:14px; position:relative; }
+  .timer { font-family:'Orbitron',sans-serif; font-size:22px; font-weight:700; color:var(--accent); letter-spacing:0.1em; padding:6px 0; }
+  .timer.warning { color:var(--accent3); }
+  .timer.danger  { color:var(--accent2); animation:pulse 0.8s ease-in-out infinite; }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.5} }
+  .btn-setup-icon { position:absolute; right:0; background:none; border:none; cursor:pointer; font-size:18px; color:var(--dim); padding:4px 6px; border-radius:6px; transition:all 0.2s; line-height:1; }
+  .btn-setup-icon:hover { color:var(--accent3); background:rgba(255,190,11,0.1); }
+
+  /* CONFETTI */
+  #confettiCanvas { position:fixed; inset:0; pointer-events:none; z-index:200; display:none; }
+
+  /* HISTORY MODAL */
+  .modal-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.88); backdrop-filter:blur(8px); z-index:300; align-items:flex-start; justify-content:center; padding:20px; overflow-y:auto; }
+  .modal-overlay.show { display:flex; }
+  .modal-box { background:var(--panel); border:1px solid var(--border); border-radius:16px; padding:24px; width:100%; max-width:460px; box-shadow:0 0 60px rgba(0,0,0,0.8); }
+  .modal-title { font-family:'Orbitron',sans-serif; font-size:13px; letter-spacing:0.2em; color:var(--accent); margin-bottom:18px; display:flex; justify-content:space-between; align-items:center; }
+  .modal-close { background:none; border:none; color:var(--dim); font-size:20px; cursor:pointer; padding:2px 6px; border-radius:4px; }
+  .modal-close:hover { color:var(--text); }
+  .history-empty { font-size:11px; color:var(--dim); text-align:center; padding:24px 0; }
+  .history-list { display:flex; flex-direction:column; gap:10px; }
+  .history-entry {
+    background:rgba(255,255,255,0.02); border:1px solid var(--border);
+    border-radius:10px; padding:12px 14px;
+    display:grid; grid-template-columns:1fr auto; gap:4px 12px; align-items:center;
+  }
+  .history-entry.h-won { border-color:rgba(0,245,255,0.2); }
+  .history-entry.h-lost { border-color:rgba(255,0,110,0.15); }
+  .h-cfg { font-size:10px; color:var(--dim); }
+  .h-result { font-family:'Orbitron',sans-serif; font-size:10px; }
+  .h-result.won { color:var(--accent); }
+  .h-result.lost { color:var(--accent2); }
+  .h-time { font-family:'Orbitron',sans-serif; font-size:16px; font-weight:700; color:var(--text); text-align:right; }
+  .h-date { font-size:9px; color:var(--dim); text-align:right; }
+  .btn-clear-history { font-family:'Orbitron',sans-serif; font-size:9px; letter-spacing:0.1em; padding:8px; border-radius:6px; border:1px solid rgba(255,0,110,0.2); background:rgba(255,0,110,0.04); color:rgba(255,0,110,0.6); cursor:pointer; transition:all 0.2s; width:100%; margin-top:14px; }
+  .btn-clear-history:hover { background:rgba(255,0,110,0.1); color:var(--accent2); }
+</style>
+</head>
+<body>
+<canvas id="confettiCanvas"></canvas>
+<div class="scanline"></div>
+<header>
+  <h1>Mastermind</h1>
+  <div class="subtitle">Descifra el código secreto</div>
+</header>
+
+<!-- ── SETUP SCREEN ── -->
+<div id="setupScreen">
+  <div class="setup-title">
+    <span>⚙ Configuración</span>
+    <span class="difficulty-badge diff-easy" id="diffBadge">● Fácil</span>
+  </div>
+
+  <div class="setup-group">
+    <div class="setup-label">Número de filas (intentos)</div>
+    <div style="display:flex;align-items:center;gap:14px">
+      <div class="stepper">
+        <button class="stepper-btn" onclick="adj('rows',-1)">−</button>
+        <div class="stepper-val" id="val-rows">7</div>
+        <button class="stepper-btn" onclick="adj('rows',+1)">+</button>
+      </div>
+      <div class="stepper-desc" id="desc-rows">7 intentos para adivinar</div>
+    </div>
+  </div>
+
+  <div class="setup-group">
+    <div class="setup-label">Longitud del código (columnas)</div>
+    <div style="display:flex;align-items:center;gap:14px">
+      <div class="stepper">
+        <button class="stepper-btn" onclick="adj('cols',-1)">−</button>
+        <div class="stepper-val" id="val-cols">4</div>
+        <button class="stepper-btn" onclick="adj('cols',+1)">+</button>
+      </div>
+      <div class="stepper-desc" id="desc-cols">4 posiciones por intento</div>
+    </div>
+  </div>
+
+  <div class="setup-group">
+    <div class="setup-label">Cantidad de colores disponibles</div>
+    <div style="display:flex;align-items:center;gap:14px">
+      <div class="stepper">
+        <button class="stepper-btn" onclick="adj('clrs',-1)">−</button>
+        <div class="stepper-val" id="val-clrs">6</div>
+        <button class="stepper-btn" onclick="adj('clrs',+1)">+</button>
+      </div>
+      <div class="stepper-desc" id="desc-clrs">6 colores en la paleta</div>
+    </div>
+    <div class="color-preview" id="colorPreview"></div>
+  </div>
+
+  <div class="setup-group">
+    <div class="setup-label">Colores en la solución</div>
+    <div style="display:flex;gap:10px;margin-top:2px">
+      <button class="toggle-btn active" id="btn-repeat" onclick="setRepeat(true)">Pueden repetirse</button>
+      <button class="toggle-btn" id="btn-norepeat" onclick="setRepeat(false)">Sin repetir</button>
+    </div>
+    <div class="stepper-desc" id="desc-repeat">La solución puede tener colores repetidos</div>
+  </div>
+
+  <div class="setup-group">
+    <div class="sounds-row">
+      <div class="setup-label">Sonidos</div>
+      <button class="sound-toggle on" id="soundToggle" onclick="toggleSound()">🔊 Activados</button>
+    </div>
+  </div>
+
+  <button class="btn-start" onclick="startGame()">▶ Comenzar partida</button>
+  <button class="btn-history" onclick="openHistory()">📋 Historial de partidas</button>
+</div>
+
+<!-- ── GAME SCREEN ── -->
+<div id="gameScreen">
+  <div class="board">
+    <div class="board-header">
+      <span class="turn-counter" id="turnCounter"></span>
+      <div class="hint-legend">
+        <span><span style="width:10px;height:10px;border-radius:50%;background:#1a1a1a;border:1px solid #555;display:inline-block"></span> pos+color</span>
+        <span><span style="width:10px;height:10px;border-radius:50%;background:#fff;display:inline-block"></span> solo color</span>
+      </div>
+    </div>
+    <div class="rows-container" id="rowsContainer"></div>
+  </div>
+
+  <div class="timer-row">
+    <div class="timer" id="timerDisplay">00:00</div>
+    <button class="btn-setup-icon" onclick="goSetup()" title="Configuración">⚙</button>
+  </div>
+
+  <div class="input-panel">
+    <div class="tray-row">
+      <span class="tray-label">Tu<br>jugada</span>
+      <div class="tray-pegs" id="trayPegs"></div>
+      <div class="tray-buttons">
+        <button class="btn-ok" id="btnConfirm" disabled onclick="confirmGuess()">▶ OK</button>
+        <button class="btn-clr" onclick="backspaceTray()">⌫ Borrar</button>
+        <button class="btn-blue" onclick="clearTray()">✕ Limpiar</button>
+      </div>
+    </div>
+    <div class="palette-row">
+      <span class="palette-label">Color</span>
+      <div class="palette-colors" id="palette"></div>
+    </div>
+  </div>
+
+  <div id="solutionBar">
+    <div class="solution-bar" id="solutionBarInner">
+      <div class="solution-info">
+        <div class="solution-result" id="solutionResult"></div>
+        <div class="solution-time" id="solutionTime"></div>
+        <div class="solution-best" id="solutionBest"></div>
+      </div>
+      <div class="solution-pegs" id="solutionPegs"></div>
+      <button class="btn-blue" onclick="goSetup()">⚙ Nueva</button>
+    </div>
+  </div>
+</div>
+
+<!-- HISTORY MODAL -->
+<div class="modal-overlay" id="historyModal">
+  <div class="modal-box">
+    <div class="modal-title">
+      <span>📋 Historial</span>
+      <button class="modal-close" onclick="closeHistory()">✕</button>
+    </div>
+    <div id="historyContent"></div>
+  </div>
+</div>
+
+<script>
+  const ALL_COLORS=[
+    {id:1,css:'var(--c1)'},{id:2,css:'var(--c2)'},{id:3,css:'var(--c3)'},
+    {id:4,css:'var(--c4)'},{id:5,css:'var(--c5)'},{id:6,css:'var(--c6)'},
+    {id:7,css:'var(--c7)'},{id:8,css:'var(--c8)'},
+  ];
+
+  const cfg = { rows:7, cols:4, clrs:6, noRepeat:false };
+  const cfgMin = { rows:3, cols:3, clrs:3 };
+  const cfgMax = { rows:10, cols:8, clrs:8 };
+  const cfgDesc = {
+    rows: v=>`${v} intento${v!==1?'s':''} para adivinar`,
+    cols: v=>`${v} posiciones por intento`,
+    clrs: v=>`${v} colores en la paleta`,
+  };
+
+  let secret=[], currentRow=0, currentGuess=[], selectedColor=null, gameOver=false;
+  let COLORS=[], CODE_LENGTH=4, MAX_TURNS=7;
+  let timerInterval=null, timerSeconds=0;
+  let soundEnabled=true;
+  let SZ={};
+
+  // ── AUDIO ──
+  const AudioCtx = window.AudioContext || window.webkitAudioContext;
+  let audioCtx=null;
+  function getAudioCtx(){ if(!audioCtx) audioCtx=new AudioCtx(); return audioCtx; }
+
+  function playTone(freq, type='sine', dur=0.08, vol=0.18, delay=0){
+    if(!soundEnabled) return;
+    try{
+      const ctx=getAudioCtx();
+      const o=ctx.createOscillator(), g=ctx.createGain();
+      o.connect(g); g.connect(ctx.destination);
+      o.type=type; o.frequency.value=freq;
+      const t=ctx.currentTime+delay;
+      g.gain.setValueAtTime(vol,t);
+      g.gain.exponentialRampToValueAtTime(0.001,t+dur);
+      o.start(t); o.stop(t+dur);
+    }catch(e){}
+  }
+
+  function playClick(){ playTone(440,'sine',0.06,0.12); }
+  function playBlack(){ playTone(660,'triangle',0.1,0.2); playTone(880,'triangle',0.08,0.15,0.07); }
+  function playWhite(){ playTone(520,'sine',0.08,0.12); }
+
+  function playHints(blacks, whites){
+    for(let i=0;i<blacks;i++) setTimeout(()=>playBlack(), i*120);
+    for(let i=0;i<whites;i++) setTimeout(()=>playWhite(), blacks*120+i*100);
+  }
+
+  function playWin(){
+    if(!soundEnabled) return;
+    const notes=[523,659,784,1047];
+    notes.forEach((f,i)=>{ playTone(f,'triangle',0.18,0.22,i*0.12); });
+  }
+
+  function playLose(){
+    if(!soundEnabled) return;
+    playTone(300,'sawtooth',0.25,0.2);
+    playTone(220,'sawtooth',0.3,0.2,0.2);
+  }
+
+  function toggleSound(){
+    soundEnabled=!soundEnabled;
+    const btn=document.getElementById('soundToggle');
+    btn.textContent=soundEnabled?'🔊 Activados':'🔇 Desactivados';
+    btn.className='sound-toggle'+(soundEnabled?' on':'');
+  }
+
+  // ── DIFFICULTY ──
+  function computeDifficulty(){
+    // score: more cols + more clrs + less rows + noRepeat = harder
+    const colScore  = (cfg.cols - 3) / 5;  // 0-1
+    const clrScore  = (cfg.clrs - 3) / 5;  // 0-1
+    const rowScore  = 1 - (cfg.rows - 3) / 7; // 0-1 (fewer rows = harder)
+    const noRep     = cfg.noRepeat ? -0.15 : 0; // no-repeat = easier
+    const total     = (colScore*0.35 + clrScore*0.35 + rowScore*0.3 + noRep);
+    if(total < 0.33) return { label:'Fácil',   cls:'diff-easy',   dot:'🟢' };
+    if(total < 0.62) return { label:'Medio',   cls:'diff-medium', dot:'🟡' };
+    return              { label:'Difícil', cls:'diff-hard',   dot:'🔴' };
+  }
+
+  function updateDiffBadge(){
+    const d=computeDifficulty();
+    const el=document.getElementById('diffBadge');
+    el.textContent=`${d.dot} ${d.label}`;
+    el.className=`difficulty-badge ${d.cls}`;
+  }
+
+  // ── HISTORY ──
+  function historyKey(){ return `mm_hist_${cfg.cols}_${cfg.clrs}_${cfg.noRepeat?'nr':'r'}`; }
+
+  function saveResult(won){
+    const key=historyKey();
+    let hist=[];
+    try{ hist=JSON.parse(localStorage.getItem(key)||'[]'); }catch(e){}
+    hist.unshift({
+      won, seconds:timerSeconds, attempts:currentRow+(won?1:0),
+      rows:cfg.rows, cols:cfg.cols, clrs:cfg.clrs, noRepeat:cfg.noRepeat,
+      date: new Date().toLocaleString('es-AR',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'})
+    });
+    if(hist.length>50) hist=hist.slice(0,50);
+    try{ localStorage.setItem(key, JSON.stringify(hist)); }catch(e){}
+  }
+
+  function getBestTime(){
+    const key=historyKey();
+    let hist=[];
+    try{ hist=JSON.parse(localStorage.getItem(key)||'[]'); }catch(e){}
+    const wins=hist.filter(h=>h.won);
+    if(!wins.length) return null;
+    return Math.min(...wins.map(h=>h.seconds));
+  }
+
+  function getAllHistory(){
+    let all=[];
+    for(let k of Object.keys(localStorage)){
+      if(!k.startsWith('mm_hist_')) continue;
+      try{ all=all.concat(JSON.parse(localStorage.getItem(k)||'[]')); }catch(e){}
+    }
+    all.sort((a,b)=> new Date(b.date)-new Date(a.date));
+    return all;
+  }
+
+  function openHistory(){
+    const hist=getAllHistory();
+    const el=document.getElementById('historyContent');
+    if(!hist.length){
+      el.innerHTML='<div class="history-empty">Todavía no hay partidas guardadas.</div>';
+    } else {
+      const fmtTime=s=>{const m=Math.floor(s/60).toString().padStart(2,'0');return `${m}:${(s%60).toString().padStart(2,'0')}`;};
+      el.innerHTML='<div class="history-list">'+hist.map(h=>`
+        <div class="history-entry ${h.won?'h-won':'h-lost'}">
+          <div class="h-cfg">${h.cols} posiciones · ${h.clrs} colores · ${h.rows} intentos${h.noRepeat?' · sin repetir':''}</div>
+          <div class="h-result ${h.won?'won':'lost'}">${h.won?`✓ ${h.attempts} intento${h.attempts!==1?'s':''}`:'✗ Perdida'}</div>
+          <div class="h-time">${fmtTime(h.seconds)}</div>
+          <div class="h-date">${h.date}</div>
+        </div>`).join('')+'</div>'
+        +'<div id="clearConfirm" style="margin-top:14px;display:flex;gap:8px;align-items:center">'
+        +'<button class="btn-clear-history" style="flex:1" onclick="showClearConfirm()">🗑 Borrar historial</button>'
+        +'<span id="clearConfirmStep" style="display:none;font-size:10px;color:var(--dim);display:flex;gap:6px;align-items:center">'
+        +'<span style="color:var(--accent2);font-size:10px">¿Seguro?</span>'
+        +'<button class="btn-clear-history" style="padding:6px 10px" onclick="doDeleteHistory()">Sí, borrar</button>'
+        +'<button class="btn-clear-history" style="padding:6px 10px;border-color:rgba(255,255,255,0.1);color:var(--dim)" onclick="hideClearConfirm()">Cancelar</button>'
+        +'</span>'
+        +'</div>';
+    }
+    document.getElementById('historyModal').classList.add('show');
+  }
+
+  function closeHistory(){ document.getElementById('historyModal').classList.remove('show'); }
+
+  function showClearConfirm(){
+    const btn = document.querySelector('#clearConfirm .btn-clear-history');
+    if(btn) btn.style.display='none';
+    const step = document.getElementById('clearConfirmStep');
+    if(step) step.style.display='flex';
+  }
+  function hideClearConfirm(){
+    const btn = document.querySelector('#clearConfirm .btn-clear-history');
+    if(btn) btn.style.display='';
+    const step = document.getElementById('clearConfirmStep');
+    if(step) step.style.display='none';
+  }
+  function doDeleteHistory(){
+    for(let k of Object.keys(localStorage)){
+      if(k.startsWith('mm_hist_')) localStorage.removeItem(k);
+    }
+    openHistory();
+  }
+  function clearHistory(){ doDeleteHistory(); }
+
+  // ── CONFETTI ──
+  function launchConfetti(){
+    const canvas=document.getElementById('confettiCanvas');
+    canvas.style.display='block';
+    canvas.width=window.innerWidth; canvas.height=window.innerHeight;
+    const ctx=canvas.getContext('2d');
+    const colors=['#00f5ff','#ff006e','#ffbe0b','#2ecc71','#cc2233','#1a56cc','#d4a017','#7b3fa0'];
+    const pieces=Array.from({length:120},()=>({
+      x:Math.random()*canvas.width, y:-20,
+      r:Math.random()*6+3,
+      color:colors[Math.floor(Math.random()*colors.length)],
+      vx:(Math.random()-0.5)*4, vy:Math.random()*3+2,
+      spin:Math.random()*0.3-0.15, angle:Math.random()*Math.PI*2,
+      shape:Math.random()<0.5?'circle':'rect'
+    }));
+    let frame=0;
+    function draw(){
+      ctx.clearRect(0,0,canvas.width,canvas.height);
+      pieces.forEach(p=>{
+        p.x+=p.vx; p.y+=p.vy; p.angle+=p.spin; p.vy+=0.05;
+        ctx.save(); ctx.translate(p.x,p.y); ctx.rotate(p.angle);
+        ctx.fillStyle=p.color; ctx.globalAlpha=Math.max(0,1-frame/120);
+        if(p.shape==='circle'){ ctx.beginPath(); ctx.arc(0,0,p.r,0,Math.PI*2); ctx.fill(); }
+        else { ctx.fillRect(-p.r,-p.r/2,p.r*2,p.r); }
+        ctx.restore();
+      });
+      frame++;
+      if(frame<160) requestAnimationFrame(draw);
+      else { canvas.style.display='none'; ctx.clearRect(0,0,canvas.width,canvas.height); }
+    }
+    draw();
+  }
+
+  // ── PEG BOUNCE ANIMATION ──
+  function bounceWinPegs(){
+    for(let j=0;j<CODE_LENGTH;j++){
+      const peg=document.getElementById(`peg-${currentRow}-${j}`);
+      if(!peg) continue;
+      setTimeout(()=>{
+        peg.classList.add('peg-bounce');
+        peg.addEventListener('animationend',()=>peg.classList.remove('peg-bounce'),{once:true});
+      }, j*80);
+    }
+  }
+
+  // ── SETUP ──
+  function adj(key, delta){
+    cfg[key]=Math.min(cfgMax[key],Math.max(cfgMin[key],cfg[key]+delta));
+    document.getElementById(`val-${key}`).textContent=cfg[key];
+    document.getElementById(`desc-${key}`).textContent=cfgDesc[key](cfg[key]);
+    if(key==='clrs') renderColorPreview();
+    updateDiffBadge();
+  }
+
+  function setRepeat(canRepeat){
+    cfg.noRepeat=!canRepeat;
+    document.getElementById('btn-repeat').classList.toggle('active',canRepeat);
+    document.getElementById('btn-norepeat').classList.toggle('active',!canRepeat);
+    document.getElementById('desc-repeat').textContent=canRepeat
+      ?'La solución puede tener colores repetidos'
+      :'Cada color aparece como máximo una vez';
+    updateDiffBadge();
+  }
+
+  function renderColorPreview(){
+    const el=document.getElementById('colorPreview'); el.innerHTML='';
+    ALL_COLORS.forEach((c,i)=>{
+      const d=document.createElement('div');
+      d.className='cp-dot '+(i<cfg.clrs?'active':'inactive');
+      d.style.background=c.css; el.appendChild(d);
+    });
+  }
+
+  // ── TIMER ──
+  function startTimer(){
+    timerSeconds=0; clearInterval(timerInterval); updateTimerDisplay();
+    timerInterval=setInterval(()=>{ timerSeconds++; updateTimerDisplay(); },1000);
+  }
+  function stopTimer(){ clearInterval(timerInterval); timerInterval=null; }
+  function updateTimerDisplay(){
+    const m=Math.floor(timerSeconds/60).toString().padStart(2,'0');
+    const s=(timerSeconds%60).toString().padStart(2,'0');
+    const el=document.getElementById('timerDisplay');
+    el.textContent=`${m}:${s}`; el.className='timer';
+    if(timerSeconds>=120) el.classList.add('danger');
+    else if(timerSeconds>=60) el.classList.add('warning');
+  }
+  function fmtTime(s){ return `${Math.floor(s/60).toString().padStart(2,'0')}:${(s%60).toString().padStart(2,'0')}`; }
+
+  // ── SIZING ──
+  function computeSizes(codeLen){
+    const boardEl=document.querySelector('.board');
+    const boardInner=boardEl?boardEl.getBoundingClientRect().width-40:Math.min(window.innerWidth-32,520)-40;
+    const hCols=codeLen<=4?2:codeLen<=6?3:4;
+    const hDot=Math.max(7,Math.min(13,Math.floor(boardInner*0.03)));
+    const hGap=2;
+    const hintsW=hCols*hDot+(hCols-1)*hGap;
+    const pegAreaW=boardInner-14-6-6-hintsW;
+    const pegGap=Math.max(3,Math.floor(pegAreaW*0.04));
+    const pegSize=Math.floor((pegAreaW-pegGap*(codeLen-1))/codeLen);
+    const panelEl=document.querySelector('.input-panel');
+    const panelInner=panelEl?panelEl.getBoundingClientRect().width-32:boardInner;
+    const trayAreaW=panelInner-152;
+    const trayGap=pegGap;
+    const traySize=Math.floor((trayAreaW-trayGap*(codeLen-1))/codeLen);
+    const palAreaW=panelInner-58;
+    const colorSize=Math.floor((palAreaW-pegGap*(codeLen-1))/codeLen);
+    return {
+      pegSize:Math.max(16,Math.min(34,pegSize)), pegGap,
+      traySize:Math.max(16,Math.min(42,traySize)), trayGap,
+      colorSize:Math.max(16,Math.min(38,colorSize)),
+      hCols, hDot, hGap, hintsW
+    };
+  }
+
+  function getColor(id){ return COLORS.find(c=>c.id===id); }
+
+  // ── GAME INIT ──
+  function startGame(){
+    if(cfg.noRepeat&&cfg.cols>cfg.clrs){
+      alert(`Sin repetir no es posible: tenés ${cfg.clrs} colores pero ${cfg.cols} posiciones.`);
+      return;
+    }
+    CODE_LENGTH=cfg.cols; MAX_TURNS=cfg.rows; COLORS=ALL_COLORS.slice(0,cfg.clrs);
+    document.getElementById('setupScreen').style.display='none';
+    document.getElementById('gameScreen').style.display='flex';
+    requestAnimationFrame(()=>{ SZ=computeSizes(CODE_LENGTH); buildPalette(); newGame(); });
+  }
+
+  function goSetup(){
+    stopTimer();
+    document.getElementById('gameScreen').style.display='none';
+    document.getElementById('setupScreen').style.display='flex';
+    document.getElementById('solutionBar').style.display='none';
+  }
+
+  function buildPalette(){
+    const p=document.getElementById('palette'); p.innerHTML='';
+    p.style.gap=SZ.pegGap+'px';
+    COLORS.forEach(c=>{
+      const btn=document.createElement('div');
+      btn.className='color-btn'; btn.style.background=c.css; btn.id=`color-btn-${c.id}`;
+      btn.style.width=SZ.colorSize+'px'; btn.style.height=SZ.colorSize+'px';
+      btn.onclick=()=>selectAndAutoFill(c.id);
+      p.appendChild(btn);
+    });
+  }
+
+  function buildTray(){
+    const tray=document.getElementById('trayPegs'); tray.innerHTML='';
+    tray.style.gap=SZ.pegGap+'px';
+    for(let j=0;j<CODE_LENGTH;j++){
+      const peg=document.createElement('div');
+      peg.className='tray-peg'; peg.id=`tray-${j}`;
+      peg.style.width=SZ.traySize+'px'; peg.style.height=SZ.traySize+'px';
+      peg.onclick=()=>{ if(currentGuess[j]) removeTrayPeg(j); };
+      tray.appendChild(peg);
+    }
+  }
+
+  function buildBoard(){
+    const container=document.getElementById('rowsContainer'); container.innerHTML='';
+    for(let i=0;i<MAX_TURNS;i++){
+      const row=document.createElement('div');
+      row.className='row'+(i===currentRow?' active':''); row.id=`row-${i}`;
+      const num=document.createElement('div'); num.className='row-num'; num.textContent=i+1;
+      const pegs=document.createElement('div');
+      pegs.className='pegs'; pegs.style.gap=SZ.pegGap+'px';
+      for(let j=0;j<CODE_LENGTH;j++){
+        const peg=document.createElement('div'); peg.className='peg'; peg.id=`peg-${i}-${j}`;
+        peg.style.width=SZ.pegSize+'px'; peg.style.height=SZ.pegSize+'px';
+        pegs.appendChild(peg);
+      }
+      const hints=document.createElement('div');
+      hints.className='hints'; hints.id=`hints-${i}`;
+      hints.style.gridTemplateColumns=`repeat(${SZ.hCols},1fr)`;
+      hints.style.gap=SZ.hGap+'px'; hints.style.width=SZ.hintsW+'px';
+      for(let k=0;k<CODE_LENGTH;k++){
+        const h=document.createElement('div'); h.className='hint';
+        h.style.width=SZ.hDot+'px'; h.style.height=SZ.hDot+'px';
+        hints.appendChild(h);
+      }
+      row.appendChild(num); row.appendChild(pegs); row.appendChild(hints);
+      container.appendChild(row);
+    }
+    document.getElementById('turnCounter').textContent=`INTENTO 1 / ${MAX_TURNS}`;
+  }
+
+  // ── TRAY ──
+  function selectAndAutoFill(id){
+    if(gameOver) return;
+    playClick();
+    selectedColor=id;
+    document.querySelectorAll('.color-btn').forEach(b=>b.classList.remove('selected'));
+    document.getElementById(`color-btn-${id}`)?.classList.add('selected');
+    const emptySlot=currentGuess.indexOf(null);
+    if(emptySlot!==-1) fillTraySlot(emptySlot,id);
+  }
+
+  function fillTraySlot(col,colorId){
+    currentGuess[col]=colorId;
+    const peg=document.getElementById(`tray-${col}`);
+    const c=getColor(colorId);
+    peg.style.background=c.css; peg.style.borderColor=c.css; peg.style.boxShadow=`0 0 12px ${c.css}88`;
+    peg.classList.add('filled','peg-anim');
+    peg.addEventListener('animationend',()=>peg.classList.remove('peg-anim'),{once:true});
+    syncBoardPreview();
+    document.getElementById('btnConfirm').disabled=currentGuess.some(v=>!v);
+  }
+
+  function removeTrayPeg(col){
+    if(gameOver) return;
+    currentGuess[col]=null;
+    const peg=document.getElementById(`tray-${col}`);
+    peg.style.background=''; peg.style.borderColor=''; peg.style.boxShadow=''; peg.classList.remove('filled');
+    syncBoardPreview();
+    document.getElementById('btnConfirm').disabled=true;
+  }
+
+  function syncBoardPreview(){
+    for(let j=0;j<CODE_LENGTH;j++){
+      const peg=document.getElementById(`peg-${currentRow}-${j}`);
+      if(!peg) continue;
+      if(currentGuess[j]){
+        const c=getColor(currentGuess[j]);
+        peg.style.background=c.css; peg.style.borderColor=c.css; peg.style.boxShadow=`0 0 8px ${c.css}66`;
+        peg.classList.add('filled');
+      } else {
+        peg.style.background=''; peg.style.borderColor=''; peg.style.boxShadow=''; peg.classList.remove('filled');
+      }
+    }
+  }
+
+  function backspaceTray(){
+    if(gameOver) return;
+    for(let j=CODE_LENGTH-1;j>=0;j--){
+      if(currentGuess[j]!==null){ removeTrayPeg(j); return; }
+    }
+  }
+
+  function clearTray(){
+    if(gameOver) return;
+    currentGuess=new Array(CODE_LENGTH).fill(null);
+    for(let j=0;j<CODE_LENGTH;j++){
+      const p=document.getElementById(`tray-${j}`);
+      p.style.background=''; p.style.borderColor=''; p.style.boxShadow=''; p.classList.remove('filled');
+    }
+    syncBoardPreview();
+    document.getElementById('btnConfirm').disabled=true;
+  }
+
+  // ── GAME LOGIC ──
+  function evaluateGuess(guess){
+    let blacks=0,whites=0;
+    const sc=[...secret],gc=[...guess];
+    for(let i=0;i<CODE_LENGTH;i++){if(gc[i]===sc[i]){blacks++;sc[i]=null;gc[i]=null;}}
+    for(let i=0;i<CODE_LENGTH;i++){if(gc[i]!==null){const idx=sc.indexOf(gc[i]);if(idx!==-1){whites++;sc[idx]=null;}}}
+    return{blacks,whites};
+  }
+
+  function confirmGuess(){
+    if(gameOver||currentGuess.some(v=>!v)) return;
+    const guess=[...currentGuess];
+    const{blacks,whites}=evaluateGuess(guess);
+    for(let j=0;j<CODE_LENGTH;j++){
+      const peg=document.getElementById(`peg-${currentRow}-${j}`);
+      const c=getColor(guess[j]);
+      peg.style.background=c.css; peg.style.borderColor=c.css; peg.style.boxShadow=`0 0 10px ${c.css}88`;
+      peg.classList.add('filled');
+    }
+    const hintDivs=document.getElementById(`hints-${currentRow}`).querySelectorAll('.hint');
+    let hi=0;
+    for(let b=0;b<blacks;b++) hintDivs[hi++].classList.add('black');
+    for(let w=0;w<whites;w++) hintDivs[hi++].classList.add('white');
+    document.getElementById(`row-${currentRow}`).classList.remove('active');
+
+    playHints(blacks, whites);
+
+    if(blacks===CODE_LENGTH){ endGame(true); return; }
+    currentRow++;
+    currentGuess=new Array(CODE_LENGTH).fill(null);
+    for(let j=0;j<CODE_LENGTH;j++){
+      const tp=document.getElementById(`tray-${j}`);
+      tp.style.background=''; tp.style.borderColor=''; tp.style.boxShadow=''; tp.classList.remove('filled');
+    }
+    document.getElementById('btnConfirm').disabled=true;
+    if(currentRow>=MAX_TURNS){ endGame(false); return; }
+    document.getElementById(`row-${currentRow}`)?.classList.add('active');
+    document.getElementById('turnCounter').textContent=`INTENTO ${currentRow+1} / ${MAX_TURNS}`;
+  }
+
+  function endGame(won){
+    gameOver=true; stopTimer();
+    document.getElementById('btnConfirm').disabled=true;
+    const timeStr=fmtTime(timerSeconds);
+    const timerEl=document.getElementById('timerDisplay');
+    timerEl.textContent=`⏱ ${timeStr}`; timerEl.className='timer';
+
+    saveResult(won);
+
+    if(won){
+      bounceWinPegs();
+      setTimeout(()=>{ launchConfetti(); playWin(); }, 300);
+    } else {
+      playLose();
+    }
+
+    const bar=document.getElementById('solutionBar');
+    const barInner=document.getElementById('solutionBarInner');
+    const resultEl=document.getElementById('solutionResult');
+    const timeEl=document.getElementById('solutionTime');
+    const bestEl=document.getElementById('solutionBest');
+    const pegsEl=document.getElementById('solutionPegs');
+
+    barInner.className='solution-bar '+(won?'won':'lost');
+    resultEl.className='solution-result '+(won?'won':'lost');
+    resultEl.textContent=won?`¡Descifrado en ${currentRow+1} intento${currentRow===0?'':'s'}!`:'Código perdido — solución:';
+    timeEl.textContent=`⏱ ${timeStr}`;
+
+    // show best time for this config
+    if(won){
+      const best=getBestTime();
+      if(best!==null && best<timerSeconds){
+        bestEl.textContent=`Mejor tiempo: ${fmtTime(best)}`;
+      } else if(best!==null && best===timerSeconds){
+        bestEl.textContent=`🏆 ¡Nuevo mejor tiempo!`;
+      } else {
+        bestEl.textContent='';
+      }
+    } else {
+      const best=getBestTime();
+      bestEl.textContent=best!==null?`Tu mejor tiempo: ${fmtTime(best)}`:'';
+    }
+
+    pegsEl.innerHTML='';
+    secret.forEach(id=>{
+      const c=getColor(id); const p=document.createElement('div');
+      p.className='solution-peg'; p.style.background=c.css; p.style.boxShadow=`0 0 8px ${c.css}88`;
+      pegsEl.appendChild(p);
+    });
+    bar.style.display='block';
+  }
+
+  function newGame(){
+    if(cfg.noRepeat){
+      const pool=[...COLORS].sort(()=>Math.random()-0.5);
+      secret=pool.slice(0,CODE_LENGTH).map(c=>c.id);
+    } else {
+      secret=Array.from({length:CODE_LENGTH},()=>COLORS[Math.floor(Math.random()*COLORS.length)].id);
+    }
+    currentRow=0; currentGuess=new Array(CODE_LENGTH).fill(null); selectedColor=null; gameOver=false;
+    document.getElementById('btnConfirm').disabled=true;
+    document.getElementById('solutionBar').style.display='none';
+    document.querySelectorAll('.color-btn').forEach(b=>b.classList.remove('selected'));
+    buildBoard(); buildTray(); startTimer();
+  }
+
+  // ── INIT ──
+  renderColorPreview(); updateDiffBadge();
+
+  window.addEventListener('resize',()=>{
+    if(document.getElementById('gameScreen').style.display==='flex'&&Object.keys(SZ).length){
+      SZ=computeSizes(CODE_LENGTH); buildPalette(); buildBoard(); buildTray();
+    }
+  });
+</script>
+</body>
+</html>
