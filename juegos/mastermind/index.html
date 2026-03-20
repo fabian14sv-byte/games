@@ -332,7 +332,7 @@
   <div class="setup-group">
     <div class="sounds-row">
       <div class="setup-label">Sonidos</div>
-      <button class="sound-toggle on" id="soundToggle" onclick="toggleSound()">🔊 Activados</button>
+      <button class="sound-toggle" id="soundToggle" onclick="toggleSound()">🔇 Desactivados</button>
     </div>
   </div>
 
@@ -417,7 +417,7 @@
   let secret=[], currentRow=0, currentGuess=[], selectedColor=null, gameOver=false;
   let COLORS=[], CODE_LENGTH=4, MAX_TURNS=7;
   let timerInterval=null, timerSeconds=0;
-  let soundEnabled=true;
+  let soundEnabled=false;
   let SZ={};
 
   // ── AUDIO ──
