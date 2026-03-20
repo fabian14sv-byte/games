@@ -224,6 +224,18 @@
   .solution-peg { width:36px; height:36px; border-radius:50%; position:relative; overflow:hidden; box-shadow:0 0 10px rgba(0,0,0,0.4); flex-shrink:0; }
   .solution-peg::after { content:''; position:absolute; top:4px; left:5px; width:9px; height:5px; border-radius:50%; background:rgba(255,255,255,0.3); transform:rotate(-30deg); }
 
+
+  /* BACK BUTTON */
+  .btn-back {
+    display:inline-flex; align-items:center; gap:6px;
+    font-family:'Orbitron',sans-serif; font-size:9px; letter-spacing:0.2em;
+    color:var(--dim); text-decoration:none; text-transform:uppercase;
+    padding:6px 0; margin-bottom:8px;
+    transition:color 0.2s;
+  }
+  .btn-back:hover { color:var(--text); }
+  .btn-back .arrow { transition:transform 0.2s; }
+  .btn-back:hover .arrow { transform:translateX(-3px); }
   .scanline { position:fixed; inset:0; background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,0.03) 2px,rgba(0,0,0,0.03) 4px); pointer-events:none; z-index:1000; }
   @keyframes pop-in { 0%{transform:scale(0.4);opacity:0} 70%{transform:scale(1.12)} 100%{transform:scale(1);opacity:1} }
   .peg-anim { animation:pop-in 0.2s ease-out; }
@@ -271,6 +283,7 @@
 <body>
 <canvas id="confettiCanvas"></canvas>
 <div class="scanline"></div>
+<a class="btn-back" href="../../index.html"><span class="arrow">←</span> Todos los juegos</a>
 <header>
   <h1>Mastermind</h1>
   <div class="subtitle">Descifra el código secreto</div>
