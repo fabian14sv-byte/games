@@ -50,11 +50,15 @@
 
   /* back button */
   .btn-back {
-    font-family:'Orbitron',sans-serif; font-size:8px; letter-spacing:0.2em;
+    position:fixed; top:14px; left:14px; z-index:500;
+    display:inline-flex; align-items:center; gap:7px;
+    font-family:'Orbitron',sans-serif; font-size:9px; letter-spacing:0.2em;
     color:var(--dim); text-decoration:none; text-transform:uppercase;
-    padding:4px 0; transition:color 0.2s; display:flex; align-items:center; gap:4px;
+    padding:8px 14px; border-radius:8px;
+    background:rgba(6,6,14,0.85); border:1px solid var(--border);
+    backdrop-filter:blur(8px); transition:all 0.2s;
   }
-  .btn-back:hover { color:var(--text); }
+  .btn-back:hover { color:var(--text); border-color:rgba(0,245,255,0.3); background:rgba(0,245,255,0.06); }
 
   /* ── CANVAS WRAPPER ── */
   .canvas-wrap {
@@ -145,7 +149,7 @@
 
 <!-- HUD -->
 <div class="hud">
-  <a class="btn-back" href="../../index.html">← Volver</a>
+  <a class="btn-back" href="../../index.html"><span style="font-size:13px">←</span> Inicio</a>
   <div class="hud-title">ARKANOID</div>
   <div class="hud-stats">
     <div class="stat">
