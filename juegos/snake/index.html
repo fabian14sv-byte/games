@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>SNAKE</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:#06060e; --panel:#0a0a18; --border:#1a1a35;
+    --green:#2efc98; --pink:#ff2d78; --gold:#ffc740; --cyan:#00f5ff;
+    --text:#e8e8ff; --dim:#3a3a6a;
+  }
+  *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+  html, body { width:100%; height:100%; overflow:hidden; background:var(--bg); }
+  body {
+    font-family:'Share Tech Mono', monospace; color:var(--text);
+    display:flex; flex-direction:column; align-items:center;
+    user-select:none; -webkit-user-select:none;
+  }
+  body::after {
+    content:''; position:fixed; inset:0; pointer-events:none; z-index:999;
+    background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,0.025) 2px,rgba(0,0,0,0.025) 4px);
+  }
+
+  /* BACK */
+  .btn-back {
+    position:fixed; top:14px; left:14px; z-index:500;
+    display:inline-flex; align-items:center; gap:7px;
+    font-family:'Orbitron',sans-serif; font-size:9px; letter-spacing:0.2em;
+    color:var(--dim); text-decoration:none; text-transform:uppercase;
+    padding:8px 14px; border-radius:8px;
+    background:rgba(6,6,14,0.85); border:1px solid var(--border);
+    backdrop-filter:blur(8px); transition:all 0.2s;
+  }
+  .btn-back:hover { color:var(--text); border-color:rgba(46,252,152,0.3); }
+
+  /* HUD */
+  .hud {
+    width:100%; max-width:440px;
+    display:flex; align-items:center; justify-content:center;
+    padding:56px 16px 6px; gap:32px; flex-shrink:0;
+  }
+  .hud-title {
+    font-family:'Orbitron',sans-serif; font-weight:900; font-size:18px;
+    letter-spacing:0.2em;
+    background:linear-gradient(90deg,var(--green),var(--cyan));
+    -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;
+    filter:drop-shadow(0 0 10px rgba(46,252,152,0.4));
+  }
+  .stat { display:flex; flex-direction:column; align-items:center; gap:1px; }
+  .stat-label { font-size:7px; letter-spacing:0.3em; color:var(--dim); text-transform:uppercase; }
+  .stat-val { font-family:'Orbitron',sans-serif; font-size:14px; font-weight:700; color:var(--green); }
+
+  /* CANVAS */
+  .canvas-wrap {
+    position:relative; flex-shrink:0;
+    border:1px solid var(--border); border-radius:8px;
+    box-shadow:0 0 40px rgba(46,252,152,0.06), inset 0 0 60px rgba(0,0,0,0.5);
+    overflow:hidden;
+  }
+  canvas { display:block; }
+
+  /* OVERLAY */
+  .overlay {
+    position:absolute; inset:0;
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    gap:14px; background:rgba(6,6,14,0.92); backdrop-filter:blur(4px); z-index:10;
+  }
+  .overlay.hidden { display:none; }
+  .overlay-title {
+    font-family:'Orbitron',sans-serif; font-weight:900;
+    font-size:clamp(22px,5vw,32px); letter-spacing:0.15em; text-align:center;
+  }
+  .overlay-title.start { color:var(--green); filter:drop-shadow(0 0 20px var(--green)); }
+  .overlay-title.lose  { color:var(--pink);  filter:drop-shadow(0 0 20px var(--pink)); }
+  .overlay-sub { font-size:11px; color:var(--dim); letter-spacing:0.15em; text-align:center; line-height:2; }
+  .overlay-score { font-family:'Orbitron',sans-serif; font-size:18px; color:var(--gold); }
+  .btn-play {
+    font-family:'Orbitron',sans-serif; font-size:11px; letter-spacing:0.3em;
+    padding:12px 28px; border-radius:8px;
+    border:1px solid var(--green); background:rgba(46,252,152,0.1); color:var(--green);
+    cursor:pointer; transition:all 0.2s; text-transform:uppercase;
+  }
+  .btn-play:hover { background:rgba(46,252,152,0.2); box-shadow:0 0 20px rgba(46,252,152,0.3); }
+
+  /* SPEED SELECTOR */
+  .speed-select { display:flex; gap:8px; }
+  .spd-btn {
+    font-family:'Orbitron',sans-serif; font-size:10px; letter-spacing:0.1em;
+    padding:7px 14px; border-radius:6px;
+    border:1px solid var(--border); background:rgba(255,255,255,0.03);
+    color:var(--dim); cursor:pointer; transition:all 0.15s;
+  }
+  .spd-btn:hover { border-color:var(--green); color:var(--green); }
+  .spd-btn.active { border-color:var(--green); background:rgba(46,252,152,0.12); color:var(--green); box-shadow:0 0 10px rgba(46,252,152,0.15); }
+  .select-label { font-size:9px; letter-spacing:0.25em; color:var(--dim); text-transform:uppercase; }
+
+  /* D-PAD */
+  .dpad {
+    width:100%; max-width:440px; flex-shrink:0;
+    display:grid; grid-template-columns:1fr 1fr 1fr;
+    grid-template-rows:auto auto;
+    gap:6px; padding:8px 16px 12px;
+    place-items:center;
+  }
+  .dpad-btn {
+    width:64px; height:48px; border-radius:10px;
+    border:1px solid var(--border); background:rgba(255,255,255,0.03);
+    color:var(--green); font-size:20px; cursor:pointer;
+    display:flex; align-items:center; justify-content:center;
+    transition:all 0.1s; -webkit-tap-highlight-color:transparent;
+    touch-action:manipulation;
+  }
+  .dpad-btn:active, .dpad-btn.pressed {
+    background:rgba(46,252,152,0.12); border-color:var(--green);
+    box-shadow:0 0 14px rgba(46,252,152,0.2); transform:scale(0.94);
+  }
+  .dpad-empty { width:64px; height:48px; }
+  .dpad-center {
+    display:flex; flex-direction:column; align-items:center; gap:3px;
+  }
+  .dpad-info { font-size:8px; letter-spacing:0.15em; color:var(--dim); text-transform:uppercase; }
+</style>
+</head>
+<body>
+
+<a class="btn-back" href="../../index.html"><span style="font-size:13px">←</span> Inicio</a>
+
+<div class="hud">
+  <div class="stat"><div class="stat-label">Score</div><div class="stat-val" id="scoreVal">0</div></div>
+  <div class="hud-title">SNAKE</div>
+  <div class="stat"><div class="stat-label">Mejor</div><div class="stat-val" id="bestVal">0</div></div>
+</div>
+
+<div class="canvas-wrap" id="canvasWrap">
+  <canvas id="gameCanvas"></canvas>
+
+  <div class="overlay" id="overlayStart">
+    <div class="overlay-title start">SNAKE</div>
+    <div class="overlay-sub">Comé, crecé, no te choques<br>con las paredes ni con vos mismo</div>
+    <div class="select-label">Velocidad</div>
+    <div class="speed-select">
+      <button class="spd-btn active" onclick="setSpeed('slow')">Lenta</button>
+      <button class="spd-btn" onclick="setSpeed('normal')">Normal</button>
+      <button class="spd-btn" onclick="setSpeed('fast')">Rápida</button>
+    </div>
+    <button class="btn-play" onclick="startGame()">▶ Jugar</button>
+  </div>
+
+  <div class="overlay hidden" id="overlayLose">
+    <div class="overlay-title lose">GAME OVER</div>
+    <div class="overlay-score" id="loseScore"></div>
+    <div class="overlay-sub" id="loseSub"></div>
+    <button class="btn-play" onclick="startGame()">↺ Reintentar</button>
+  </div>
+</div>
+
+<div class="dpad">
+  <div class="dpad-empty"></div>
+  <button class="dpad-btn" id="dUp"    ontouchstart="dDir('UP')"    onmousedown="dDir('UP')">▲</button>
+  <div class="dpad-empty"></div>
+  <button class="dpad-btn" id="dLeft"  ontouchstart="dDir('LEFT')"  onmousedown="dDir('LEFT')">◀</button>
+  <div class="dpad-center">
+    <div class="dpad-info" id="dpadInfo">← → ▲ ▼ mover</div>
+  </div>
+  <button class="dpad-btn" id="dRight" ontouchstart="dDir('RIGHT')" onmousedown="dDir('RIGHT')">▶</button>
+  <div class="dpad-empty"></div>
+  <button class="dpad-btn" id="dDown"  ontouchstart="dDir('DOWN')"  onmousedown="dDir('DOWN')">▼</button>
+  <div class="dpad-empty"></div>
+</div>
+
+<script>
+const canvas = document.getElementById('gameCanvas');
+const ctx    = canvas.getContext('2d');
+
+// sizing
+let COLS=20, ROWS=20, CELL=20;
+
+function resize(){
+  const wrap=document.getElementById('canvasWrap');
+  const hudH=document.querySelector('.hud').offsetHeight;
+  const dpadH=document.querySelector('.dpad').offsetHeight;
+  const maxW=Math.min(window.innerWidth,440);
+  const availH=window.innerHeight-hudH-dpadH-16;
+  const size=Math.min(maxW-2, availH);
+  CELL=Math.floor(size/COLS);
+  const W=CELL*COLS, H=CELL*ROWS;
+  canvas.width=W; canvas.height=H;
+  wrap.style.width=W+'px'; wrap.style.height=H+'px';
+}
+
+// game state
+let snake, dir, nextDir, food, score, best=0, gameRunning=false, loopId=null;
+const SPEEDS = { slow:180, normal:120, fast:75 };
+let speed='normal';
+
+function setSpeed(s){
+  speed=s;
+  document.querySelectorAll('.spd-btn').forEach(b=>{
+    b.classList.toggle('active', b.textContent.toLowerCase()===
+      (s==='slow'?'lenta':s==='normal'?'normal':'rápida'));
+  });
+}
+
+function dDir(d){
+  if(!gameRunning) return;
+  const opp={UP:'DOWN',DOWN:'UP',LEFT:'RIGHT',RIGHT:'LEFT'};
+  if(d!==opp[dir]) nextDir=d;
+}
+
+document.addEventListener('keydown',e=>{
+  const map={ArrowUp:'UP',ArrowDown:'DOWN',ArrowLeft:'LEFT',ArrowRight:'RIGHT',w:'UP',s:'DOWN',a:'LEFT',d:'RIGHT'};
+  if(map[e.key]){ e.preventDefault(); dDir(map[e.key]); }
+  if(e.key===' '){ e.preventDefault(); if(!gameRunning) startGame(); }
+});
+
+// touch swipe
+let tx=0,ty=0;
+canvas.addEventListener('touchstart',e=>{ tx=e.touches[0].clientX; ty=e.touches[0].clientY; },{passive:true});
+canvas.addEventListener('touchend',e=>{
+  const dx=e.changedTouches[0].clientX-tx;
+  const dy=e.changedTouches[0].clientY-ty;
+  if(Math.abs(dx)>Math.abs(dy)){ dDir(dx>0?'RIGHT':'LEFT'); }
+  else { dDir(dy>0?'DOWN':'UP'); }
+},{passive:true});
+
+function spawnFood(){
+  let pos;
+  do {
+    pos={x:Math.floor(Math.random()*COLS), y:Math.floor(Math.random()*ROWS)};
+  } while(snake.some(s=>s.x===pos.x&&s.y===pos.y));
+  food=pos;
+}
+
+function startGame(){
+  score=0; updateScore();
+  snake=[{x:Math.floor(COLS/2),y:Math.floor(ROWS/2)}];
+  dir='RIGHT'; nextDir='RIGHT';
+  spawnFood();
+  gameRunning=true;
+  hideOverlays();
+  clearTimeout(loopId);
+  loop();
+}
+
+function loop(){
+  if(!gameRunning) return;
+  dir=nextDir;
+  const head={x:snake[0].x+(dir==='RIGHT'?1:dir==='LEFT'?-1:0),
+               y:snake[0].y+(dir==='DOWN'?1:dir==='UP'?-1:0)};
+  // wall collision
+  if(head.x<0||head.x>=COLS||head.y<0||head.y>=ROWS){ endGame(); return; }
+  // self collision
+  if(snake.some(s=>s.x===head.x&&s.y===head.y)){ endGame(); return; }
+
+  snake.unshift(head);
+  if(head.x===food.x&&head.y===food.y){
+    score+=10; updateScore(); spawnFood();
+  } else {
+    snake.pop();
+  }
+  draw();
+  loopId=setTimeout(loop, SPEEDS[speed]);
+}
+
+function draw(){
+  // bg
+  ctx.fillStyle='#06060e';
+  ctx.fillRect(0,0,canvas.width,canvas.height);
+
+  // grid
+  ctx.strokeStyle='rgba(46,252,152,0.04)';
+  ctx.lineWidth=1;
+  for(let x=0;x<=COLS;x++){ ctx.beginPath();ctx.moveTo(x*CELL,0);ctx.lineTo(x*CELL,canvas.height);ctx.stroke(); }
+  for(let y=0;y<=ROWS;y++){ ctx.beginPath();ctx.moveTo(0,y*CELL);ctx.lineTo(canvas.width,y*CELL);ctx.stroke(); }
+
+  // food
+  const fx=food.x*CELL+CELL/2, fy=food.y*CELL+CELL/2, fr=CELL*0.38;
+  ctx.save();
+  ctx.shadowColor='rgba(255,45,120,0.9)'; ctx.shadowBlur=12;
+  const fg=ctx.createRadialGradient(fx-fr*0.2,fy-fr*0.2,fr*0.1,fx,fy,fr);
+  fg.addColorStop(0,'#fff'); fg.addColorStop(0.4,'#ff2d78'); fg.addColorStop(1,'#aa0040');
+  ctx.fillStyle=fg;
+  ctx.beginPath(); ctx.arc(fx,fy,fr,0,Math.PI*2); ctx.fill();
+  ctx.restore();
+
+  // snake
+  snake.forEach((seg,i)=>{
+    const x=seg.x*CELL, y=seg.y*CELL;
+    const pad=i===0?1:2;
+    ctx.save();
+    if(i===0){
+      ctx.shadowColor='rgba(46,252,152,0.9)'; ctx.shadowBlur=14;
+      ctx.fillStyle='#2efc98';
+    } else {
+      const t=i/snake.length;
+      ctx.shadowColor='rgba(46,252,152,0.4)'; ctx.shadowBlur=6;
+      ctx.fillStyle=`hsl(${150+t*30},${90-t*30}%,${55-t*15}%)`;
+    }
+    ctx.beginPath();
+    ctx.roundRect(x+pad,y+pad,CELL-pad*2,CELL-pad*2,i===0?CELL*0.3:CELL*0.2);
+    ctx.fill();
+    // eyes on head
+    if(i===0){
+      ctx.fillStyle='#001a0a';
+      const ex=dir==='LEFT'?-1:dir==='RIGHT'?1:0;
+      const ey=dir==='UP'?-1:dir==='DOWN'?1:0;
+      const cx=x+CELL/2+ex*CELL*0.18, cy=y+CELL/2+ey*CELL*0.18;
+      const perp=dir==='LEFT'||dir==='RIGHT'?{dx:0,dy:1}:{dx:1,dy:0};
+      const er=Math.max(1.5,CELL*0.1);
+      ctx.beginPath(); ctx.arc(cx+perp.dx*CELL*0.18,cy+perp.dy*CELL*0.18,er,0,Math.PI*2); ctx.fill();
+      ctx.beginPath(); ctx.arc(cx-perp.dx*CELL*0.18,cy-perp.dy*CELL*0.18,er,0,Math.PI*2); ctx.fill();
+    }
+    ctx.restore();
+  });
+}
+
+function updateScore(){
+  document.getElementById('scoreVal').textContent=score;
+  if(score>best){ best=score; document.getElementById('bestVal').textContent=best; }
+}
+
+function endGame(){
+  gameRunning=false; clearTimeout(loopId);
+  document.getElementById('loseScore').textContent=`Score: ${score}`;
+  document.getElementById('loseSub').textContent=score>0?`¡${Math.floor(score/10)} manzanas comidas!`:'Casi ni empezaste 😅';
+  showOverlay('overlayLose');
+}
+
+function showOverlay(id){
+  ['overlayStart','overlayLose'].forEach(o=>document.getElementById(o).classList.toggle('hidden',o!==id));
+}
+function hideOverlays(){
+  ['overlayStart','overlayLose'].forEach(o=>document.getElementById(o).classList.add('hidden'));
+}
+
+window.addEventListener('resize',()=>{ resize(); if(!gameRunning){ ctx.fillStyle='#06060e'; ctx.fillRect(0,0,canvas.width,canvas.height); }});
+resize();
+showOverlay('overlayStart');
+ctx.fillStyle='#06060e'; ctx.fillRect(0,0,canvas.width,canvas.height);
+</script>
+</body>
+</html>
