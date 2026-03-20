@@ -6,7 +6,7 @@
 <title>Arcade</title>
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
 <style>
-  :root{--bg:#06060a;--surface:#0d0d14;--border:#1c1c2e;--cyan:#00f5ff;--pink:#ff2d78;--gold:#ffc740;--green:#2efc98;--text:#f0f0ff;--muted:#7a7a9a;}
+  :root{--bg:#06060a;--surface:#0d0d14;--border:#1c1c2e;--cyan:#00f5ff;--pink:#ff2d78;--gold:#ffc740;--green:#2efc98;--text:#f0f0ff;--muted:#8a8aaa;}
   *,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
   body{background:var(--bg);color:var(--text);font-family:'JetBrains Mono',monospace;min-height:100vh;overflow-x:hidden;}
   body::before{content:'';position:fixed;inset:0;z-index:0;background-image:linear-gradient(rgba(0,245,255,0.03) 1px,transparent 1px),linear-gradient(90deg,rgba(0,245,255,0.03) 1px,transparent 1px);background-size:60px 60px;mask-image:radial-gradient(ellipse 80% 60% at 50% 0%,black 40%,transparent 100%);}
@@ -14,60 +14,65 @@
   .orb-1{width:500px;height:500px;background:var(--cyan);top:-150px;left:-100px;}
   .orb-2{width:400px;height:400px;background:var(--pink);bottom:-100px;right:-80px;}
   .wrapper{position:relative;z-index:1;max-width:1000px;margin:0 auto;padding:60px 24px 80px;}
-  header{margin-bottom:60px;}
+  header{margin-bottom:56px;}
   .header-top{display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border);padding-bottom:20px;margin-bottom:32px;}
   .logo{font-family:'Syne',sans-serif;font-weight:800;font-size:13px;letter-spacing:0.4em;text-transform:uppercase;color:#9a9abb;}
   .logo span{color:var(--cyan);}
   .badge{font-size:10px;letter-spacing:0.25em;color:#6a6a8a;border:1px solid var(--border);padding:4px 12px;border-radius:20px;}
-  .hero-title{font-family:'Syne',sans-serif;font-weight:800;font-size:clamp(52px,10vw,96px);line-height:0.9;letter-spacing:-0.02em;margin-bottom:20px;}
+  .hero-title{font-family:'Syne',sans-serif;font-weight:800;font-size:clamp(48px,10vw,96px);line-height:0.9;letter-spacing:-0.02em;margin-bottom:20px;}
   .hero-title .line-1{display:block;color:var(--text);}
   .hero-title .line-2{display:block;background:linear-gradient(90deg,var(--cyan) 0%,var(--pink) 60%,var(--gold) 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
-  .hero-sub{font-size:12px;letter-spacing:0.2em;color:#8a8aaa;text-transform:uppercase;margin-top:16px;}
+  .hero-sub{font-size:12px;letter-spacing:0.2em;color:var(--muted);text-transform:uppercase;margin-top:16px;}
   .hero-sub span{color:var(--cyan);}
-  .section-label{display:flex;align-items:center;gap:12px;font-size:10px;letter-spacing:0.35em;text-transform:uppercase;color:#6a6a8a;margin-bottom:20px;}
+  .section-label{display:flex;align-items:center;gap:12px;font-size:10px;letter-spacing:0.35em;text-transform:uppercase;color:#6a6a8a;margin-bottom:20px;margin-top:32px;}
+  .section-label:first-of-type{margin-top:0;}
   .section-label::after{content:'';flex:1;height:1px;background:var(--border);}
-  .games-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:14px;}
-  .card{position:relative;text-decoration:none;color:var(--text);background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:24px;transition:transform 0.2s,border-color 0.2s,box-shadow 0.2s;overflow:hidden;display:flex;flex-direction:column;gap:14px;}
+  .games-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:12px;}
+  .card{position:relative;text-decoration:none;color:var(--text);background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:22px;transition:transform 0.2s,border-color 0.2s,box-shadow 0.2s;overflow:hidden;display:flex;flex-direction:column;gap:12px;}
   .card::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(0,245,255,0.05) 0%,transparent 60%);opacity:0;transition:opacity 0.3s;}
-  .card:hover{transform:translateY(-4px);border-color:rgba(0,245,255,0.3);box-shadow:0 12px 40px rgba(0,245,255,0.08);}
+  .card:hover{transform:translateY(-3px);border-color:rgba(0,245,255,0.3);box-shadow:0 10px 32px rgba(0,245,255,0.08);}
   .card:hover::before{opacity:1;}
   .card::after{content:'';position:absolute;top:0;left:20%;right:20%;height:1px;background:linear-gradient(90deg,transparent,var(--cyan),transparent);opacity:0;transition:opacity 0.3s;}
   .card:hover::after{opacity:1;}
-  .card.soon{opacity:0.45;pointer-events:none;filter:saturate(0.3);}
-  .card-header{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;}
-  .icon{width:52px;height:52px;border-radius:12px;flex-shrink:0;display:flex;align-items:center;justify-content:center;}
+  .card.soon{opacity:0.4;pointer-events:none;filter:saturate(0.2);}
+  .card-header{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;}
+  .icon{width:48px;height:48px;border-radius:11px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:20px;}
   .icon.mm{background:linear-gradient(135deg,#0d1f3c,#1a1040);border:1px solid rgba(0,245,255,0.2);}
   .icon.bk{background:linear-gradient(135deg,#1a0a2e,#0d1a10);border:1px solid rgba(255,45,120,0.2);}
   .icon.sn{background:linear-gradient(135deg,#0a2e12,#0a1a0d);border:1px solid rgba(46,252,152,0.2);}
-  .icon.next{background:linear-gradient(135deg,#1a1a10,#0d0d0a);border:1px solid rgba(255,199,64,0.15);font-size:22px;}
-  .mm-icon{display:flex;flex-wrap:wrap;gap:3px;width:32px;height:32px;align-content:center;justify-content:center;}
-  .mm-dot{width:9px;height:9px;border-radius:50%;box-shadow:0 0 5px currentColor;}
+  .icon.g2048{background:linear-gradient(135deg,#2a1500,#1a0a00);border:1px solid rgba(255,199,64,0.25);}
+  .icon.ast{background:linear-gradient(135deg,#050518,#0a0a20);border:1px solid rgba(0,245,255,0.15);}
+  .icon.soon{background:#0d0d14;border:1px solid #1c1c2e;}
+  .mm-icon{display:flex;flex-wrap:wrap;gap:3px;width:30px;height:30px;align-content:center;justify-content:center;}
+  .mm-dot{width:8px;height:8px;border-radius:50%;box-shadow:0 0 4px currentColor;}
   .bk-icon{display:flex;flex-direction:column;gap:2px;align-items:center;}
   .bk-row{display:flex;gap:2px;}
-  .bk-brick{width:9px;height:4px;border-radius:1px;}
-  .bk-ball{width:6px;height:6px;border-radius:50%;background:#ffc740;box-shadow:0 0 5px #ffc740;margin-top:2px;}
+  .bk-brick{width:8px;height:4px;border-radius:1px;}
+  .bk-ball{width:5px;height:5px;border-radius:50%;background:#ffc740;box-shadow:0 0 4px #ffc740;margin-top:1px;}
   .sn-icon{display:flex;flex-direction:column;gap:2px;}
   .sn-row{display:flex;gap:2px;}
-  .sn-cell{width:8px;height:8px;border-radius:2px;}
+  .sn-cell{width:7px;height:7px;border-radius:2px;}
   .tags{display:flex;flex-wrap:wrap;gap:5px;}
-  .tag{font-size:9px;letter-spacing:0.2em;text-transform:uppercase;padding:3px 8px;border-radius:20px;}
+  .tag{font-size:9px;letter-spacing:0.15em;text-transform:uppercase;padding:3px 8px;border-radius:20px;}
   .tag.logic{border:1px solid rgba(0,245,255,0.2);color:rgba(0,245,255,0.7);}
   .tag.action{border:1px solid rgba(255,45,120,0.25);color:rgba(255,45,120,0.8);}
   .tag.arcade{border:1px solid rgba(46,252,152,0.25);color:rgba(46,252,152,0.8);}
-  .tag.soon{border:1px solid rgba(255,199,64,0.2);color:rgba(255,199,64,0.6);}
-  .card-title{font-family:'Syne',sans-serif;font-weight:700;font-size:18px;color:var(--text);}
-  .card-desc{font-size:11px;color:#8a8aaa;line-height:1.8;}
-  .card-footer{display:flex;align-items:center;justify-content:space-between;margin-top:auto;padding-top:14px;border-top:1px solid var(--border);font-size:10px;color:#6a6a8a;}
-  .cta{font-size:10px;letter-spacing:0.15em;text-transform:uppercase;color:var(--cyan);display:flex;align-items:center;gap:5px;transition:gap 0.2s;}
-  .card:hover .cta{gap:9px;}
-  footer{margin-top:70px;padding-top:24px;border-top:1px solid var(--border);display:flex;justify-content:space-between;font-size:10px;color:#6a6a8a;letter-spacing:0.2em;flex-wrap:wrap;gap:8px;}
-  @keyframes fade-up{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
-  header{animation:fade-up 0.5s ease both;}
-  .card:nth-child(1){animation:fade-up 0.5s 0.1s ease both;}
-  .card:nth-child(2){animation:fade-up 0.5s 0.2s ease both;}
-  .card:nth-child(3){animation:fade-up 0.5s 0.3s ease both;}
-  .card:nth-child(4){animation:fade-up 0.5s 0.4s ease both;}
-  .card:nth-child(5){animation:fade-up 0.5s 0.5s ease both;}
+  .tag.puzzle{border:1px solid rgba(255,199,64,0.25);color:rgba(255,199,64,0.8);}
+  .tag.shooter{border:1px solid rgba(0,245,255,0.2);color:rgba(0,245,255,0.7);}
+  .tag.soon{border:1px solid rgba(255,255,255,0.08);color:rgba(255,255,255,0.25);}
+  .card-title{font-family:'Syne',sans-serif;font-weight:700;font-size:16px;color:var(--text);}
+  .card-desc{font-size:11px;color:var(--muted);line-height:1.7;}
+  .card-footer{display:flex;align-items:center;justify-content:space-between;margin-top:auto;padding-top:12px;border-top:1px solid var(--border);font-size:10px;color:#6a6a8a;}
+  .cta{font-size:10px;letter-spacing:0.12em;text-transform:uppercase;color:var(--cyan);display:flex;align-items:center;gap:4px;transition:gap 0.2s;}
+  .card:hover .cta{gap:8px;}
+  footer{margin-top:60px;padding-top:24px;border-top:1px solid var(--border);display:flex;justify-content:space-between;font-size:10px;color:#5a5a7a;letter-spacing:0.2em;flex-wrap:wrap;gap:8px;}
+  @keyframes fade-up{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+  header{animation:fade-up 0.4s ease both;}
+  .card{animation:fade-up 0.4s ease both;}
+  .card:nth-child(1){animation-delay:0.05s;} .card:nth-child(2){animation-delay:0.1s;}
+  .card:nth-child(3){animation-delay:0.15s;} .card:nth-child(4){animation-delay:0.2s;}
+  .card:nth-child(5){animation-delay:0.25s;} .card:nth-child(6){animation-delay:0.3s;}
+  .card:nth-child(7){animation-delay:0.35s;} .card:nth-child(8){animation-delay:0.4s;}
 </style>
 </head>
 <body>
@@ -77,28 +82,27 @@
   <header>
     <div class="header-top">
       <div class="logo"><span>◈</span> Arcade</div>
-      <div class="badge">v1.2</div>
+      <div class="badge">v2.0</div>
     </div>
     <h1 class="hero-title">
       <span class="line-1">Juegos</span>
       <span class="line-2">Arcade</span>
     </h1>
-    <p class="hero-sub">Colección personal · <span>3 juegos disponibles</span></p>
+    <p class="hero-sub">Colección personal · <span>5 juegos disponibles</span></p>
   </header>
-  <div class="section-label">Disponibles ahora</div>
+
+  <div class="section-label">Disponibles</div>
   <div class="games-grid">
     <a class="card" href="juegos/mastermind/">
       <div class="card-header">
-        <div class="icon mm">
-          <div class="mm-icon">
-            <div class="mm-dot" style="color:#cc2233;background:#cc2233"></div>
-            <div class="mm-dot" style="color:#1a56cc;background:#1a56cc"></div>
-            <div class="mm-dot" style="color:#d4a017;background:#d4a017"></div>
-            <div class="mm-dot" style="color:#2a9a3f;background:#2a9a3f"></div>
-            <div class="mm-dot" style="color:#cc5500;background:#cc5500"></div>
-            <div class="mm-dot" style="color:#7b3fa0;background:#7b3fa0"></div>
-          </div>
-        </div>
+        <div class="icon mm"><div class="mm-icon">
+          <div class="mm-dot" style="color:#cc2233;background:#cc2233"></div>
+          <div class="mm-dot" style="color:#1a56cc;background:#1a56cc"></div>
+          <div class="mm-dot" style="color:#d4a017;background:#d4a017"></div>
+          <div class="mm-dot" style="color:#2a9a3f;background:#2a9a3f"></div>
+          <div class="mm-dot" style="color:#cc5500;background:#cc5500"></div>
+          <div class="mm-dot" style="color:#7b3fa0;background:#7b3fa0"></div>
+        </div></div>
         <div class="tags"><span class="tag logic">Lógica</span></div>
       </div>
       <div><div class="card-title">Mastermind</div><div class="card-desc">Descifra el código secreto de colores en el menor tiempo posible.</div></div>
@@ -106,21 +110,11 @@
     </a>
     <a class="card" href="juegos/arkanoid/">
       <div class="card-header">
-        <div class="icon bk">
-          <div class="bk-icon">
-            <div class="bk-row">
-              <div class="bk-brick" style="background:#ff2d78;box-shadow:0 0 4px #ff2d78"></div>
-              <div class="bk-brick" style="background:#ff8c00;box-shadow:0 0 4px #ff8c00"></div>
-              <div class="bk-brick" style="background:#ffc740;box-shadow:0 0 4px #ffc740"></div>
-            </div>
-            <div class="bk-row">
-              <div class="bk-brick" style="background:#2efc98;box-shadow:0 0 4px #2efc98"></div>
-              <div class="bk-brick" style="background:#00f5ff;box-shadow:0 0 4px #00f5ff"></div>
-              <div class="bk-brick" style="background:#a855f7;box-shadow:0 0 4px #a855f7"></div>
-            </div>
-            <div class="bk-ball"></div>
-          </div>
-        </div>
+        <div class="icon bk"><div class="bk-icon">
+          <div class="bk-row"><div class="bk-brick" style="background:#ff2d78;box-shadow:0 0 3px #ff2d78"></div><div class="bk-brick" style="background:#ff8c00;box-shadow:0 0 3px #ff8c00"></div><div class="bk-brick" style="background:#ffc740;box-shadow:0 0 3px #ffc740"></div></div>
+          <div class="bk-row"><div class="bk-brick" style="background:#2efc98;box-shadow:0 0 3px #2efc98"></div><div class="bk-brick" style="background:#00f5ff;box-shadow:0 0 3px #00f5ff"></div><div class="bk-brick" style="background:#a855f7;box-shadow:0 0 3px #a855f7"></div></div>
+          <div class="bk-ball"></div>
+        </div></div>
         <div class="tags"><span class="tag action">Acción</span></div>
       </div>
       <div><div class="card-title">Arkanoid</div><div class="card-desc">Rompé todos los bloques sin dejar caer la pelota. 5 niveles.</div></div>
@@ -128,47 +122,53 @@
     </a>
     <a class="card" href="juegos/snake/">
       <div class="card-header">
-        <div class="icon sn">
-          <div class="sn-icon">
-            <div class="sn-row">
-              <div class="sn-cell" style="background:#2efc98;box-shadow:0 0 4px #2efc98"></div>
-              <div class="sn-cell" style="background:#2efc98;box-shadow:0 0 4px #2efc98"></div>
-              <div class="sn-cell" style="background:#2efc98;box-shadow:0 0 4px #2efc98"></div>
-            </div>
-            <div class="sn-row">
-              <div class="sn-cell" style="background:transparent"></div>
-              <div class="sn-cell" style="background:transparent"></div>
-              <div class="sn-cell" style="background:#1adc78"></div>
-            </div>
-            <div class="sn-row">
-              <div class="sn-cell" style="background:#ff2d78;border-radius:50%;box-shadow:0 0 5px #ff2d78"></div>
-              <div class="sn-cell" style="background:transparent"></div>
-              <div class="sn-cell" style="background:#0ec060"></div>
-            </div>
-          </div>
-        </div>
+        <div class="icon sn"><div class="sn-icon">
+          <div class="sn-row"><div class="sn-cell" style="background:#2efc98;box-shadow:0 0 3px #2efc98"></div><div class="sn-cell" style="background:#2efc98"></div><div class="sn-cell" style="background:#2efc98"></div></div>
+          <div class="sn-row"><div class="sn-cell" style="background:transparent"></div><div class="sn-cell" style="background:transparent"></div><div class="sn-cell" style="background:#1adc78"></div></div>
+          <div class="sn-row"><div class="sn-cell" style="background:#ff2d78;border-radius:50%;box-shadow:0 0 4px #ff2d78"></div><div class="sn-cell" style="background:transparent"></div><div class="sn-cell" style="background:#0ec060"></div></div>
+        </div></div>
         <div class="tags"><span class="tag arcade">Clásico</span></div>
       </div>
       <div><div class="card-title">Snake</div><div class="card-desc">Comé, crecé, no te choques. El clásico de todos los tiempos.</div></div>
       <div class="card-footer"><span>3 velocidades · Mejor score</span><span class="cta">Jugar →</span></div>
     </a>
-    <div class="card soon">
+    <a class="card" href="juegos/2048/">
       <div class="card-header">
-        <div class="icon next">🎲</div>
-        <div class="tags"><span class="tag soon">Próximamente</span></div>
+        <div class="icon g2048" style="font-family:'Orbitron',sans-serif;font-weight:900;font-size:13px;color:#ffc740;letter-spacing:-0.05em;">2048</div>
+        <div class="tags"><span class="tag puzzle">Puzzle</span></div>
       </div>
       <div><div class="card-title">2048</div><div class="card-desc">Combiná los números deslizando. Llegá al 2048 sin quedarte sin movimientos.</div></div>
+      <div class="card-footer"><span>Mejor score · Deslizá</span><span class="cta">Jugar →</span></div>
+    </a>
+    <a class="card" href="juegos/asteroids/">
+      <div class="card-header">
+        <div class="icon ast" style="font-size:22px">🚀</div>
+        <div class="tags"><span class="tag shooter">Shooter</span></div>
+      </div>
+      <div><div class="card-title">Asteroids</div><div class="card-desc">Destruí los asteroides antes de que te destruyan. Los fragmentos son peligrosos.</div></div>
+      <div class="card-footer"><span>Niveles · Vidas · Score</span><span class="cta">Jugar →</span></div>
+    </a>
+  </div>
+
+  <div class="section-label">Próximamente</div>
+  <div class="games-grid">
+    <div class="card soon">
+      <div class="card-header"><div class="icon soon">🔴</div><div class="tags"><span class="tag soon">Próximamente</span></div></div>
+      <div><div class="card-title">Tetris</div><div class="card-desc">Piezas que caen. Completá líneas antes de llegar al tope.</div></div>
       <div class="card-footer"><span>En desarrollo</span></div>
     </div>
     <div class="card soon">
-      <div class="card-header">
-        <div class="icon next">🚀</div>
-        <div class="tags"><span class="tag soon">Próximamente</span></div>
-      </div>
-      <div><div class="card-title">Asteroids</div><div class="card-desc">Disparás asteroides que se rompen en pedazos. Sobreviví las oleadas.</div></div>
+      <div class="card-header"><div class="icon soon">👻</div><div class="tags"><span class="tag soon">Próximamente</span></div></div>
+      <div><div class="card-title">Pac-Man</div><div class="card-desc">Comé puntos, esquivá fantasmas. El arcade original.</div></div>
+      <div class="card-footer"><span>En desarrollo</span></div>
+    </div>
+    <div class="card soon">
+      <div class="card-header"><div class="icon soon">🏓</div><div class="tags"><span class="tag soon">Próximamente</span></div></div>
+      <div><div class="card-title">Pong</div><div class="card-desc">El primer videojuego. Dos paletas, una pelota, pura tensión.</div></div>
       <div class="card-footer"><span>En desarrollo</span></div>
     </div>
   </div>
+
   <footer><span>◈ ARCADE</span><span>Colección personal de juegos</span></footer>
 </div>
 </body>
