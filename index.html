@@ -3,47 +3,121 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Juegos</title>
-<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
+<title>Arcade</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
 <style>
-  :root{--bg:#0a0a0f;--panel:#0f0f1a;--border:#1a1a2e;--accent:#00f5ff;--accent2:#ff006e;--accent3:#ffbe0b;--text:#e0e0ff;--dim:#555577;}
-  *{margin:0;padding:0;box-sizing:border-box;}
-  body{background:var(--bg);color:var(--text);font-family:'Share Tech Mono',monospace;min-height:100vh;padding:40px 20px;
-    background-image:radial-gradient(ellipse at 20% 0%,rgba(0,245,255,0.06) 0%,transparent 50%),radial-gradient(ellipse at 80% 100%,rgba(255,0,110,0.06) 0%,transparent 50%);}
-  header{text-align:center;margin-bottom:48px;}
-  h1{font-family:'Orbitron',sans-serif;font-size:clamp(28px,6vw,52px);font-weight:900;letter-spacing:0.15em;
-    background:linear-gradient(90deg,var(--accent2),var(--accent),var(--accent3));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
-    filter:drop-shadow(0 0 24px rgba(0,245,255,0.35));}
-  .subtitle{font-size:11px;letter-spacing:0.35em;color:var(--dim);text-transform:uppercase;margin-top:6px;}
-  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:20px;max-width:900px;margin:0 auto;}
-  .card{background:var(--panel);border:1px solid var(--border);border-radius:14px;padding:28px 24px;
-    text-decoration:none;color:var(--text);transition:all 0.25s;position:relative;overflow:hidden;}
-  .card::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(0,245,255,0.04),transparent);opacity:0;transition:opacity 0.25s;}
-  .card:hover{border-color:rgba(0,245,255,0.35);transform:translateY(-3px);box-shadow:0 8px 32px rgba(0,245,255,0.1);}
+  :root{--bg:#06060a;--surface:#0d0d14;--border:#1c1c2e;--cyan:#00f5ff;--pink:#ff2d78;--gold:#ffc740;--text:#f0f0ff;--muted:#4a4a6a;}
+  *,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+  body{background:var(--bg);color:var(--text);font-family:'JetBrains Mono',monospace;min-height:100vh;overflow-x:hidden;}
+  body::before{content:'';position:fixed;inset:0;z-index:0;
+    background-image:linear-gradient(rgba(0,245,255,0.03) 1px,transparent 1px),linear-gradient(90deg,rgba(0,245,255,0.03) 1px,transparent 1px);
+    background-size:60px 60px;
+    mask-image:radial-gradient(ellipse 80% 60% at 50% 0%,black 40%,transparent 100%);}
+  .orb{position:fixed;border-radius:50%;pointer-events:none;z-index:0;filter:blur(80px);opacity:0.12;}
+  .orb-1{width:500px;height:500px;background:var(--cyan);top:-150px;left:-100px;}
+  .orb-2{width:400px;height:400px;background:var(--pink);bottom:-100px;right:-80px;}
+  .wrapper{position:relative;z-index:1;max-width:1000px;margin:0 auto;padding:60px 24px 80px;}
+  header{margin-bottom:72px;}
+  .header-top{display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border);padding-bottom:20px;margin-bottom:32px;}
+  .logo{font-family:'Syne',sans-serif;font-weight:800;font-size:13px;letter-spacing:0.4em;text-transform:uppercase;color:var(--muted);}
+  .logo span{color:var(--cyan);}
+  .badge{font-size:10px;letter-spacing:0.25em;color:var(--muted);border:1px solid var(--border);padding:4px 12px;border-radius:20px;}
+  .hero-title{font-family:'Syne',sans-serif;font-weight:800;font-size:clamp(52px,10vw,96px);line-height:0.9;letter-spacing:-0.02em;margin-bottom:20px;}
+  .hero-title .line-1{display:block;color:var(--text);}
+  .hero-title .line-2{display:block;background:linear-gradient(90deg,var(--cyan) 0%,var(--pink) 60%,var(--gold) 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+  .hero-sub{font-size:12px;letter-spacing:0.2em;color:var(--muted);text-transform:uppercase;margin-top:16px;}
+  .hero-sub span{color:var(--cyan);}
+  .section-label{display:flex;align-items:center;gap:12px;font-size:10px;letter-spacing:0.35em;text-transform:uppercase;color:var(--muted);margin-bottom:24px;}
+  .section-label::after{content:'';flex:1;height:1px;background:var(--border);}
+  .games-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px;}
+  .card{position:relative;text-decoration:none;color:var(--text);background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:28px;transition:transform 0.2s,border-color 0.2s,box-shadow 0.2s;overflow:hidden;display:flex;flex-direction:column;gap:16px;}
+  .card::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(0,245,255,0.05) 0%,transparent 60%);opacity:0;transition:opacity 0.3s;}
+  .card:hover{transform:translateY(-4px);border-color:rgba(0,245,255,0.3);box-shadow:0 12px 40px rgba(0,245,255,0.08);}
   .card:hover::before{opacity:1;}
-  .card-icon{font-size:36px;margin-bottom:14px;}
-  .card-title{font-family:'Orbitron',sans-serif;font-size:14px;font-weight:700;letter-spacing:0.1em;color:var(--accent);margin-bottom:8px;}
-  .card-desc{font-size:11px;color:var(--dim);line-height:1.7;}
-  .card-tag{display:inline-block;margin-top:12px;font-size:9px;letter-spacing:0.2em;text-transform:uppercase;
-    padding:3px 10px;border-radius:20px;border:1px solid rgba(0,245,255,0.2);color:rgba(0,245,255,0.6);}
-  .scanline{position:fixed;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,0.025) 2px,rgba(0,0,0,0.025) 4px);pointer-events:none;z-index:100;}
-  footer{text-align:center;margin-top:60px;font-size:10px;color:var(--dim);letter-spacing:0.2em;}
+  .card::after{content:'';position:absolute;top:0;left:20%;right:20%;height:1px;background:linear-gradient(90deg,transparent,var(--cyan),transparent);opacity:0;transition:opacity 0.3s;}
+  .card:hover::after{opacity:1;}
+  .card-header{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;}
+  .card-icon-wrap{width:56px;height:56px;border-radius:14px;flex-shrink:0;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;}
+  .card-icon-wrap.mastermind{background:linear-gradient(135deg,#0d1f3c,#1a1040);border:1px solid rgba(0,245,255,0.2);box-shadow:0 0 20px rgba(0,245,255,0.1),inset 0 1px 0 rgba(255,255,255,0.05);}
+  .mm-icon{display:flex;flex-wrap:wrap;gap:4px;width:36px;height:36px;align-content:center;justify-content:center;}
+  .mm-dot{width:10px;height:10px;border-radius:50%;box-shadow:0 0 6px currentColor;}
+  .card-tags{display:flex;flex-wrap:wrap;gap:6px;}
+  .tag{font-size:9px;letter-spacing:0.2em;text-transform:uppercase;padding:3px 9px;border-radius:20px;border:1px solid rgba(0,245,255,0.2);color:rgba(0,245,255,0.6);}
+  .tag.hard{border-color:rgba(255,45,120,0.25);color:rgba(255,45,120,0.7);}
+  .card-title{font-family:'Syne',sans-serif;font-weight:700;font-size:20px;letter-spacing:-0.01em;color:var(--text);}
+  .card-desc{font-size:11px;color:var(--muted);line-height:1.8;}
+  .card-footer{display:flex;align-items:center;justify-content:space-between;margin-top:auto;padding-top:16px;border-top:1px solid var(--border);font-size:10px;color:var(--muted);letter-spacing:0.1em;}
+  .card-cta{font-size:10px;letter-spacing:0.15em;text-transform:uppercase;color:var(--cyan);display:flex;align-items:center;gap:5px;transition:gap 0.2s;}
+  .card:hover .card-cta{gap:9px;}
+  .card.soon{opacity:0.4;pointer-events:none;}
+  .card.soon .card-title{color:var(--muted);}
+  footer{margin-top:80px;padding-top:24px;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;font-size:10px;color:var(--muted);letter-spacing:0.2em;flex-wrap:wrap;gap:8px;}
+  @keyframes fade-up{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+  .hero-title{animation:fade-up 0.6s ease both;}
+  .hero-sub{animation:fade-up 0.6s 0.1s ease both;}
+  .section-label{animation:fade-up 0.6s 0.2s ease both;}
+  .card{animation:fade-up 0.6s 0.3s ease both;}
 </style>
 </head>
 <body>
-<div class="scanline"></div>
-<header>
-  <h1>ARCADE</h1>
-  <div class="subtitle">Coleccion de juegos</div>
-</header>
-<div class="grid">
-  <a class="card" href="juegos/mastermind/">
-    <div class="card-icon">🎯</div>
-    <div class="card-title">Mastermind</div>
-    <div class="card-desc">Descifra el codigo secreto de colores. Logica pura contra el reloj.</div>
-    <span class="card-tag">Logica</span>
-  </a>
+<div class="orb orb-1"></div>
+<div class="orb orb-2"></div>
+<div class="wrapper">
+  <header>
+    <div class="header-top">
+      <div class="logo"><span>◈</span> Arcade</div>
+      <div class="badge">v1.0</div>
+    </div>
+    <h1 class="hero-title">
+      <span class="line-1">Juegos</span>
+      <span class="line-2">Arcade</span>
+    </h1>
+    <p class="hero-sub">Colección personal · <span>1 juego disponible</span></p>
+  </header>
+  <div class="section-label">Disponibles ahora</div>
+  <div class="games-grid">
+    <a class="card" href="juegos/mastermind/">
+      <div class="card-header">
+        <div class="card-icon-wrap mastermind">
+          <div class="mm-icon">
+            <div class="mm-dot" style="color:#cc2233;background:#cc2233"></div>
+            <div class="mm-dot" style="color:#1a56cc;background:#1a56cc"></div>
+            <div class="mm-dot" style="color:#d4a017;background:#d4a017"></div>
+            <div class="mm-dot" style="color:#2a9a3f;background:#2a9a3f"></div>
+            <div class="mm-dot" style="color:#cc5500;background:#cc5500"></div>
+            <div class="mm-dot" style="color:#7b3fa0;background:#7b3fa0"></div>
+          </div>
+        </div>
+        <div class="card-tags">
+          <span class="tag">Lógica</span>
+          <span class="tag hard">Difícil</span>
+        </div>
+      </div>
+      <div>
+        <div class="card-title">Mastermind</div>
+        <div class="card-desc">Descifra el código secreto de colores en el menor tiempo posible. Cada pista cuenta.</div>
+      </div>
+      <div class="card-footer">
+        <span>Timer · Historial · Sonidos</span>
+        <span class="card-cta">Jugar →</span>
+      </div>
+    </a>
+    <div class="card soon">
+      <div class="card-header">
+        <div class="card-icon-wrap" style="background:#0d0d14;border:1px solid #1c1c2e;font-size:24px">🎲</div>
+        <div class="card-tags"><span class="tag">Próximamente</span></div>
+      </div>
+      <div>
+        <div class="card-title">???</div>
+        <div class="card-desc">Próximo juego en desarrollo.</div>
+      </div>
+      <div class="card-footer"><span>—</span></div>
+    </div>
+  </div>
+  <footer>
+    <span>◈ ARCADE</span>
+    <span>Colección personal de juegos</span>
+  </footer>
 </div>
-<footer>ARCADE · Todos los juegos</footer>
 </body>
 </html>
