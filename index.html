@@ -33,19 +33,25 @@
   .card:hover::before{opacity:1;}
   .card::after{content:'';position:absolute;top:0;left:20%;right:20%;height:1px;background:linear-gradient(90deg,transparent,var(--cyan),transparent);opacity:0;transition:opacity 0.3s;}
   .card:hover::after{opacity:1;}
+  .card.soon{opacity:0.45;pointer-events:none;filter:saturate(0.3);}
   .card-header{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;}
   .card-icon-wrap{width:56px;height:56px;border-radius:14px;flex-shrink:0;display:flex;align-items:center;justify-content:center;}
   .card-icon-wrap.mastermind{background:linear-gradient(135deg,#0d1f3c,#1a1040);border:1px solid rgba(0,245,255,0.2);box-shadow:0 0 20px rgba(0,245,255,0.1);}
   .card-icon-wrap.breakout{background:linear-gradient(135deg,#1a0a2e,#0d1a10);border:1px solid rgba(255,45,120,0.2);box-shadow:0 0 20px rgba(255,45,120,0.1);}
+  .card-icon-wrap.snake{background:linear-gradient(135deg,#0a2e0a,#0a1a0d);border:1px solid rgba(46,252,152,0.2);box-shadow:0 0 20px rgba(46,252,152,0.08);}
   .mm-icon{display:flex;flex-wrap:wrap;gap:4px;width:36px;height:36px;align-content:center;justify-content:center;}
   .mm-dot{width:10px;height:10px;border-radius:50%;box-shadow:0 0 6px currentColor;}
   .bk-icon{display:flex;flex-direction:column;gap:3px;align-items:center;justify-content:center;width:36px;}
   .bk-row{display:flex;gap:2px;}
   .bk-brick{width:10px;height:5px;border-radius:1px;}
   .bk-ball{width:7px;height:7px;border-radius:50%;background:#ffc740;box-shadow:0 0 6px #ffc740;margin-top:2px;}
+  .snake-icon{display:flex;flex-direction:column;gap:2px;align-items:center;justify-content:center;width:36px;}
+  .snake-row{display:flex;gap:2px;}
+  .snake-cell{width:8px;height:8px;border-radius:2px;}
   .card-tags{display:flex;flex-wrap:wrap;gap:6px;}
   .tag{font-size:9px;letter-spacing:0.2em;text-transform:uppercase;padding:3px 9px;border-radius:20px;border:1px solid rgba(0,245,255,0.2);color:rgba(0,245,255,0.6);}
   .tag.action{border-color:rgba(255,45,120,0.25);color:rgba(255,45,120,0.7);}
+  .tag.soon{border-color:rgba(255,199,64,0.2);color:rgba(255,199,64,0.5);}
   .card-title{font-family:'Syne',sans-serif;font-weight:700;font-size:20px;color:var(--text);}
   .card-desc{font-size:11px;color:var(--muted);line-height:1.8;}
   .card-footer{display:flex;align-items:center;justify-content:space-between;margin-top:auto;padding-top:16px;border-top:1px solid var(--border);font-size:10px;color:var(--muted);}
@@ -58,6 +64,7 @@
   .section-label{animation:fade-up 0.6s 0.2s ease both;}
   .card:nth-child(1){animation:fade-up 0.6s 0.3s ease both;}
   .card:nth-child(2){animation:fade-up 0.6s 0.4s ease both;}
+  .card:nth-child(3){animation:fade-up 0.6s 0.5s ease both;}
 </style>
 </head>
 <body>
@@ -67,7 +74,7 @@
   <header>
     <div class="header-top">
       <div class="logo"><span>◈</span> Arcade</div>
-      <div class="badge">v1.1</div>
+      <div class="badge">v1.2</div>
     </div>
     <h1 class="hero-title">
       <span class="line-1">Juegos</span>
@@ -128,6 +135,37 @@
         <span class="card-cta">Jugar →</span>
       </div>
     </a>
+    <div class="card soon">
+      <div class="card-header">
+        <div class="card-icon-wrap snake">
+          <div class="snake-icon">
+            <div class="snake-row">
+              <div class="snake-cell" style="background:#2efc98;box-shadow:0 0 4px #2efc98"></div>
+              <div class="snake-cell" style="background:#2efc98;box-shadow:0 0 4px #2efc98"></div>
+              <div class="snake-cell" style="background:#2efc98;box-shadow:0 0 4px #2efc98"></div>
+            </div>
+            <div class="snake-row">
+              <div class="snake-cell" style="background:transparent"></div>
+              <div class="snake-cell" style="background:transparent"></div>
+              <div class="snake-cell" style="background:#2efc98;box-shadow:0 0 4px #2efc98"></div>
+            </div>
+            <div class="snake-row">
+              <div class="snake-cell" style="background:#ff2d78;border-radius:50%;box-shadow:0 0 6px #ff2d78"></div>
+              <div class="snake-cell" style="background:transparent"></div>
+              <div class="snake-cell" style="background:#2efc98;box-shadow:0 0 4px #2efc98"></div>
+            </div>
+          </div>
+        </div>
+        <div class="card-tags"><span class="tag soon">Próximamente</span></div>
+      </div>
+      <div>
+        <div class="card-title">Snake</div>
+        <div class="card-desc">Comé, crecé, no te choques. El clásico de todos los tiempos.</div>
+      </div>
+      <div class="card-footer">
+        <span>En desarrollo</span>
+      </div>
+    </div>
   </div>
   <footer>
     <span>◈ ARCADE</span>
