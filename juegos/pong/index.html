@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>PONG</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<style>
+  :root{--bg:#06060e;--border:#1a1a35;--cyan:#00f5ff;--pink:#ff2d78;--gold:#ffc740;--text:#e8e8ff;--dim:#3a3a6a;}
+  *,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+  html,body{width:100%;height:100%;overflow:hidden;background:var(--bg);}
+  body{font-family:'Share Tech Mono',monospace;color:var(--text);display:flex;flex-direction:column;align-items:center;user-select:none;-webkit-user-select:none;}
+  body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:999;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,0.025) 2px,rgba(0,0,0,0.025) 4px);}
+  .btn-back{position:fixed;top:14px;left:14px;z-index:500;display:inline-flex;align-items:center;gap:7px;font-family:'Orbitron',sans-serif;font-size:9px;letter-spacing:0.2em;color:var(--dim);text-decoration:none;text-transform:uppercase;padding:8px 14px;border-radius:8px;background:rgba(6,6,14,0.85);border:1px solid var(--border);backdrop-filter:blur(8px);transition:all 0.2s;}
+  .canvas-wrap{position:relative;flex-shrink:0;border:1px solid var(--border);border-radius:8px;overflow:hidden;box-shadow:0 0 40px rgba(0,245,255,0.06);}
+  canvas{display:block;}
+  .overlay{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;background:rgba(6,6,14,0.92);backdrop-filter:blur(4px);z-index:10;}
+  .overlay.hidden{display:none;}
+  .overlay-title{font-family:'Orbitron',sans-serif;font-weight:900;font-size:clamp(22px,5vw,30px);letter-spacing:0.15em;text-align:center;}
+  .ot-cyan{color:var(--cyan);filter:drop-shadow(0 0 20px var(--cyan));}
+  .overlay-sub{font-size:11px;color:var(--dim);letter-spacing:0.15em;text-align:center;line-height:2;}
+  .mode-btns{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;}
+  .btn-play{font-family:'Orbitron',sans-serif;font-size:10px;letter-spacing:0.2em;padding:10px 20px;border-radius:8px;border:1px solid var(--cyan);background:rgba(0,245,255,0.1);color:var(--cyan);cursor:pointer;transition:all 0.2s;text-transform:uppercase;-webkit-tap-highlight-color:transparent;}
+  .btn-play:active{background:rgba(0,245,255,0.2);}
+  .btn-play.p2{border-color:var(--pink);background:rgba(255,45,120,0.1);color:var(--pink);}
+  .controls{width:100%;max-width:520px;display:flex;justify-content:space-between;padding:8px 16px 10px;flex-shrink:0;gap:10px;}
+  .ctrl-group{display:flex;flex-direction:column;gap:6px;align-items:center;}
+  .ctrl-btn{width:64px;height:44px;border-radius:8px;border:1px solid var(--border);background:rgba(255,255,255,0.03);font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;-webkit-tap-highlight-color:transparent;touch-action:manipulation;transition:all 0.1s;}
+  .ctrl-btn.p1{color:var(--cyan);}
+  .ctrl-btn.p2c{color:var(--pink);}
+  .ctrl-btn:active{transform:scale(0.93);}
+  .ctrl-label{font-size:8px;letter-spacing:0.15em;color:var(--dim);text-transform:uppercase;}
+</style>
+</head>
+<body>
+<a class="btn-back" href="../../index.html"><span style="font-size:13px">←</span> Inicio</a>
+<div class="canvas-wrap" id="canvasWrap" style="margin-top:52px">
+  <canvas id="gameCanvas"></canvas>
+  <div class="overlay" id="overlayStart">
+    <div class="overlay-title ot-cyan">PONG</div>
+    <div class="overlay-sub">El primer videojuego · Pura tensión</div>
+    <div class="mode-btns">
+      <button class="btn-play" onclick="startGame(1)">▶ 1 Jugador</button>
+      <button class="btn-play p2" onclick="startGame(2)">▶▶ 2 Jugadores</button>
+    </div>
+  </div>
+  <div class="overlay hidden" id="overlayWin">
+    <div class="overlay-title ot-cyan" id="winTitle"></div>
+    <div class="overlay-sub" id="winSub"></div>
+    <div class="mode-btns">
+      <button class="btn-play" onclick="startGame(lastMode)">↺ Revancha</button>
+      <button class="btn-play" onclick="showStart()">⌂ Menú</button>
+    </div>
+  </div>
+</div>
+<div class="controls" id="ctrlBar">
+  <div class="ctrl-group">
+    <button class="ctrl-btn p1" ontouchstart="p1up=true" ontouchend="p1up=false" onmousedown="p1up=true" onmouseup="p1up=false">▲</button>
+    <div class="ctrl-label">J1</div>
+    <button class="ctrl-btn p1" ontouchstart="p1down=true" ontouchend="p1down=false" onmousedown="p1down=true" onmouseup="p1down=false">▼</button>
+  </div>
+  <div class="ctrl-group" style="align-self:center">
+    <div class="ctrl-label" id="ctrlMode">W/S · ↑↓</div>
+  </div>
+  <div class="ctrl-group" id="p2ctrl">
+    <button class="ctrl-btn p2c" ontouchstart="p2up=true" ontouchend="p2up=false" onmousedown="p2up=true" onmouseup="p2up=false">▲</button>
+    <div class="ctrl-label">J2</div>
+    <button class="ctrl-btn p2c" ontouchstart="p2down=true" ontouchend="p2down=false" onmousedown="p2down=true" onmouseup="p2down=false">▼</button>
+  </div>
+</div>
+
+<script>
+const canvas=document.getElementById('gameCanvas');
+const ctx=canvas.getContext('2d');
+let W,H,paddleH,paddleW,ballR;
+let p1y,p2y,bx,by,bvx,bvy,s1,s2,gameRunning,mode,animId,lastMode=1;
+let p1up=false,p1down=false,p2up=false,p2down=false;
+const WIN_SCORE=7;
+
+function resize(){
+  const wrap=document.getElementById('canvasWrap');
+  const ctrlH=document.querySelector('.controls').offsetHeight;
+  const maxW=Math.min(window.innerWidth,520);
+  const availH=window.innerHeight-52-ctrlH-16;
+  W=maxW-2; H=Math.min(availH,Math.round(W*0.65));
+  canvas.width=W; canvas.height=H;
+  wrap.style.width=W+'px'; wrap.style.height=H+'px';
+  paddleH=Math.round(H*0.18); paddleW=Math.round(W*0.022);
+  ballR=Math.round(W*0.018);
+}
+
+function startGame(m){
+  lastMode=m; mode=m;
+  resize();
+  p1y=H/2-paddleH/2; p2y=H/2-paddleH/2;
+  s1=0; s2=0; gameRunning=true;
+  launchBall();
+  hideOverlays();
+  document.getElementById('p2ctrl').style.opacity=m===2?'1':'0.3';
+  document.getElementById('ctrlMode').textContent=m===1?'W/S mover':'W/S · ↑↓';
+  if(animId) cancelAnimationFrame(animId);
+  loop();
+}
+
+function launchBall(){
+  bx=W/2; by=H/2;
+  const angle=(Math.random()*0.6-0.3)+(Math.random()<0.5?0:Math.PI);
+  const spd=W*0.007;
+  bvx=Math.cos(angle)*spd; bvy=Math.sin(angle)*spd;
+}
+
+function loop(){
+  if(!gameRunning) return;
+  update(); draw();
+  animId=requestAnimationFrame(loop);
+}
+
+function update(){
+  const spd=H*0.012;
+  if(p1up) p1y=Math.max(0,p1y-spd);
+  if(p1down) p1y=Math.min(H-paddleH,p1y+spd);
+  if(mode===2){
+    if(p2up) p2y=Math.max(0,p2y-spd);
+    if(p2down) p2y=Math.min(H-paddleH,p2y+spd);
+  } else {
+    // AI
+    const center=p2y+paddleH/2;
+    const aiSpd=spd*0.82;
+    if(bvx>0){
+      if(center<by-10) p2y=Math.min(H-paddleH,p2y+aiSpd);
+      else if(center>by+10) p2y=Math.max(0,p2y-aiSpd);
+    } else p2y+=(H/2-paddleH/2-p2y)*0.04;
+  }
+
+  bx+=bvx; by+=bvy;
+  // top/bottom
+  if(by-ballR<0){by=ballR;bvy=Math.abs(bvy);}
+  if(by+ballR>H){by=H-ballR;bvy=-Math.abs(bvy);}
+
+  // p1 paddle (left)
+  if(bx-ballR<paddleW+8&&by>p1y-ballR&&by<p1y+paddleH+ballR&&bvx<0){
+    bvx=Math.abs(bvx)*1.04;
+    const rel=(by-(p1y+paddleH/2))/(paddleH/2);
+    bvy=rel*Math.abs(bvx)*0.9;
+    bx=paddleW+8+ballR;
+  }
+  // p2 paddle (right)
+  if(bx+ballR>W-paddleW-8&&by>p2y-ballR&&by<p2y+paddleH+ballR&&bvx>0){
+    bvx=-Math.abs(bvx)*1.04;
+    const rel=(by-(p2y+paddleH/2))/(paddleH/2);
+    bvy=rel*Math.abs(bvx)*0.9;
+    bx=W-paddleW-8-ballR;
+  }
+  // cap speed
+  const spd2=Math.sqrt(bvx*bvx+bvy*bvy);
+  const maxSpd=W*0.018;
+  if(spd2>maxSpd){bvx=bvx/spd2*maxSpd;bvy=bvy/spd2*maxSpd;}
+
+  // score
+  if(bx<0){s2++;if(s2>=WIN_SCORE){endGame(2);}else launchBall();}
+  if(bx>W){s1++;if(s1>=WIN_SCORE){endGame(1);}else launchBall();}
+}
+
+function draw(){
+  ctx.fillStyle='#06060e';ctx.fillRect(0,0,W,H);
+  // center line
+  ctx.setLineDash([6,8]);ctx.strokeStyle='rgba(255,255,255,0.08)';ctx.lineWidth=2;
+  ctx.beginPath();ctx.moveTo(W/2,0);ctx.lineTo(W/2,H);ctx.stroke();ctx.setLineDash([]);
+  // scores
+  ctx.font=`bold ${Math.round(H*0.12)}px 'Orbitron',monospace`;ctx.textAlign='center';
+  ctx.fillStyle='rgba(0,245,255,0.15)';ctx.fillText(s1,W*0.25,H*0.18);
+  ctx.fillStyle='rgba(255,45,120,0.15)';ctx.fillText(s2,W*0.75,H*0.18);
+  // paddles
+  ctx.save();ctx.shadowBlur=14;
+  ctx.shadowColor='#00f5ff';ctx.fillStyle='#00f5ff';
+  roundRect(ctx,4,p1y,paddleW,paddleH,paddleW/2);
+  ctx.shadowColor='#ff2d78';ctx.fillStyle='#ff2d78';
+  roundRect(ctx,W-paddleW-4,p2y,paddleW,paddleH,paddleW/2);
+  ctx.restore();
+  // ball
+  ctx.save();ctx.shadowColor='#ffc740';ctx.shadowBlur=16;
+  const bg=ctx.createRadialGradient(bx-ballR*0.3,by-ballR*0.3,ballR*0.1,bx,by,ballR);
+  bg.addColorStop(0,'#fff');bg.addColorStop(0.4,'#ffc740');bg.addColorStop(1,'#ff8c00');
+  ctx.fillStyle=bg;ctx.beginPath();ctx.arc(bx,by,ballR,0,Math.PI*2);ctx.fill();ctx.restore();
+}
+
+function roundRect(ctx,x,y,w,h,r){ctx.beginPath();ctx.roundRect(x,y,w,h,r);ctx.fill();}
+
+function endGame(winner){
+  gameRunning=false;cancelAnimationFrame(animId);
+  const isP1=winner===1;
+  document.getElementById('winTitle').textContent=mode===1?(isP1?'¡GANASTE!':'PERDISTE'):`¡JUGADOR ${winner} GANA!`;
+  document.getElementById('winTitle').style.color=isP1?'var(--cyan)':'var(--pink)';
+  document.getElementById('winSub').textContent=`${s1} — ${s2}`;
+  showOverlay('overlayWin');
+}
+
+function showStart(){hideOverlays();showOverlay('overlayStart');}
+function showOverlay(id){['overlayStart','overlayWin'].forEach(o=>document.getElementById(o).classList.toggle('hidden',o!==id));}
+function hideOverlays(){['overlayStart','overlayWin'].forEach(o=>document.getElementById(o).classList.add('hidden'));}
+
+document.addEventListener('keydown',e=>{
+  if(e.key==='w'||e.key==='W') p1up=true;
+  if(e.key==='s'||e.key==='S') p1down=true;
+  if(e.key==='ArrowUp'){e.preventDefault();p2up=true;}
+  if(e.key==='ArrowDown'){e.preventDefault();p2down=true;}
+});
+document.addEventListener('keyup',e=>{
+  if(e.key==='w'||e.key==='W') p1up=false;
+  if(e.key==='s'||e.key==='S') p1down=false;
+  if(e.key==='ArrowUp') p2up=false;
+  if(e.key==='ArrowDown') p2down=false;
+});
+
+window.addEventListener('resize',resize);
+resize();
+</script>
+</body>
+</html>
