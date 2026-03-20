@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>PAC-MAN</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<style>
+  :root{--bg:#06060e;--border:#1a1a35;--cyan:#00f5ff;--pink:#ff2d78;--gold:#ffc740;--text:#e8e8ff;--dim:#3a3a6a;}
+  *,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+  html,body{width:100%;height:100%;overflow:hidden;background:var(--bg);}
+  body{font-family:'Share Tech Mono',monospace;color:var(--text);display:flex;flex-direction:column;align-items:center;user-select:none;-webkit-user-select:none;}
+  body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:999;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,0.025) 2px,rgba(0,0,0,0.025) 4px);}
+  .btn-back{position:fixed;top:14px;left:14px;z-index:500;display:inline-flex;align-items:center;gap:7px;font-family:'Orbitron',sans-serif;font-size:9px;letter-spacing:0.2em;color:var(--dim);text-decoration:none;text-transform:uppercase;padding:8px 14px;border-radius:8px;background:rgba(6,6,14,0.85);border:1px solid var(--border);backdrop-filter:blur(8px);transition:all 0.2s;}
+  .hud{width:100%;max-width:440px;display:flex;align-items:center;justify-content:space-between;padding:56px 16px 6px;flex-shrink:0;}
+  .hud-title{font-family:'Orbitron',sans-serif;font-weight:900;font-size:16px;letter-spacing:0.2em;background:linear-gradient(90deg,var(--gold),var(--pink));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+  .hud-stats{display:flex;gap:14px;}
+  .stat{display:flex;flex-direction:column;align-items:center;}
+  .stat-label{font-size:7px;letter-spacing:0.3em;color:var(--dim);text-transform:uppercase;}
+  .stat-val{font-family:'Orbitron',sans-serif;font-size:13px;font-weight:700;color:var(--gold);}
+  .canvas-wrap{position:relative;flex-shrink:0;border:1px solid var(--border);border-radius:8px;overflow:hidden;box-shadow:0 0 30px rgba(255,199,64,0.06);}
+  canvas{display:block;}
+  .overlay{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;background:rgba(6,6,14,0.92);backdrop-filter:blur(4px);z-index:10;}
+  .overlay.hidden{display:none;}
+  .overlay-title{font-family:'Orbitron',sans-serif;font-weight:900;font-size:clamp(20px,5vw,26px);letter-spacing:0.15em;text-align:center;}
+  .ot-gold{color:var(--gold);filter:drop-shadow(0 0 20px var(--gold));}
+  .ot-lose{color:var(--pink);filter:drop-shadow(0 0 20px var(--pink));}
+  .overlay-sub{font-size:10px;color:var(--dim);letter-spacing:0.12em;text-align:center;line-height:2;}
+  .btn-play{font-family:'Orbitron',sans-serif;font-size:10px;letter-spacing:0.25em;padding:10px 24px;border-radius:8px;border:1px solid var(--gold);background:rgba(255,199,64,0.1);color:var(--gold);cursor:pointer;transition:all 0.2s;text-transform:uppercase;-webkit-tap-highlight-color:transparent;}
+  .btn-play:active{background:rgba(255,199,64,0.2);}
+  .dpad{width:100%;max-width:440px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:5px;padding:8px 16px 10px;place-items:center;flex-shrink:0;}
+  .dpad-btn{width:60px;height:46px;border-radius:10px;border:1px solid var(--border);background:rgba(255,255,255,0.03);color:var(--gold);font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;-webkit-tap-highlight-color:transparent;touch-action:manipulation;transition:all 0.1s;}
+  .dpad-btn:active{background:rgba(255,199,64,0.12);border-color:var(--gold);}
+  .dpad-empty{width:60px;height:46px;}
+</style>
+</head>
+<body>
+<a class="btn-back" href="../../index.html"><span style="font-size:13px">←</span> Inicio</a>
+<div class="hud">
+  <div class="hud-title">PAC-MAN</div>
+  <div class="hud-stats">
+    <div class="stat"><div class="stat-label">Score</div><div class="stat-val" id="scoreVal">0</div></div>
+    <div class="stat"><div class="stat-label">Vidas</div><div class="stat-val" id="livesVal">3</div></div>
+    <div class="stat"><div class="stat-label">Nivel</div><div class="stat-val" id="levelVal">1</div></div>
+  </div>
+</div>
+<div class="canvas-wrap" id="canvasWrap">
+  <canvas id="gameCanvas"></canvas>
+  <div class="overlay" id="overlayStart">
+    <div class="overlay-title ot-gold">PAC-MAN</div>
+    <div class="overlay-sub">Comé todos los puntos<br>Evitá los fantasmas · Powerups azules</div>
+    <button class="btn-play" onclick="startGame()">▶ Jugar</button>
+  </div>
+  <div class="overlay hidden" id="overlayLose">
+    <div class="overlay-title ot-lose">GAME OVER</div>
+    <div class="overlay-sub" id="loseScore"></div>
+    <button class="btn-play" onclick="startGame()">↺ Reintentar</button>
+  </div>
+  <div class="overlay hidden" id="overlayWin">
+    <div class="overlay-title ot-gold">¡NIVEL LIMPIO!</div>
+    <div class="overlay-sub" id="winScore"></div>
+    <button class="btn-play" onclick="nextLevel()">▶ Siguiente</button>
+  </div>
+</div>
+<div class="dpad">
+  <div class="dpad-empty"></div>
+  <button class="dpad-btn" ontouchstart="setDir(0,-1)" onmousedown="setDir(0,-1)">▲</button>
+  <div class="dpad-empty"></div>
+  <button class="dpad-btn" ontouchstart="setDir(-1,0)" onmousedown="setDir(-1,0)">◀</button>
+  <div class="dpad-empty"></div>
+  <button class="dpad-btn" ontouchstart="setDir(1,0)" onmousedown="setDir(1,0)">▶</button>
+  <div class="dpad-empty"></div>
+  <button class="dpad-btn" ontouchstart="setDir(0,1)" onmousedown="setDir(0,1)">▼</button>
+  <div class="dpad-empty"></div>
+</div>
+
+<script>
+// Map: 0=empty, 1=wall, 2=dot, 3=powerup
+const MAP_TEMPLATE=[
+  [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
+  [1,2,2,2,2,2,2,2,2,1,2,2,2,2,2,2,2,2,1],
+  [1,3,1,1,2,1,1,1,2,1,2,1,1,1,2,1,1,3,1],
+  [1,2,1,1,2,1,1,1,2,1,2,1,1,1,2,1,1,2,1],
+  [1,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,1],
+  [1,2,1,1,2,1,2,1,1,1,1,1,2,1,2,1,1,2,1],
+  [1,2,2,2,2,1,2,2,2,1,2,2,2,1,2,2,2,2,1],
+  [1,1,1,1,2,1,1,1,0,0,0,1,1,1,2,1,1,1,1],
+  [1,1,1,1,2,1,0,0,0,0,0,0,0,1,2,1,1,1,1],
+  [1,1,1,1,2,1,0,1,1,0,1,1,0,1,2,1,1,1,1],
+  [0,0,0,0,2,0,0,1,0,0,0,1,0,0,2,0,0,0,0],
+  [1,1,1,1,2,1,0,1,1,1,1,1,0,1,2,1,1,1,1],
+  [1,1,1,1,2,1,0,0,0,0,0,0,0,1,2,1,1,1,1],
+  [1,1,1,1,2,1,0,1,1,1,1,1,0,1,2,1,1,1,1],
+  [1,2,2,2,2,2,2,2,2,1,2,2,2,2,2,2,2,2,1],
+  [1,2,1,1,2,1,1,1,2,1,2,1,1,1,2,1,1,2,1],
+  [1,3,2,1,2,2,2,2,2,2,2,2,2,2,2,1,2,3,1],
+  [1,1,2,1,2,1,2,1,1,1,1,1,2,1,2,1,2,1,1],
+  [1,2,2,2,2,1,2,2,2,1,2,2,2,1,2,2,2,2,1],
+  [1,2,1,1,1,1,1,1,2,1,2,1,1,1,1,1,1,2,1],
+  [1,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,1],
+  [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
+];
+const ROWS=MAP_TEMPLATE.length, COLS=MAP_TEMPLATE[0].length;
+const GHOST_COLORS=['#ff2d78','#00f5ff','#ff8c00','#ff00ff'];
+const GHOST_STARTS=[[9,9],[9,10],[10,9],[10,10]];
+const PAC_START={x:9,y:16};
+
+let map,pac,ghosts,dir,nextDir,score,lives,level,gameRunning,animId,frightTimer,dotsLeft;
+let CELL=20;
+
+function resize(){
+  const wrap=document.getElementById('canvasWrap');
+  const hudH=document.querySelector('.hud').offsetHeight;
+  const dpadH=document.querySelector('.dpad').offsetHeight;
+  const maxW=Math.min(window.innerWidth,440);
+  const availH=window.innerHeight-hudH-dpadH-16;
+  const cellW=Math.floor((maxW-2)/COLS);
+  const cellH=Math.floor(availH/ROWS);
+  CELL=Math.min(cellW,cellH,22);
+  const W=COLS*CELL,H=ROWS*CELL;
+  const canvas=document.getElementById('gameCanvas');
+  canvas.width=W;canvas.height=H;
+  wrap.style.width=W+'px';wrap.style.height=H+'px';
+}
+
+function initMap(){
+  map=MAP_TEMPLATE.map(r=>[...r]);
+  dotsLeft=map.flat().filter(v=>v===2||v===3).length;
+}
+
+function mkGhost(idx){
+  const s=GHOST_STARTS[idx];
+  return{x:s[0],y:s[1],px:s[0]*CELL+CELL/2,py:s[1]*CELL+CELL/2,dx:0,dy:0,color:GHOST_COLORS[idx],fright:false,eaten:false,releaseTimer:idx*40};
+}
+
+function startGame(){
+  resize();initMap();
+  score=0;lives=3;level=1;frightTimer=0;
+  pac={x:PAC_START.x,y:PAC_START.y,px:PAC_START.x*CELL+CELL/2,py:PAC_START.y*CELL+CELL/2,mouth:0.2,mouthDir:1};
+  dir={dx:0,dy:0};nextDir={dx:1,dy:0};
+  ghosts=GHOST_STARTS.map((_,i)=>mkGhost(i));
+  gameRunning=true;updateHUD();hideOverlays();
+  if(animId) cancelAnimationFrame(animId);
+  loop();
+}
+
+function nextLevel(){
+  level++;initMap();frightTimer=0;
+  pac={x:PAC_START.x,y:PAC_START.y,px:PAC_START.x*CELL+CELL/2,py:PAC_START.y*CELL+CELL/2,mouth:0.2,mouthDir:1};
+  dir={dx:0,dy:0};nextDir={dx:1,dy:0};
+  ghosts=GHOST_STARTS.map((_,i)=>mkGhost(i));
+  gameRunning=true;updateHUD();hideOverlays();
+}
+
+let tick=0;
+function loop(){
+  if(!gameRunning) return;
+  tick++;
+  if(tick%8===0) updatePac();
+  if(tick%10===0) updateGhosts();
+  if(frightTimer>0) frightTimer--;
+  draw();
+  animId=requestAnimationFrame(loop);
+}
+
+function canMove(x,y){return x>=0&&x<COLS&&y>=0&&y<ROWS&&map[y][x]!==1;}
+
+function updatePac(){
+  // try nextDir
+  const nx=pac.x+nextDir.dx,ny=pac.y+nextDir.dy;
+  if(canMove(nx,ny)){dir=nextDir;}
+  // move
+  const mx=pac.x+dir.dx,my=pac.y+dir.dy;
+  // tunnel
+  const tx=((mx%COLS)+COLS)%COLS;
+  if(canMove(tx,my)){pac.x=tx;pac.y=my;}
+  pac.px=pac.x*CELL+CELL/2;pac.py=pac.y*CELL+CELL/2;
+  // eat
+  const cell=map[pac.y][pac.x];
+  if(cell===2){map[pac.y][pac.x]=0;score+=10;dotsLeft--;updateHUD();}
+  if(cell===3){map[pac.y][pac.x]=0;score+=50;dotsLeft--;frightTimer=180;
+    ghosts.forEach(g=>{g.fright=true;g.eaten=false;});updateHUD();}
+  if(dotsLeft<=0){gameRunning=false;cancelAnimationFrame(animId);
+    document.getElementById('winScore').textContent=`Score: ${score}`;showOverlay('overlayWin');}
+  // mouth
+  pac.mouth+=0.08*pac.mouthDir;
+  if(pac.mouth>0.35||pac.mouth<0.02) pac.mouthDir*=-1;
+}
+
+function updateGhosts(){
+  ghosts.forEach(g=>{
+    if(g.releaseTimer>0){g.releaseTimer--;return;}
+    g.fright=frightTimer>0&&!g.eaten;
+    // simple chase/scatter AI
+    let tx,ty;
+    if(g.fright){tx=Math.floor(Math.random()*COLS);ty=Math.floor(Math.random()*ROWS);}
+    else{tx=pac.x;ty=pac.y;}
+    const dirs=[{dx:1,dy:0},{dx:-1,dy:0},{dx:0,dy:1},{dx:0,dy:-1}];
+    const valid=dirs.filter(d=>{
+      const nx=((g.x+d.dx)%COLS+COLS)%COLS,ny=g.y+d.dy;
+      return canMove(nx,ny)&&!(d.dx===-g.dx&&d.dy===-g.dy&&(g.dx||g.dy));
+    });
+    if(!valid.length) return;
+    const best=g.fright?valid[Math.floor(Math.random()*valid.length)]:
+      valid.reduce((a,b)=>Math.hypot(g.x+b.dx-tx,g.y+b.dy-ty)<Math.hypot(g.x+a.dx-tx,g.y+a.dy-ty)?b:a);
+    g.dx=best.dx;g.dy=best.dy;
+    g.x=((g.x+g.dx)%COLS+COLS)%COLS;g.y=g.y+g.dy;
+    g.px=g.x*CELL+CELL/2;g.py=g.y*CELL+CELL/2;
+    // collision
+    if(Math.abs(g.x-pac.x)<=1&&Math.abs(g.y-pac.y)<=1){
+      if(g.fright&&!g.eaten){g.eaten=true;score+=200;updateHUD();}
+      else if(!g.fright&&!g.eaten){
+        lives--;updateHUD();
+        if(lives<=0){gameRunning=false;cancelAnimationFrame(animId);
+          document.getElementById('loseScore').textContent=`Score: ${score}`;showOverlay('overlayLose');}
+        else{pac={x:PAC_START.x,y:PAC_START.y,px:PAC_START.x*CELL+CELL/2,py:PAC_START.y*CELL+CELL/2,mouth:0.2,mouthDir:1};
+          dir={dx:0,dy:0};nextDir={dx:1,dy:0};}
+      }
+    }
+  });
+}
+
+function draw(){
+  const canvas=document.getElementById('gameCanvas');
+  const ctx=canvas.getContext('2d');
+  ctx.fillStyle='#06060e';ctx.fillRect(0,0,canvas.width,canvas.height);
+  // map
+  for(let r=0;r<ROWS;r++) for(let c=0;c<COLS;c++){
+    const x=c*CELL,y=r*CELL,v=map[r][c];
+    if(v===1){
+      ctx.fillStyle='#0a0a2a';ctx.fillRect(x,y,CELL,CELL);
+      ctx.strokeStyle='rgba(0,50,180,0.6)';ctx.lineWidth=1;ctx.strokeRect(x+0.5,y+0.5,CELL-1,CELL-1);
+    } else if(v===2){
+      ctx.save();ctx.fillStyle='#ffc740';ctx.shadowColor='#ffc740';ctx.shadowBlur=4;
+      ctx.beginPath();ctx.arc(x+CELL/2,y+CELL/2,CELL*0.1,0,Math.PI*2);ctx.fill();ctx.restore();
+    } else if(v===3){
+      ctx.save();ctx.fillStyle='#ffc740';ctx.shadowColor='#ffc740';ctx.shadowBlur=10;
+      ctx.beginPath();ctx.arc(x+CELL/2,y+CELL/2,CELL*0.28,0,Math.PI*2);ctx.fill();ctx.restore();
+    }
+  }
+  // ghosts
+  ghosts.forEach(g=>{
+    if(g.releaseTimer>0) return;
+    const gx=g.px,gy=g.py,r=CELL*0.42;
+    ctx.save();
+    const col=g.eaten?'#444':g.fright?(frightTimer<60&&tick%20<10?'#fff':'#2255ff'):g.color;
+    ctx.fillStyle=col;ctx.shadowColor=col;ctx.shadowBlur=8;
+    ctx.beginPath();ctx.arc(gx,gy-r*0.1,r,Math.PI,0);
+    ctx.lineTo(gx+r,gy+r*0.9);
+    const waves=3;for(let i=0;i<waves;i++){ctx.quadraticCurveTo(gx+r-(i+0.5)*(2*r/waves),gy+r*0.6,gx+r-(i+1)*(2*r/waves),gy+r*0.9);}
+    ctx.closePath();ctx.fill();
+    if(!g.eaten&&!g.fright){ctx.fillStyle='#fff';ctx.beginPath();ctx.arc(gx-r*0.28,gy-r*0.1,r*0.22,0,Math.PI*2);ctx.arc(gx+r*0.28,gy-r*0.1,r*0.22,0,Math.PI*2);ctx.fill();
+    ctx.fillStyle='#00f';ctx.beginPath();ctx.arc(gx-r*0.22,gy-r*0.06,r*0.12,0,Math.PI*2);ctx.arc(gx+r*0.34,gy-r*0.06,r*0.12,0,Math.PI*2);ctx.fill();}
+    ctx.restore();
+  });
+  // pac
+  ctx.save();ctx.fillStyle='#ffc740';ctx.shadowColor='#ffc740';ctx.shadowBlur=14;
+  const angle=Math.atan2(dir.dy,dir.dx)||0;
+  ctx.beginPath();ctx.moveTo(pac.px,pac.py);
+  ctx.arc(pac.px,pac.py,CELL*0.44,angle+pac.mouth,angle+Math.PI*2-pac.mouth);
+  ctx.closePath();ctx.fill();ctx.restore();
+}
+
+function setDir(dx,dy){nextDir={dx,dy};}
+function updateHUD(){
+  document.getElementById('scoreVal').textContent=score;
+  document.getElementById('livesVal').textContent=lives;
+  document.getElementById('levelVal').textContent=level;
+}
+function showOverlay(id){['overlayStart','overlayLose','overlayWin'].forEach(o=>document.getElementById(o).classList.toggle('hidden',o!==id));}
+function hideOverlays(){['overlayStart','overlayLose','overlayWin'].forEach(o=>document.getElementById(o).classList.add('hidden'));}
+
+document.addEventListener('keydown',e=>{
+  if(e.key==='ArrowLeft') setDir(-1,0);
+  if(e.key==='ArrowRight') setDir(1,0);
+  if(e.key==='ArrowUp'){e.preventDefault();setDir(0,-1);}
+  if(e.key==='ArrowDown'){e.preventDefault();setDir(0,1);}
+});
+window.addEventListener('resize',resize);
+resize();
+</script>
+</body>
+</html>
