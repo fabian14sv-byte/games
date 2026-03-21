@@ -6,7 +6,7 @@
 <title>Arcade</title>
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
 <style>
-  :root{--bg:#06060a;--surface:#0d0d14;--border:#1c1c2e;--cyan:#00f5ff;--pink:#ff2d78;--gold:#ffc740;--green:#2efc98;--text:#f0f0ff;--muted:#8a8aaa;}
+  :root{--bg:#06060a;--surface:#0d0d14;--border:#1c1c2e;--cyan:#00f5ff;--pink:#ff2d78;--gold:#ffc740;--text:#f0f0ff;--muted:#8a8aaa;}
   *,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
   body{background:var(--bg);color:var(--text);font-family:'JetBrains Mono',monospace;min-height:100vh;overflow-x:hidden;}
   body::before{content:'';position:fixed;inset:0;z-index:0;background-image:linear-gradient(rgba(0,245,255,0.03) 1px,transparent 1px),linear-gradient(90deg,rgba(0,245,255,0.03) 1px,transparent 1px);background-size:60px 60px;mask-image:radial-gradient(ellipse 80% 60% at 50% 0%,black 40%,transparent 100%);}
@@ -14,7 +14,7 @@
   .orb-1{width:500px;height:500px;background:var(--cyan);top:-150px;left:-100px;}
   .orb-2{width:400px;height:400px;background:var(--pink);bottom:-100px;right:-80px;}
   .wrapper{position:relative;z-index:1;max-width:1000px;margin:0 auto;padding:60px 24px 80px;}
-  header{margin-bottom:48px;}
+  header{margin-bottom:56px;}
   .header-top{display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border);padding-bottom:20px;margin-bottom:28px;}
   .logo{font-family:'Syne',sans-serif;font-weight:800;font-size:13px;letter-spacing:0.4em;text-transform:uppercase;color:#9a9abb;}
   .logo span{color:var(--cyan);}
@@ -24,214 +24,82 @@
   .hero-title .line-2{display:block;background:linear-gradient(90deg,var(--cyan) 0%,var(--pink) 60%,var(--gold) 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
   .hero-sub{font-size:12px;letter-spacing:0.2em;color:var(--muted);text-transform:uppercase;margin-top:14px;}
   .hero-sub span{color:var(--cyan);}
-  .section-label{display:flex;align-items:center;gap:12px;font-size:10px;letter-spacing:0.35em;text-transform:uppercase;color:#6a6a8a;margin-bottom:16px;margin-top:28px;}
-  .section-label:first-of-type{margin-top:0;}
+  .section-label{display:flex;align-items:center;gap:12px;font-size:10px;letter-spacing:0.35em;text-transform:uppercase;color:#6a6a8a;margin-bottom:20px;}
   .section-label::after{content:'';flex:1;height:1px;background:var(--border);}
-  .games-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px;}
-  .card{position:relative;text-decoration:none;color:var(--text);background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:18px;transition:transform 0.2s,border-color 0.2s,box-shadow 0.2s;overflow:hidden;display:flex;flex-direction:column;gap:10px;}
-  .card::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(0,245,255,0.04) 0%,transparent 60%);opacity:0;transition:opacity 0.3s;}
-  .card:hover{transform:translateY(-3px);border-color:rgba(0,245,255,0.25);box-shadow:0 8px 28px rgba(0,245,255,0.07);}
+  .games-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:14px;}
+  .card{position:relative;text-decoration:none;color:var(--text);background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:22px;transition:transform 0.2s,border-color 0.2s,box-shadow 0.2s;overflow:hidden;display:flex;flex-direction:column;gap:12px;}
+  .card::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(0,245,255,0.05) 0%,transparent 60%);opacity:0;transition:opacity 0.3s;}
+  .card:hover{transform:translateY(-3px);border-color:rgba(0,245,255,0.3);box-shadow:0 10px 32px rgba(0,245,255,0.08);}
   .card:hover::before{opacity:1;}
   .card::after{content:'';position:absolute;top:0;left:20%;right:20%;height:1px;background:linear-gradient(90deg,transparent,var(--cyan),transparent);opacity:0;transition:opacity 0.3s;}
   .card:hover::after{opacity:1;}
-  .card.soon{opacity:0.35;pointer-events:none;filter:saturate(0.15);}
-  .card{}
-  .card-header{display:flex;align-items:center;justify-content:space-between;gap:8px;}
-  .icon{width:42px;height:42px;border-radius:10px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:18px;border:1px solid #1c1c2e;}
-  .mm-icon{display:flex;flex-wrap:wrap;gap:2px;width:26px;height:26px;align-content:center;justify-content:center;}
-  .mm-dot{width:7px;height:7px;border-radius:50%;box-shadow:0 0 4px currentColor;}
-  .tags{display:flex;flex-wrap:wrap;gap:4px;}
-  .tag{font-size:8px;letter-spacing:0.12em;text-transform:uppercase;padding:2px 7px;border-radius:20px;}
+  .card-header{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;}
+  .icon{width:48px;height:48px;border-radius:11px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:22px;}
+  .mm-icon{display:flex;flex-wrap:wrap;gap:3px;width:30px;height:30px;align-content:center;justify-content:center;}
+  .mm-dot{width:8px;height:8px;border-radius:50%;box-shadow:0 0 4px currentColor;}
+  .tags{display:flex;flex-wrap:wrap;gap:5px;}
+  .tag{font-size:9px;letter-spacing:0.15em;text-transform:uppercase;padding:3px 8px;border-radius:20px;}
   .tag.logic{border:1px solid rgba(0,245,255,0.2);color:rgba(0,245,255,0.7);}
   .tag.action{border:1px solid rgba(255,45,120,0.25);color:rgba(255,45,120,0.8);}
-  .tag.arcade{border:1px solid rgba(46,252,152,0.25);color:rgba(46,252,152,0.8);}
-  .tag.puzzle{border:1px solid rgba(255,199,64,0.25);color:rgba(255,199,64,0.8);}
-  .tag.shooter{border:1px solid rgba(0,245,255,0.2);color:rgba(0,245,255,0.7);}
   .tag.classic{border:1px solid rgba(255,255,255,0.12);color:rgba(255,255,255,0.5);}
-  .tag.soon{border:1px solid rgba(255,255,255,0.07);color:rgba(255,255,255,0.2);}
-  .card-title{font-family:'Syne',sans-serif;font-weight:700;font-size:15px;color:var(--text);}
-  .card-desc{font-size:10px;color:var(--muted);line-height:1.7;}
-  .card-footer{display:flex;align-items:center;justify-content:space-between;margin-top:auto;padding-top:10px;border-top:1px solid var(--border);font-size:9px;color:#5a5a7a;}
-  .cta{font-size:9px;letter-spacing:0.12em;text-transform:uppercase;color:var(--cyan);display:flex;align-items:center;gap:4px;transition:gap 0.2s;}
-  .card:hover .cta{gap:7px;}
-  footer{margin-top:60px;padding-top:20px;border-top:1px solid var(--border);display:flex;justify-content:space-between;font-size:10px;color:#4a4a6a;letter-spacing:0.2em;flex-wrap:wrap;gap:8px;}
-  @keyframes fade-up{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+  .card-title{font-family:'Syne',sans-serif;font-weight:700;font-size:18px;color:var(--text);}
+  .card-desc{font-size:11px;color:var(--muted);line-height:1.8;}
+  .card-footer{display:flex;align-items:center;justify-content:space-between;margin-top:auto;padding-top:12px;border-top:1px solid var(--border);font-size:10px;color:#5a5a7a;}
+  .cta{font-size:10px;letter-spacing:0.12em;text-transform:uppercase;color:var(--cyan);display:flex;align-items:center;gap:4px;transition:gap 0.2s;}
+  .card:hover .cta{gap:8px;}
+  footer{margin-top:70px;padding-top:24px;border-top:1px solid var(--border);display:flex;justify-content:space-between;font-size:10px;color:#4a4a6a;letter-spacing:0.2em;flex-wrap:wrap;gap:8px;}
+  @keyframes fade-up{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
   header{animation:fade-up 0.4s ease both;}
-  .card{animation:fade-up 0.4s ease both;}
-
-  .card-handle {
-    position:absolute; top:8px; right:8px;
-    width:24px; height:24px; border-radius:6px;
-    background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.08);
-    display:none; align-items:center; justify-content:center;
-    cursor:grab; color:var(--muted); font-size:12px; z-index:2;
-    transition:all 0.15s; -webkit-tap-highlight-color:transparent;
-  }
-  .edit-mode .card:not(.soon) .card-handle { display:flex; }
-  .edit-mode .card:not(.soon) { cursor:default; border-color:rgba(0,245,255,0.2); }
-  .card.dragging { opacity:0.35; transform:scale(0.96); }
-  .card.drag-over { border-color:rgba(0,245,255,0.7)!important; box-shadow:0 0 24px rgba(0,245,255,0.25)!important; transform:scale(1.02); }
-  .btn-edit {
-    font-family:'JetBrains Mono',monospace; font-size:10px; letter-spacing:0.15em;
-    padding:5px 14px; border-radius:6px; cursor:pointer; transition:all 0.2s;
-    border:1px solid var(--border); background:rgba(255,255,255,0.03); color:var(--muted);
-  }
-  .btn-edit.active { border-color:rgba(0,245,255,0.4); background:rgba(0,245,255,0.08); color:var(--cyan); }
-  .edit-hint { font-size:10px; color:var(--cyan); letter-spacing:0.15em; display:none; }
-  .edit-mode .edit-hint { display:block; }
+  .card:nth-child(1){animation:fade-up 0.4s 0.1s ease both;}
+  .card:nth-child(2){animation:fade-up 0.4s 0.2s ease both;}
+  .card:nth-child(3){animation:fade-up 0.4s 0.3s ease both;}
 </style>
 </head>
 <body>
 <div class="orb orb-1"></div><div class="orb orb-2"></div>
 <div class="wrapper">
   <header>
-    <div class="header-top"><div class="logo"><span>◈</span> Arcade</div><div style="display:flex;align-items:center;gap:10px"><span class="edit-hint">☰ Arrastrá las cards</span><button class="btn-edit" id="btnEdit" onclick="toggleEdit()">☰ Ordenar</button><div class="badge">v4.0</div></div></div>
+    <div class="header-top"><div class="logo"><span>◈</span> Arcade</div><div class="badge">v1.0</div></div>
     <h1 class="hero-title"><span class="line-1">Juegos</span><span class="line-2">Arcade</span></h1>
-    <p class="hero-sub">Colección personal · <span>10 juegos disponibles</span></p>
+    <p class="hero-sub">Colección personal · <span>3 juegos</span></p>
   </header>
   <div class="section-label">Disponibles</div>
   <div class="games-grid">
-    <a class="card" href="juegos/mastermind/" data-id="mastermind"><div class="card-handle" data-handle="true">☰</div><div class="card-header"><div class="icon" style="background:linear-gradient(135deg,#0d1f3c,#1a1040);border-color:rgba(0,245,255,0.2)"><div class="mm-icon"><div class="mm-dot" style="color:#cc2233;background:#cc2233"></div><div class="mm-dot" style="color:#1a56cc;background:#1a56cc"></div><div class="mm-dot" style="color:#d4a017;background:#d4a017"></div><div class="mm-dot" style="color:#2a9a3f;background:#2a9a3f"></div><div class="mm-dot" style="color:#cc5500;background:#cc5500"></div><div class="mm-dot" style="color:#7b3fa0;background:#7b3fa0"></div></div></div><div class="tags"><span class="tag logic">Lógica</span></div></div><div><div class="card-title">Mastermind</div><div class="card-desc">Descifra el código secreto de colores.</div></div><div class="card-footer"><span>Timer · Historial</span><span class="cta">Jugar →</span></div></a>
-    <a class="card" href="juegos/arkanoid/" data-id="arkanoid"><div class="card-handle" data-handle="true">☰</div><div class="card-header"><div class="icon">🧱</div><div class="tags"><span class="tag action">Acción</span></div></div><div><div class="card-title">Arkanoid</div><div class="card-desc">Rompé todos los bloques sin dejar caer la pelota.</div></div><div class="card-footer"><span>5 niveles · Vidas</span><span class="cta">Jugar →</span></div></a>
-    <a class="card" href="juegos/snake/" data-id="snake"><div class="card-handle" data-handle="true">☰</div><div class="card-header"><div class="icon">🐍</div><div class="tags"><span class="tag arcade">Clásico</span></div></div><div><div class="card-title">Snake</div><div class="card-desc">Comé, crecé, no te choques.</div></div><div class="card-footer"><span>3 velocidades</span><span class="cta">Jugar →</span></div></a>
-    <a class="card" href="juegos/2048/" data-id="2048"><div class="card-handle" data-handle="true">☰</div><div class="card-header"><div class="icon" style="font-family:Orbitron,sans-serif;font-weight:900;font-size:11px;color:#ffc740;background:linear-gradient(135deg,#2a1500,#1a0a00);border-color:rgba(255,199,64,0.25)">2048</div><div class="tags"><span class="tag puzzle">Puzzle</span></div></div><div><div class="card-title">2048</div><div class="card-desc">Combiná números deslizando.</div></div><div class="card-footer"><span>Mejor score</span><span class="cta">Jugar →</span></div></a>
-    <a class="card" href="juegos/asteroids/" data-id="asteroids"><div class="card-handle" data-handle="true">☰</div><div class="card-header"><div class="icon">🚀</div><div class="tags"><span class="tag shooter">Shooter</span></div></div><div><div class="card-title">Asteroids</div><div class="card-desc">Destruí los asteroides antes de que te destruyan.</div></div><div class="card-footer"><span>Niveles · Vidas</span><span class="cta">Jugar →</span></div></a>
-    <a class="card" href="juegos/tetris/" data-id="tetris"><div class="card-handle" data-handle="true">☰</div><div class="card-header"><div class="icon">🟦</div><div class="tags"><span class="tag puzzle">Puzzle</span></div></div><div><div class="card-title">Tetris</div><div class="card-desc">Completá líneas antes de llegar al tope.</div></div><div class="card-footer"><span>Niveles · Score</span><span class="cta">Jugar →</span></div></a>
-    <a class="card" href="juegos/pong/" data-id="pong"><div class="card-handle" data-handle="true">☰</div><div class="card-header"><div class="icon">🏓</div><div class="tags"><span class="tag classic">Clásico</span></div></div><div><div class="card-title">Pong</div><div class="card-desc">El primer videojuego. 1 o 2 jugadores.</div></div><div class="card-footer"><span>1P vs CPU · 2P</span><span class="cta">Jugar →</span></div></a>
-    <a class="card" href="juegos/pacman/" data-id="pacman"><div class="card-handle" data-handle="true">☰</div><div class="card-header"><div class="icon">👻</div><div class="tags"><span class="tag arcade">Clásico</span></div></div><div><div class="card-title">Pac-Man</div><div class="card-desc">Comé puntos, esquivá fantasmas.</div></div><div class="card-footer"><span>Niveles · Vidas</span><span class="cta">Jugar →</span></div></a>
-    <a class="card" href="juegos/bubble-shooter/" data-id="bubble-shooter"><div class="card-handle" data-handle="true">☰</div><div class="card-header"><div class="icon">🫧</div><div class="tags"><span class="tag action">Acción</span></div></div><div><div class="card-title">Bubble Shooter</div><div class="card-desc">Apuntá y dispará. Juntá 3+ del mismo color para explotar.</div></div><div class="card-footer"><span>Niveles · Score</span><span class="cta">Jugar →</span></div></a>
-    <a class="card" href="juegos/zuma/" data-id="zuma"><div class="card-handle" data-handle="true">☰</div><div class="card-header"><div class="icon">🔮</div><div class="tags"><span class="tag action">Acción</span></div></div><div><div class="card-title">Zuma</div><div class="card-desc">Disparás desde el centro. Eliminá la cadena antes de que llegue al agujero.</div></div><div class="card-footer"><span>Niveles · Score</span><span class="cta">Jugar →</span></div></a>
-  </div>
-  <div class="section-label">Próximamente</div>
-  <div class="games-grid">
-    <div class="card soon"><div class="card-header"><div class="icon">🏎️</div><div class="tags"><span class="tag soon">Próximamente</span></div></div><div><div class="card-title">Racing</div><div class="card-desc">Esquivá el tráfico a toda velocidad.</div></div><div class="card-footer"><span>En desarrollo</span></div></div>
-    <div class="card soon"><div class="card-header"><div class="icon">⚔️</div><div class="tags"><span class="tag soon">Próximamente</span></div></div><div><div class="card-title">Dungeon</div><div class="card-desc">Explorá mazmorras y derrotá enemigos.</div></div><div class="card-footer"><span>En desarrollo</span></div></div>
-    <div class="card soon"><div class="card-header"><div class="icon">💣</div><div class="tags"><span class="tag soon">Próximamente</span></div></div><div><div class="card-title">Minesweeper</div><div class="card-desc">Encontrá las minas sin pisarlas.</div></div><div class="card-footer"><span>En desarrollo</span></div></div>
-    <div class="card soon"><div class="card-header"><div class="icon">🃏</div><div class="tags"><span class="tag soon">Próximamente</span></div></div><div><div class="card-title">Solitaire</div><div class="card-desc">El clásico de cartas. Organizá el mazo por palos.</div></div><div class="card-footer"><span>En desarrollo</span></div></div>
-    <div class="card soon"><div class="card-header"><div class="icon">🌊</div><div class="tags"><span class="tag soon">Próximamente</span></div></div><div><div class="card-title">Flappy Bird</div><div class="card-desc">Tap para volar. Esquivá los caños infinitamente.</div></div><div class="card-footer"><span>En desarrollo</span></div></div>
-    <div class="card soon"><div class="card-header"><div class="icon">🎰</div><div class="tags"><span class="tag soon">Próximamente</span></div></div><div><div class="card-title">Simon Says</div><div class="card-desc">Repetí la secuencia de colores. Hasta dónde llegás.</div></div><div class="card-footer"><span>En desarrollo</span></div></div>
+    <a class="card" href="juegos/mastermind/">
+      <div class="card-header">
+        <div class="icon" style="background:linear-gradient(135deg,#0d1f3c,#1a1040);border:1px solid rgba(0,245,255,0.2)">
+          <div class="mm-icon">
+            <div class="mm-dot" style="color:#cc2233;background:#cc2233"></div>
+            <div class="mm-dot" style="color:#1a56cc;background:#1a56cc"></div>
+            <div class="mm-dot" style="color:#d4a017;background:#d4a017"></div>
+            <div class="mm-dot" style="color:#2a9a3f;background:#2a9a3f"></div>
+            <div class="mm-dot" style="color:#cc5500;background:#cc5500"></div>
+            <div class="mm-dot" style="color:#7b3fa0;background:#7b3fa0"></div>
+          </div>
+        </div>
+        <div class="tags"><span class="tag logic">Lógica</span></div>
+      </div>
+      <div><div class="card-title">Mastermind</div><div class="card-desc">Descifra el código secreto de colores en el menor tiempo posible.</div></div>
+      <div class="card-footer"><span>Timer · Historial · Sonidos</span><span class="cta">Jugar →</span></div>
+    </a>
+    <a class="card" href="juegos/arkanoid/">
+      <div class="card-header">
+        <div class="icon" style="background:linear-gradient(135deg,#1a0a2e,#0d1a10);border:1px solid rgba(255,45,120,0.2)">🧱</div>
+        <div class="tags"><span class="tag action">Acción</span></div>
+      </div>
+      <div><div class="card-title">Arkanoid</div><div class="card-desc">Rompé todos los bloques sin dejar caer la pelota. 5 niveles de dificultad.</div></div>
+      <div class="card-footer"><span>5 niveles · Score · Vidas</span><span class="cta">Jugar →</span></div>
+    </a>
+    <a class="card" href="juegos/pong/">
+      <div class="card-header">
+        <div class="icon" style="background:linear-gradient(135deg,#0a1a0a,#1a0a1a);border:1px solid rgba(255,255,255,0.1)">🏓</div>
+        <div class="tags"><span class="tag classic">Clásico</span></div>
+      </div>
+      <div><div class="card-title">Pong</div><div class="card-desc">El primer videojuego. 1 jugador vs CPU o 2 jugadores en el mismo celular.</div></div>
+      <div class="card-footer"><span>1P vs CPU · 2P · Touch</span><span class="cta">Jugar →</span></div>
+    </a>
   </div>
   <footer><span>◈ ARCADE</span><span>Colección personal de juegos</span></footer>
 </div>
-
-<script>
-const ORDER_KEY='arcade_order_v2';
-let editMode=false;
-
-function toggleEdit(){
-  editMode=!editMode;
-  document.querySelector('.games-grid').classList.toggle('edit-mode',editMode);
-  const btn=document.getElementById('btnEdit');
-  btn.classList.toggle('active',editMode);
-  btn.textContent=editMode?'✓ Listo':'☰ Ordenar';
-}
-
-function saveOrder(){
-  const g=document.querySelector('.games-grid');
-  const o=[...g.querySelectorAll('.card[data-id]')].map(c=>c.dataset.id);
-  localStorage.setItem(ORDER_KEY,JSON.stringify(o));
-}
-function loadOrder(){try{return JSON.parse(localStorage.getItem(ORDER_KEY))||[];}catch(e){return[];}}
-function applyOrder(){
-  const o=loadOrder();if(!o.length)return;
-  const g=document.querySelector('.games-grid');
-  const cards=[...g.querySelectorAll('.card[data-id]')];
-  const map={};cards.forEach(c=>map[c.dataset.id]=c);
-  const sorted=o.map(id=>map[id]).filter(Boolean);
-  const rest=cards.filter(c=>!o.includes(c.dataset.id));
-  [...sorted,...rest].forEach(c=>g.appendChild(c));
-}
-
-document.addEventListener('DOMContentLoaded',()=>{
-  applyOrder();
-  const grid=document.querySelector('.games-grid');
-  let dragged=null;
-
-  // Prevent card navigation when in edit mode
-  grid.addEventListener('click',e=>{
-    if(!editMode) return;
-    e.preventDefault();
-    e.stopPropagation();
-  },true);
-
-  // Desktop: drag from handle
-  grid.addEventListener('mousedown',e=>{
-    if(!editMode) return;
-    const handle=e.target.closest('[data-handle]');
-    if(!handle) return;
-    const card=handle.closest('.card');
-    if(!card) return;
-    dragged=card;
-    card.classList.add('dragging');
-    e.preventDefault();
-  });
-  document.addEventListener('mouseup',()=>{
-    if(dragged){dragged.classList.remove('dragging');dragged=null;}
-    grid.querySelectorAll('.card').forEach(c=>c.classList.remove('drag-over'));
-    saveOrder();
-  });
-  grid.addEventListener('mouseover',e=>{
-    if(!dragged) return;
-    const over=e.target.closest('.card[data-id]:not(.dragging)');
-    grid.querySelectorAll('.card').forEach(c=>c.classList.remove('drag-over'));
-    if(over) over.classList.add('drag-over');
-  });
-  grid.addEventListener('mousemove',e=>{
-    if(!dragged) return;
-    const over=e.target.closest('.card[data-id]:not(.dragging)');
-    if(over&&over!==dragged){
-      const all=[...grid.querySelectorAll('.card')];
-      all.indexOf(dragged)<all.indexOf(over)?over.after(dragged):over.before(dragged);
-      saveOrder();
-    }
-  });
-
-  // Touch: drag from handle
-  let td=null,tc=null,tox=0,toy=0;
-  grid.addEventListener('touchstart',e=>{
-    if(!editMode) return;
-    const handle=e.target.closest('[data-handle]');
-    if(!handle) return;
-    e.preventDefault();
-    const card=handle.closest('.card');
-    if(!card) return;
-    const touch=e.touches[0];
-    const rect=card.getBoundingClientRect();
-    tox=touch.clientX-rect.left; toy=touch.clientY-rect.top;
-    td=card; card.classList.add('dragging');
-    tc=card.cloneNode(true);
-    tc.style.cssText='position:fixed;z-index:9999;width:'+rect.width+'px;left:'+(touch.clientX-tox)+'px;top:'+(touch.clientY-toy)+'px;opacity:0.85;pointer-events:none;border-radius:12px;box-shadow:0 10px 40px rgba(0,0,0,0.7);transition:none;';
-    document.body.appendChild(tc);
-    try{navigator.vibrate(25);}catch(e){}
-  },{passive:false});
-
-  document.addEventListener('touchmove',e=>{
-    if(!td||!tc) return;
-    e.preventDefault();
-    const touch=e.touches[0];
-    tc.style.left=(touch.clientX-tox)+'px';
-    tc.style.top=(touch.clientY-toy)+'px';
-    tc.style.display='none';
-    const el=document.elementFromPoint(touch.clientX,touch.clientY);
-    tc.style.display='';
-    const over=el&&el.closest('.card[data-id]:not(.dragging)');
-    grid.querySelectorAll('.card').forEach(c=>c.classList.remove('drag-over'));
-    if(over){
-      over.classList.add('drag-over');
-      const all=[...grid.querySelectorAll('.card')];
-      all.indexOf(td)<all.indexOf(over)?over.after(td):over.before(td);
-      saveOrder();
-    }
-  },{passive:false});
-
-  document.addEventListener('touchend',e=>{
-    if(!td) return;
-    if(tc){tc.remove();tc=null;}
-    td.classList.remove('dragging');
-    grid.querySelectorAll('.card').forEach(c=>c.classList.remove('drag-over'));
-    td=null;
-  },{passive:true});
-});
-</script>
 </body>
 </html>
