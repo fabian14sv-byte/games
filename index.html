@@ -35,10 +35,7 @@
   .card::after{content:'';position:absolute;top:0;left:20%;right:20%;height:1px;background:linear-gradient(90deg,transparent,var(--cyan),transparent);opacity:0;transition:opacity 0.3s;}
   .card:hover::after{opacity:1;}
   .card.soon{opacity:0.35;pointer-events:none;filter:saturate(0.15);}
-  .card{cursor:grab;}
-  .card.soon{cursor:default;}
-  .card.dragging{opacity:0.4;transform:scale(0.96);cursor:grabbing;}
-  .card.drag-over{border-color:rgba(0,245,255,0.6)!important;box-shadow:0 0 20px rgba(0,245,255,0.2)!important;}
+  .card{}
   .card-header{display:flex;align-items:center;justify-content:space-between;gap:8px;}
   .icon{width:42px;height:42px;border-radius:10px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:18px;border:1px solid #1c1c2e;}
   .mm-icon{display:flex;flex-wrap:wrap;gap:2px;width:26px;height:26px;align-content:center;justify-content:center;}
@@ -61,28 +58,49 @@
   @keyframes fade-up{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
   header{animation:fade-up 0.4s ease both;}
   .card{animation:fade-up 0.4s ease both;}
+
+  .card-handle {
+    position:absolute; top:8px; right:8px;
+    width:24px; height:24px; border-radius:6px;
+    background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.08);
+    display:none; align-items:center; justify-content:center;
+    cursor:grab; color:var(--muted); font-size:12px; z-index:2;
+    transition:all 0.15s; -webkit-tap-highlight-color:transparent;
+  }
+  .edit-mode .card:not(.soon) .card-handle { display:flex; }
+  .edit-mode .card:not(.soon) { cursor:default; border-color:rgba(0,245,255,0.2); }
+  .card.dragging { opacity:0.35; transform:scale(0.96); }
+  .card.drag-over { border-color:rgba(0,245,255,0.7)!important; box-shadow:0 0 24px rgba(0,245,255,0.25)!important; transform:scale(1.02); }
+  .btn-edit {
+    font-family:'JetBrains Mono',monospace; font-size:10px; letter-spacing:0.15em;
+    padding:5px 14px; border-radius:6px; cursor:pointer; transition:all 0.2s;
+    border:1px solid var(--border); background:rgba(255,255,255,0.03); color:var(--muted);
+  }
+  .btn-edit.active { border-color:rgba(0,245,255,0.4); background:rgba(0,245,255,0.08); color:var(--cyan); }
+  .edit-hint { font-size:10px; color:var(--cyan); letter-spacing:0.15em; display:none; }
+  .edit-mode .edit-hint { display:block; }
 </style>
 </head>
 <body>
 <div class="orb orb-1"></div><div class="orb orb-2"></div>
 <div class="wrapper">
   <header>
-    <div class="header-top"><div class="logo"><span>◈</span> Arcade</div><div class="badge">v4.0</div></div>
+    <div class="header-top"><div class="logo"><span>◈</span> Arcade</div><div style="display:flex;align-items:center;gap:10px"><span class="edit-hint">☰ Arrastrá las cards</span><button class="btn-edit" id="btnEdit" onclick="toggleEdit()">☰ Ordenar</button><div class="badge">v4.0</div></div></div>
     <h1 class="hero-title"><span class="line-1">Juegos</span><span class="line-2">Arcade</span></h1>
     <p class="hero-sub">Colección personal · <span>10 juegos disponibles</span></p>
   </header>
   <div class="section-label">Disponibles</div>
   <div class="games-grid">
-    <a class="card" href="juegos/mastermind/" draggable="true" data-id="mastermind"><div class="card-header"><div class="icon" style="background:linear-gradient(135deg,#0d1f3c,#1a1040);border-color:rgba(0,245,255,0.2)"><div class="mm-icon"><div class="mm-dot" style="color:#cc2233;background:#cc2233"></div><div class="mm-dot" style="color:#1a56cc;background:#1a56cc"></div><div class="mm-dot" style="color:#d4a017;background:#d4a017"></div><div class="mm-dot" style="color:#2a9a3f;background:#2a9a3f"></div><div class="mm-dot" style="color:#cc5500;background:#cc5500"></div><div class="mm-dot" style="color:#7b3fa0;background:#7b3fa0"></div></div></div><div class="tags"><span class="tag logic">Lógica</span></div></div><div><div class="card-title">Mastermind</div><div class="card-desc">Descifra el código secreto de colores.</div></div><div class="card-footer"><span>Timer · Historial</span><span class="cta">Jugar →</span></div></a>
-    <a class="card" href="juegos/arkanoid/" draggable="true" data-id="arkanoid"><div class="card-header"><div class="icon">🧱</div><div class="tags"><span class="tag action">Acción</span></div></div><div><div class="card-title">Arkanoid</div><div class="card-desc">Rompé todos los bloques sin dejar caer la pelota.</div></div><div class="card-footer"><span>5 niveles · Vidas</span><span class="cta">Jugar →</span></div></a>
-    <a class="card" href="juegos/snake/" draggable="true" data-id="snake"><div class="card-header"><div class="icon">🐍</div><div class="tags"><span class="tag arcade">Clásico</span></div></div><div><div class="card-title">Snake</div><div class="card-desc">Comé, crecé, no te choques.</div></div><div class="card-footer"><span>3 velocidades</span><span class="cta">Jugar →</span></div></a>
-    <a class="card" href="juegos/2048/" draggable="true" data-id="2048"><div class="card-header"><div class="icon" style="font-family:Orbitron,sans-serif;font-weight:900;font-size:11px;color:#ffc740;background:linear-gradient(135deg,#2a1500,#1a0a00);border-color:rgba(255,199,64,0.25)">2048</div><div class="tags"><span class="tag puzzle">Puzzle</span></div></div><div><div class="card-title">2048</div><div class="card-desc">Combiná números deslizando.</div></div><div class="card-footer"><span>Mejor score</span><span class="cta">Jugar →</span></div></a>
-    <a class="card" href="juegos/asteroids/" draggable="true" data-id="asteroids"><div class="card-header"><div class="icon">🚀</div><div class="tags"><span class="tag shooter">Shooter</span></div></div><div><div class="card-title">Asteroids</div><div class="card-desc">Destruí los asteroides antes de que te destruyan.</div></div><div class="card-footer"><span>Niveles · Vidas</span><span class="cta">Jugar →</span></div></a>
-    <a class="card" href="juegos/tetris/" draggable="true" data-id="tetris"><div class="card-header"><div class="icon">🟦</div><div class="tags"><span class="tag puzzle">Puzzle</span></div></div><div><div class="card-title">Tetris</div><div class="card-desc">Completá líneas antes de llegar al tope.</div></div><div class="card-footer"><span>Niveles · Score</span><span class="cta">Jugar →</span></div></a>
-    <a class="card" href="juegos/pong/" draggable="true" data-id="pong"><div class="card-header"><div class="icon">🏓</div><div class="tags"><span class="tag classic">Clásico</span></div></div><div><div class="card-title">Pong</div><div class="card-desc">El primer videojuego. 1 o 2 jugadores.</div></div><div class="card-footer"><span>1P vs CPU · 2P</span><span class="cta">Jugar →</span></div></a>
-    <a class="card" href="juegos/pacman/" draggable="true" data-id="pacman"><div class="card-header"><div class="icon">👻</div><div class="tags"><span class="tag arcade">Clásico</span></div></div><div><div class="card-title">Pac-Man</div><div class="card-desc">Comé puntos, esquivá fantasmas.</div></div><div class="card-footer"><span>Niveles · Vidas</span><span class="cta">Jugar →</span></div></a>
-    <a class="card" href="juegos/bubble-shooter/" draggable="true" data-id="bubble-shooter"><div class="card-header"><div class="icon">🫧</div><div class="tags"><span class="tag action">Acción</span></div></div><div><div class="card-title">Bubble Shooter</div><div class="card-desc">Apuntá y dispará. Juntá 3+ del mismo color para explotar.</div></div><div class="card-footer"><span>Niveles · Score</span><span class="cta">Jugar →</span></div></a>
-    <a class="card" href="juegos/zuma/" draggable="true" data-id="zuma"><div class="card-header"><div class="icon">🔮</div><div class="tags"><span class="tag action">Acción</span></div></div><div><div class="card-title">Zuma</div><div class="card-desc">Disparás desde el centro. Eliminá la cadena antes de que llegue al agujero.</div></div><div class="card-footer"><span>Niveles · Score</span><span class="cta">Jugar →</span></div></a>
+    <a class="card" href="juegos/mastermind/" data-id="mastermind"><div class="card-handle" data-handle="true">☰</div><div class="card-header"><div class="icon" style="background:linear-gradient(135deg,#0d1f3c,#1a1040);border-color:rgba(0,245,255,0.2)"><div class="mm-icon"><div class="mm-dot" style="color:#cc2233;background:#cc2233"></div><div class="mm-dot" style="color:#1a56cc;background:#1a56cc"></div><div class="mm-dot" style="color:#d4a017;background:#d4a017"></div><div class="mm-dot" style="color:#2a9a3f;background:#2a9a3f"></div><div class="mm-dot" style="color:#cc5500;background:#cc5500"></div><div class="mm-dot" style="color:#7b3fa0;background:#7b3fa0"></div></div></div><div class="tags"><span class="tag logic">Lógica</span></div></div><div><div class="card-title">Mastermind</div><div class="card-desc">Descifra el código secreto de colores.</div></div><div class="card-footer"><span>Timer · Historial</span><span class="cta">Jugar →</span></div></a>
+    <a class="card" href="juegos/arkanoid/" data-id="arkanoid"><div class="card-handle" data-handle="true">☰</div><div class="card-header"><div class="icon">🧱</div><div class="tags"><span class="tag action">Acción</span></div></div><div><div class="card-title">Arkanoid</div><div class="card-desc">Rompé todos los bloques sin dejar caer la pelota.</div></div><div class="card-footer"><span>5 niveles · Vidas</span><span class="cta">Jugar →</span></div></a>
+    <a class="card" href="juegos/snake/" data-id="snake"><div class="card-handle" data-handle="true">☰</div><div class="card-header"><div class="icon">🐍</div><div class="tags"><span class="tag arcade">Clásico</span></div></div><div><div class="card-title">Snake</div><div class="card-desc">Comé, crecé, no te choques.</div></div><div class="card-footer"><span>3 velocidades</span><span class="cta">Jugar →</span></div></a>
+    <a class="card" href="juegos/2048/" data-id="2048"><div class="card-handle" data-handle="true">☰</div><div class="card-header"><div class="icon" style="font-family:Orbitron,sans-serif;font-weight:900;font-size:11px;color:#ffc740;background:linear-gradient(135deg,#2a1500,#1a0a00);border-color:rgba(255,199,64,0.25)">2048</div><div class="tags"><span class="tag puzzle">Puzzle</span></div></div><div><div class="card-title">2048</div><div class="card-desc">Combiná números deslizando.</div></div><div class="card-footer"><span>Mejor score</span><span class="cta">Jugar →</span></div></a>
+    <a class="card" href="juegos/asteroids/" data-id="asteroids"><div class="card-handle" data-handle="true">☰</div><div class="card-header"><div class="icon">🚀</div><div class="tags"><span class="tag shooter">Shooter</span></div></div><div><div class="card-title">Asteroids</div><div class="card-desc">Destruí los asteroides antes de que te destruyan.</div></div><div class="card-footer"><span>Niveles · Vidas</span><span class="cta">Jugar →</span></div></a>
+    <a class="card" href="juegos/tetris/" data-id="tetris"><div class="card-handle" data-handle="true">☰</div><div class="card-header"><div class="icon">🟦</div><div class="tags"><span class="tag puzzle">Puzzle</span></div></div><div><div class="card-title">Tetris</div><div class="card-desc">Completá líneas antes de llegar al tope.</div></div><div class="card-footer"><span>Niveles · Score</span><span class="cta">Jugar →</span></div></a>
+    <a class="card" href="juegos/pong/" data-id="pong"><div class="card-handle" data-handle="true">☰</div><div class="card-header"><div class="icon">🏓</div><div class="tags"><span class="tag classic">Clásico</span></div></div><div><div class="card-title">Pong</div><div class="card-desc">El primer videojuego. 1 o 2 jugadores.</div></div><div class="card-footer"><span>1P vs CPU · 2P</span><span class="cta">Jugar →</span></div></a>
+    <a class="card" href="juegos/pacman/" data-id="pacman"><div class="card-handle" data-handle="true">☰</div><div class="card-header"><div class="icon">👻</div><div class="tags"><span class="tag arcade">Clásico</span></div></div><div><div class="card-title">Pac-Man</div><div class="card-desc">Comé puntos, esquivá fantasmas.</div></div><div class="card-footer"><span>Niveles · Vidas</span><span class="cta">Jugar →</span></div></a>
+    <a class="card" href="juegos/bubble-shooter/" data-id="bubble-shooter"><div class="card-handle" data-handle="true">☰</div><div class="card-header"><div class="icon">🫧</div><div class="tags"><span class="tag action">Acción</span></div></div><div><div class="card-title">Bubble Shooter</div><div class="card-desc">Apuntá y dispará. Juntá 3+ del mismo color para explotar.</div></div><div class="card-footer"><span>Niveles · Score</span><span class="cta">Jugar →</span></div></a>
+    <a class="card" href="juegos/zuma/" data-id="zuma"><div class="card-handle" data-handle="true">☰</div><div class="card-header"><div class="icon">🔮</div><div class="tags"><span class="tag action">Acción</span></div></div><div><div class="card-title">Zuma</div><div class="card-desc">Disparás desde el centro. Eliminá la cadena antes de que llegue al agujero.</div></div><div class="card-footer"><span>Niveles · Score</span><span class="cta">Jugar →</span></div></a>
   </div>
   <div class="section-label">Próximamente</div>
   <div class="games-grid">
@@ -95,64 +113,123 @@
   </div>
   <footer><span>◈ ARCADE</span><span>Colección personal de juegos</span></footer>
 </div>
+
 <script>
-const ORDER_KEY='arcade_order_v1';
-function saveOrder(){const g=document.querySelector('.games-grid');const o=[...g.querySelectorAll('.card:not(.soon)')].map(c=>c.dataset.id);localStorage.setItem(ORDER_KEY,JSON.stringify(o));}
+const ORDER_KEY='arcade_order_v2';
+let editMode=false;
+
+function toggleEdit(){
+  editMode=!editMode;
+  document.querySelector('.games-grid').classList.toggle('edit-mode',editMode);
+  const btn=document.getElementById('btnEdit');
+  btn.classList.toggle('active',editMode);
+  btn.textContent=editMode?'✓ Listo':'☰ Ordenar';
+}
+
+function saveOrder(){
+  const g=document.querySelector('.games-grid');
+  const o=[...g.querySelectorAll('.card[data-id]')].map(c=>c.dataset.id);
+  localStorage.setItem(ORDER_KEY,JSON.stringify(o));
+}
 function loadOrder(){try{return JSON.parse(localStorage.getItem(ORDER_KEY))||[];}catch(e){return[];}}
-function applyOrder(){const o=loadOrder();if(!o.length)return;const g=document.querySelector('.games-grid');const cards=[...g.querySelectorAll('.card:not(.soon)')];const map={};cards.forEach(c=>map[c.dataset.id]=c);const sorted=o.map(id=>map[id]).filter(Boolean);const rest=cards.filter(c=>!o.includes(c.dataset.id));[...sorted,...rest].forEach(c=>g.appendChild(c));}
+function applyOrder(){
+  const o=loadOrder();if(!o.length)return;
+  const g=document.querySelector('.games-grid');
+  const cards=[...g.querySelectorAll('.card[data-id]')];
+  const map={};cards.forEach(c=>map[c.dataset.id]=c);
+  const sorted=o.map(id=>map[id]).filter(Boolean);
+  const rest=cards.filter(c=>!o.includes(c.dataset.id));
+  [...sorted,...rest].forEach(c=>g.appendChild(c));
+}
 
 document.addEventListener('DOMContentLoaded',()=>{
   applyOrder();
   const grid=document.querySelector('.games-grid');
   let dragged=null;
 
-  // Desktop drag
-  grid.addEventListener('dragstart',e=>{const c=e.target.closest('.card:not(.soon)');if(!c)return;dragged=c;c.classList.add('dragging');e.dataTransfer.effectAllowed='move';});
-  grid.addEventListener('dragend',e=>{if(dragged){dragged.classList.remove('dragging');dragged=null;}grid.querySelectorAll('.card').forEach(c=>c.classList.remove('drag-over'));saveOrder();});
-  grid.addEventListener('dragover',e=>{e.preventDefault();const c=e.target.closest('.card:not(.soon):not(.dragging)');grid.querySelectorAll('.card').forEach(c=>c.classList.remove('drag-over'));if(c)c.classList.add('drag-over');});
-  grid.addEventListener('drop',e=>{e.preventDefault();const c=e.target.closest('.card:not(.soon):not(.dragging)');if(c&&dragged&&c!==dragged){const all=[...grid.querySelectorAll('.card')];all.indexOf(dragged)<all.indexOf(c)?c.after(dragged):c.before(dragged);}grid.querySelectorAll('.card').forEach(c=>c.classList.remove('drag-over'));saveOrder();});
+  // Prevent card navigation when in edit mode
+  grid.addEventListener('click',e=>{
+    if(!editMode) return;
+    const card=e.target.closest('.card[data-id]');
+    if(card) e.preventDefault();
+  });
 
-  // Touch drag - long press 350ms
-  let td=null,tc=null,tt=null,ta=false,tox=0,toy=0,tsx=0,tsy=0;
-  grid.addEventListener('touchstart',e=>{
-    const card=e.target.closest('.card:not(.soon)');
-    if(!card)return;
-    const touch=e.touches[0];
-    tsx=touch.clientX;tsy=touch.clientY;
-    const rect=card.getBoundingClientRect();
-    tox=touch.clientX-rect.left;toy=touch.clientY-rect.top;
-    td=card;ta=false;
-    tt=setTimeout(()=>{
-      ta=true;td.classList.add('dragging');
-      tc=td.cloneNode(true);
-      tc.style.cssText='position:fixed;z-index:9999;width:'+rect.width+'px;left:'+(touch.clientX-tox)+'px;top:'+(touch.clientY-toy)+'px;opacity:0.88;pointer-events:none;border-radius:12px;box-shadow:0 8px 32px rgba(0,0,0,0.6);';
-      document.body.appendChild(tc);
-      try{navigator.vibrate(30);}catch(e){}
-    },350);
-  },{passive:true});
-
-  grid.addEventListener('touchmove',e=>{
-    const touch=e.touches[0];
-    if(!ta){if(Math.hypot(touch.clientX-tsx,touch.clientY-tsy)>8){clearTimeout(tt);td=null;}return;}
+  // Desktop: drag from handle
+  grid.addEventListener('mousedown',e=>{
+    if(!editMode) return;
+    const handle=e.target.closest('[data-handle]');
+    if(!handle) return;
+    const card=handle.closest('.card');
+    if(!card) return;
+    dragged=card;
+    card.classList.add('dragging');
     e.preventDefault();
-    tc.style.left=(touch.clientX-tox)+'px';tc.style.top=(touch.clientY-toy)+'px';
-    tc.style.display='none';const el=document.elementFromPoint(touch.clientX,touch.clientY);tc.style.display='';
-    const over=el&&el.closest('.card:not(.soon):not(.dragging)');
+  });
+  document.addEventListener('mouseup',()=>{
+    if(dragged){dragged.classList.remove('dragging');dragged=null;}
     grid.querySelectorAll('.card').forEach(c=>c.classList.remove('drag-over'));
-    if(over)over.classList.add('drag-over');
+    saveOrder();
+  });
+  grid.addEventListener('mouseover',e=>{
+    if(!dragged) return;
+    const over=e.target.closest('.card[data-id]:not(.dragging)');
+    grid.querySelectorAll('.card').forEach(c=>c.classList.remove('drag-over'));
+    if(over) over.classList.add('drag-over');
+  });
+  grid.addEventListener('mousemove',e=>{
+    if(!dragged) return;
+    const over=e.target.closest('.card[data-id]:not(.dragging)');
+    if(over&&over!==dragged){
+      const all=[...grid.querySelectorAll('.card')];
+      all.indexOf(dragged)<all.indexOf(over)?over.after(dragged):over.before(dragged);
+      saveOrder();
+    }
+  });
+
+  // Touch: drag from handle
+  let td=null,tc=null,tox=0,toy=0;
+  grid.addEventListener('touchstart',e=>{
+    if(!editMode) return;
+    const handle=e.target.closest('[data-handle]');
+    if(!handle) return;
+    e.preventDefault();
+    const card=handle.closest('.card');
+    if(!card) return;
+    const touch=e.touches[0];
+    const rect=card.getBoundingClientRect();
+    tox=touch.clientX-rect.left; toy=touch.clientY-rect.top;
+    td=card; card.classList.add('dragging');
+    tc=card.cloneNode(true);
+    tc.style.cssText='position:fixed;z-index:9999;width:'+rect.width+'px;left:'+(touch.clientX-tox)+'px;top:'+(touch.clientY-toy)+'px;opacity:0.85;pointer-events:none;border-radius:12px;box-shadow:0 10px 40px rgba(0,0,0,0.7);transition:none;';
+    document.body.appendChild(tc);
+    try{navigator.vibrate(25);}catch(e){}
   },{passive:false});
 
-  grid.addEventListener('touchend',e=>{
-    clearTimeout(tt);
-    if(!ta){td=null;return;}
-    const touch=e.changedTouches[0];
-    if(tc){tc.remove();tc=null;}
-    if(td)td.classList.remove('dragging');
+  document.addEventListener('touchmove',e=>{
+    if(!td||!tc) return;
+    e.preventDefault();
+    const touch=e.touches[0];
+    tc.style.left=(touch.clientX-tox)+'px';
+    tc.style.top=(touch.clientY-toy)+'px';
+    tc.style.display='none';
     const el=document.elementFromPoint(touch.clientX,touch.clientY);
-    const over=el&&el.closest('.card:not(.soon):not(.dragging)');
-    if(over&&td&&over!==td){const all=[...grid.querySelectorAll('.card')];all.indexOf(td)<all.indexOf(over)?over.after(td):over.before(td);}
+    tc.style.display='';
+    const over=el&&el.closest('.card[data-id]:not(.dragging)');
     grid.querySelectorAll('.card').forEach(c=>c.classList.remove('drag-over'));
-    saveOrder();td=null;ta=false;
+    if(over){
+      over.classList.add('drag-over');
+      const all=[...grid.querySelectorAll('.card')];
+      all.indexOf(td)<all.indexOf(over)?over.after(td):over.before(td);
+      saveOrder();
+    }
+  },{passive:false});
+
+  document.addEventListener('touchend',e=>{
+    if(!td) return;
+    if(tc){tc.remove();tc=null;}
+    td.classList.remove('dragging');
+    grid.querySelectorAll('.card').forEach(c=>c.classList.remove('drag-over'));
+    td=null;
   },{passive:true});
 });
 </script>
