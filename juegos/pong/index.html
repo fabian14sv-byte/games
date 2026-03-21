@@ -790,13 +790,23 @@ function draw() {
       ctx.stroke();
       ctx.globalAlpha = 1;
     } else {
-      ctx.shadowColor = '#ffc740'; ctx.shadowBlur = 16;
-      const g = ctx.createRadialGradient(bx-BR*0.3, by-BR*0.3, BR*0.1, bx, by, BR);
-      g.addColorStop(0, '#fff');
-      g.addColorStop(0.4, '#ffc740');
-      g.addColorStop(1, '#ff8000');
+      // neon green ball with gloss
+      ctx.shadowColor = '#00ff88'; ctx.shadowBlur = 20;
+      const g = ctx.createRadialGradient(bx-ballR*0.35, by-ballR*0.4, ballR*0.05, bx, by, ballR);
+      g.addColorStop(0, '#ccffe8');
+      g.addColorStop(0.25, '#00ff88');
+      g.addColorStop(0.7, '#00cc55');
+      g.addColorStop(1, '#004422');
       ctx.fillStyle = g;
       ctx.beginPath(); ctx.arc(bx, by, ballR, 0, Math.PI*2); ctx.fill();
+      // specular highlight
+      ctx.save();
+      const hl = ctx.createRadialGradient(bx-ballR*0.3, by-ballR*0.35, 0, bx-ballR*0.2, by-ballR*0.25, ballR*0.45);
+      hl.addColorStop(0, 'rgba(255,255,255,0.7)');
+      hl.addColorStop(1, 'rgba(255,255,255,0)');
+      ctx.fillStyle = hl;
+      ctx.beginPath(); ctx.arc(bx, by, ballR, 0, Math.PI*2); ctx.fill();
+      ctx.restore();
     }
     ctx.restore();
   }
@@ -959,7 +969,7 @@ function playBgmNote() {
       const o = ac.createOscillator(); const g = ac.createGain();
       o.connect(g); g.connect(ac.destination);
       o.type = 'sine'; o.frequency.value = freq;
-      g.gain.setValueAtTime(0.028, t);
+      g.gain.setValueAtTime(0.055, t);
       g.gain.exponentialRampToValueAtTime(0.001, t + dur * 0.9);
       o.start(t); o.stop(t + dur);
       // harmony third below every 3 notes
@@ -967,7 +977,7 @@ function playBgmNote() {
         const oh = ac.createOscillator(); const gh = ac.createGain();
         oh.connect(gh); gh.connect(ac.destination);
         oh.type = 'sine'; oh.frequency.value = freq * 1.5; // fifth above // minor third down
-        gh.gain.setValueAtTime(0.018, t);
+        gh.gain.setValueAtTime(0.032, t);
         gh.gain.exponentialRampToValueAtTime(0.001, t + dur * 0.6);
         oh.start(t); oh.stop(t + dur * 0.6);
       }
@@ -976,7 +986,7 @@ function playBgmNote() {
         const ob = ac.createOscillator(); const gb = ac.createGain();
         ob.connect(gb); gb.connect(ac.destination);
         ob.type = 'triangle'; ob.frequency.value = freq * 0.5;
-        gb.gain.setValueAtTime(0.015, t);
+        gb.gain.setValueAtTime(0.025, t);
         gb.gain.exponentialRampToValueAtTime(0.001, t + 0.12);
         ob.start(t); ob.stop(t + 0.08);
       }
