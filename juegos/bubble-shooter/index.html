@@ -65,6 +65,8 @@ const COLORS=['#cc2233','#1a56cc','#d4a017','#2a9a3f','#cc5500','#7b3fa0'];
 let W,H,CELL,COLS,ROWS_VISIBLE;
 let grid,bullet,nextColor,score,level,gameRunning,animId,aimAngle;
 let particles=[];
+const gameCanvas=document.getElementById('gameCanvas');
+let ctx=gameCanvas.getContext('2d');
 
 function resize(){
   const wrap=document.getElementById('canvasWrap');
@@ -73,11 +75,10 @@ function resize(){
   const maxW=Math.min(window.innerWidth,380);
   const availH=window.innerHeight-hudH-nextH-20;
   W=maxW-2; H=Math.min(availH,Math.round(W*1.5));
-  const canvas=document.getElementById('gameCanvas');
   const dpr=window.devicePixelRatio||1;
-  canvas.width=Math.round(W*dpr); canvas.height=Math.round(H*dpr);
-  canvas.style.width=W+'px'; canvas.style.height=H+'px';
-  ctx=canvas.getContext('2d'); ctx.scale(dpr,dpr);
+  gameCanvas.width=Math.round(W*dpr); gameCanvas.height=Math.round(H*dpr);
+  gameCanvas.style.width=W+'px'; gameCanvas.style.height=H+'px';
+  ctx=gameCanvas.getContext('2d'); ctx.scale(dpr,dpr);
   wrap.style.width=W+'px'; wrap.style.height=H+'px';
   CELL=Math.floor(W/10);
   COLS=Math.floor(W/CELL);
@@ -117,8 +118,8 @@ function nextLevel(){
 function spawnBullet(){
   const color=nextColor;
   nextColor=rndColor(Math.min(3+level,COLORS.length));
-  drawNext();
   bullet={x:W/2,y:H-CELL,vx:0,vy:0,r:CELL/2-1,color,moving:false};
+  drawNext();
 }
 
 function drawNext(){
@@ -148,6 +149,7 @@ function update(){
   // top wall
   if(bullet.y-bullet.r<0){landBullet(); return;}
   // check collision with grid
+  if(!bullet.moving) return;
   for(let r=0;r<grid.length;r++){
     for(let c=0;c<grid[r].length;c++){
       if(!grid[r][c]) continue;
@@ -314,7 +316,7 @@ function shoot(){
 }
 
 function updateAim(e){
-  const rect=document.getElementById('gameCanvas').getBoundingClientRect();
+  const rect=gameCanvas.getBoundingClientRect();
   let cx,cy;
   if(e.touches&&e.touches.length>0){ cx=e.touches[0].clientX; cy=e.touches[0].clientY; }
   else if(e.changedTouches&&e.changedTouches.length>0){ cx=e.changedTouches[0].clientX; cy=e.changedTouches[0].clientY; }
@@ -332,15 +334,14 @@ function updateHUD(){
 function showOverlay(id){['overlayStart','overlayWin','overlayLose'].forEach(o=>document.getElementById(o).classList.toggle('hidden',o!==id));}
 function hideOverlays(){['overlayStart','overlayWin','overlayLose'].forEach(o=>document.getElementById(o).classList.add('hidden'));}
 
-const canvas=document.getElementById('gameCanvas');
-canvas.addEventListener('mousemove',e=>{if(gameRunning&&!bullet.moving) updateAim(e);});
-canvas.addEventListener('touchmove',e=>{e.preventDefault();if(gameRunning&&!bullet.moving) updateAim(e);},{passive:false});
-canvas.addEventListener('click',e=>{updateAim(e);shoot();});
-canvas.addEventListener('touchmove',e=>{
+gameCanvas.addEventListener('mousemove',e=>{if(gameRunning&&!bullet.moving) updateAim(e);});
+gameCanvas.addEventListener('touchmove',e=>{e.preventDefault();if(gameRunning&&!bullet.moving) updateAim(e);},{passive:false});
+gameCanvas.addEventListener('click',e=>{updateAim(e);shoot();});
+gameCanvas.addEventListener('touchmove',e=>{
   e.preventDefault();
   if(gameRunning&&!bullet.moving) updateAim(e);
 },{passive:false});
-canvas.addEventListener('touchend',e=>{
+gameCanvas.addEventListener('touchend',e=>{
   e.preventDefault();
   if(gameRunning&&!bullet.moving){ updateAim(e); shoot(); }
 },{passive:false});
