@@ -14,7 +14,7 @@
   .orb-1{width:500px;height:500px;background:var(--cyan);top:-150px;left:-100px;}
   .orb-2{width:400px;height:400px;background:var(--pink);bottom:-100px;right:-80px;}
   .wrapper{position:relative;z-index:1;max-width:1000px;margin:0 auto;padding:60px 24px 80px;}
-  header{margin-bottom:52px;}
+  header{margin-bottom:48px;}
   .header-top{display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border);padding-bottom:20px;margin-bottom:28px;}
   .logo{font-family:'Syne',sans-serif;font-weight:800;font-size:13px;letter-spacing:0.4em;text-transform:uppercase;color:#9a9abb;}
   .logo span{color:var(--cyan);}
@@ -27,29 +27,20 @@
   .section-label{display:flex;align-items:center;gap:12px;font-size:10px;letter-spacing:0.35em;text-transform:uppercase;color:#6a6a8a;margin-bottom:16px;margin-top:28px;}
   .section-label:first-of-type{margin-top:0;}
   .section-label::after{content:'';flex:1;height:1px;background:var(--border);}
-  .games-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:10px;}
-  .card{position:relative;text-decoration:none;color:var(--text);background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:20px;transition:transform 0.2s,border-color 0.2s,box-shadow 0.2s;overflow:hidden;display:flex;flex-direction:column;gap:10px;}
+  .games-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px;}
+  .card{position:relative;text-decoration:none;color:var(--text);background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:18px;transition:transform 0.2s,border-color 0.2s,box-shadow 0.2s;overflow:hidden;display:flex;flex-direction:column;gap:10px;}
   .card::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(0,245,255,0.04) 0%,transparent 60%);opacity:0;transition:opacity 0.3s;}
   .card:hover{transform:translateY(-3px);border-color:rgba(0,245,255,0.25);box-shadow:0 8px 28px rgba(0,245,255,0.07);}
   .card:hover::before{opacity:1;}
   .card::after{content:'';position:absolute;top:0;left:20%;right:20%;height:1px;background:linear-gradient(90deg,transparent,var(--cyan),transparent);opacity:0;transition:opacity 0.3s;}
   .card:hover::after{opacity:1;}
-  .card.soon{opacity:0.38;pointer-events:none;filter:saturate(0.15);}
+  .card.soon{opacity:0.35;pointer-events:none;filter:saturate(0.15);}
   .card-header{display:flex;align-items:center;justify-content:space-between;gap:8px;}
-  .icon{width:44px;height:44px;border-radius:10px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:18px;}
-  .icon.mm{background:linear-gradient(135deg,#0d1f3c,#1a1040);border:1px solid rgba(0,245,255,0.2);}
-  .icon.bk{background:linear-gradient(135deg,#1a0a2e,#0d1a10);border:1px solid rgba(255,45,120,0.2);}
-  .icon.sn{background:linear-gradient(135deg,#0a2e12,#0a1a0d);border:1px solid rgba(46,252,152,0.2);}
-  .icon.g2048{background:linear-gradient(135deg,#2a1500,#1a0a00);border:1px solid rgba(255,199,64,0.25);font-family:'Orbitron',sans-serif;font-weight:900;font-size:11px;color:#ffc740;letter-spacing:-0.05em;}
-  .icon.ast{background:linear-gradient(135deg,#050518,#0a0a20);border:1px solid rgba(0,245,255,0.15);}
-  .icon.tet{background:linear-gradient(135deg,#0a1a2e,#1a0a1a);border:1px solid rgba(0,245,255,0.15);}
-  .icon.png{background:linear-gradient(135deg,#0a1a0a,#1a0a1a);border:1px solid rgba(255,255,255,0.1);}
-  .icon.pac{background:linear-gradient(135deg,#1a1500,#0a0a00);border:1px solid rgba(255,199,64,0.2);}
-  .icon.soon{background:#0d0d14;border:1px solid #1c1c2e;}
-  .mm-icon{display:flex;flex-wrap:wrap;gap:2px;width:28px;height:28px;align-content:center;justify-content:center;}
-  .mm-dot{width:8px;height:8px;border-radius:50%;box-shadow:0 0 4px currentColor;}
+  .icon{width:42px;height:42px;border-radius:10px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:18px;border:1px solid #1c1c2e;}
+  .mm-icon{display:flex;flex-wrap:wrap;gap:2px;width:26px;height:26px;align-content:center;justify-content:center;}
+  .mm-dot{width:7px;height:7px;border-radius:50%;box-shadow:0 0 4px currentColor;}
   .tags{display:flex;flex-wrap:wrap;gap:4px;}
-  .tag{font-size:8px;letter-spacing:0.15em;text-transform:uppercase;padding:2px 7px;border-radius:20px;}
+  .tag{font-size:8px;letter-spacing:0.12em;text-transform:uppercase;padding:2px 7px;border-radius:20px;}
   .tag.logic{border:1px solid rgba(0,245,255,0.2);color:rgba(0,245,255,0.7);}
   .tag.action{border:1px solid rgba(255,45,120,0.25);color:rgba(255,45,120,0.8);}
   .tag.arcade{border:1px solid rgba(46,252,152,0.25);color:rgba(46,252,152,0.8);}
@@ -65,66 +56,38 @@
   footer{margin-top:60px;padding-top:20px;border-top:1px solid var(--border);display:flex;justify-content:space-between;font-size:10px;color:#4a4a6a;letter-spacing:0.2em;flex-wrap:wrap;gap:8px;}
   @keyframes fade-up{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
   header{animation:fade-up 0.4s ease both;}
-  .games-grid .card{animation:fade-up 0.4s ease both;}
+  .card{animation:fade-up 0.4s ease both;}
 </style>
 </head>
 <body>
 <div class="orb orb-1"></div><div class="orb orb-2"></div>
 <div class="wrapper">
   <header>
-    <div class="header-top"><div class="logo"><span>◈</span> Arcade</div><div class="badge">v3.0</div></div>
+    <div class="header-top"><div class="logo"><span>◈</span> Arcade</div><div class="badge">v4.0</div></div>
     <h1 class="hero-title"><span class="line-1">Juegos</span><span class="line-2">Arcade</span></h1>
-    <p class="hero-sub">Colección personal · <span>8 juegos disponibles</span></p>
+    <p class="hero-sub">Colección personal · <span>10 juegos disponibles</span></p>
   </header>
   <div class="section-label">Disponibles</div>
   <div class="games-grid">
-    <a class="card" href="juegos/mastermind/">
-      <div class="card-header"><div class="icon mm"><div class="mm-icon"><div class="mm-dot" style="color:#cc2233;background:#cc2233"></div><div class="mm-dot" style="color:#1a56cc;background:#1a56cc"></div><div class="mm-dot" style="color:#d4a017;background:#d4a017"></div><div class="mm-dot" style="color:#2a9a3f;background:#2a9a3f"></div><div class="mm-dot" style="color:#cc5500;background:#cc5500"></div><div class="mm-dot" style="color:#7b3fa0;background:#7b3fa0"></div></div></div><div class="tags"><span class="tag logic">Lógica</span></div></div>
-      <div><div class="card-title">Mastermind</div><div class="card-desc">Descifra el código secreto de colores.</div></div>
-      <div class="card-footer"><span>Timer · Historial</span><span class="cta">Jugar →</span></div>
-    </a>
-    <a class="card" href="juegos/arkanoid/">
-      <div class="card-header"><div class="icon bk" style="font-size:22px">🧱</div><div class="tags"><span class="tag action">Acción</span></div></div>
-      <div><div class="card-title">Arkanoid</div><div class="card-desc">Rompé todos los bloques sin dejar caer la pelota.</div></div>
-      <div class="card-footer"><span>5 niveles · Vidas</span><span class="cta">Jugar →</span></div>
-    </a>
-    <a class="card" href="juegos/snake/">
-      <div class="card-header"><div class="icon sn" style="font-size:22px">🐍</div><div class="tags"><span class="tag arcade">Clásico</span></div></div>
-      <div><div class="card-title">Snake</div><div class="card-desc">Comé, crecé, no te choques.</div></div>
-      <div class="card-footer"><span>3 velocidades</span><span class="cta">Jugar →</span></div>
-    </a>
-    <a class="card" href="juegos/2048/">
-      <div class="card-header"><div class="icon g2048">2048</div><div class="tags"><span class="tag puzzle">Puzzle</span></div></div>
-      <div><div class="card-title">2048</div><div class="card-desc">Combiná números deslizando. Llegá al 2048.</div></div>
-      <div class="card-footer"><span>Mejor score</span><span class="cta">Jugar →</span></div>
-    </a>
-    <a class="card" href="juegos/asteroids/">
-      <div class="card-header"><div class="icon ast" style="font-size:22px">🚀</div><div class="tags"><span class="tag shooter">Shooter</span></div></div>
-      <div><div class="card-title">Asteroids</div><div class="card-desc">Destruí los asteroides. Los fragmentos son peligrosos.</div></div>
-      <div class="card-footer"><span>Niveles · Vidas</span><span class="cta">Jugar →</span></div>
-    </a>
-    <a class="card" href="juegos/tetris/">
-      <div class="card-header"><div class="icon tet" style="font-size:22px">🟦</div><div class="tags"><span class="tag puzzle">Puzzle</span></div></div>
-      <div><div class="card-title">Tetris</div><div class="card-desc">Completá líneas antes de llegar al tope.</div></div>
-      <div class="card-footer"><span>Niveles · Score</span><span class="cta">Jugar →</span></div>
-    </a>
-    <a class="card" href="juegos/pong/">
-      <div class="card-header"><div class="icon png" style="font-size:22px">🏓</div><div class="tags"><span class="tag classic">Clásico</span></div></div>
-      <div><div class="card-title">Pong</div><div class="card-desc">El primer videojuego. 1 o 2 jugadores.</div></div>
-      <div class="card-footer"><span>1P vs CPU · 2P</span><span class="cta">Jugar →</span></div>
-    </a>
-    <a class="card" href="juegos/pacman/">
-      <div class="card-header"><div class="icon pac" style="font-size:22px">👻</div><div class="tags"><span class="tag arcade">Clásico</span></div></div>
-      <div><div class="card-title">Pac-Man</div><div class="card-desc">Comé puntos, esquivá fantasmas, usá los powerups.</div></div>
-      <div class="card-footer"><span>Niveles · Vidas</span><span class="cta">Jugar →</span></div>
-    </a>
+    <a class="card" href="juegos/mastermind/"><div class="card-header"><div class="icon" style="background:linear-gradient(135deg,#0d1f3c,#1a1040);border-color:rgba(0,245,255,0.2)"><div class="mm-icon"><div class="mm-dot" style="color:#cc2233;background:#cc2233"></div><div class="mm-dot" style="color:#1a56cc;background:#1a56cc"></div><div class="mm-dot" style="color:#d4a017;background:#d4a017"></div><div class="mm-dot" style="color:#2a9a3f;background:#2a9a3f"></div><div class="mm-dot" style="color:#cc5500;background:#cc5500"></div><div class="mm-dot" style="color:#7b3fa0;background:#7b3fa0"></div></div></div><div class="tags"><span class="tag logic">Lógica</span></div></div><div><div class="card-title">Mastermind</div><div class="card-desc">Descifra el código secreto de colores.</div></div><div class="card-footer"><span>Timer · Historial</span><span class="cta">Jugar →</span></div></a>
+    <a class="card" href="juegos/arkanoid/"><div class="card-header"><div class="icon">🧱</div><div class="tags"><span class="tag action">Acción</span></div></div><div><div class="card-title">Arkanoid</div><div class="card-desc">Rompé todos los bloques sin dejar caer la pelota.</div></div><div class="card-footer"><span>5 niveles · Vidas</span><span class="cta">Jugar →</span></div></a>
+    <a class="card" href="juegos/snake/"><div class="card-header"><div class="icon">🐍</div><div class="tags"><span class="tag arcade">Clásico</span></div></div><div><div class="card-title">Snake</div><div class="card-desc">Comé, crecé, no te choques.</div></div><div class="card-footer"><span>3 velocidades</span><span class="cta">Jugar →</span></div></a>
+    <a class="card" href="juegos/2048/"><div class="card-header"><div class="icon" style="font-family:Orbitron,sans-serif;font-weight:900;font-size:11px;color:#ffc740;background:linear-gradient(135deg,#2a1500,#1a0a00);border-color:rgba(255,199,64,0.25)">2048</div><div class="tags"><span class="tag puzzle">Puzzle</span></div></div><div><div class="card-title">2048</div><div class="card-desc">Combiná números deslizando.</div></div><div class="card-footer"><span>Mejor score</span><span class="cta">Jugar →</span></div></a>
+    <a class="card" href="juegos/asteroids/"><div class="card-header"><div class="icon">🚀</div><div class="tags"><span class="tag shooter">Shooter</span></div></div><div><div class="card-title">Asteroids</div><div class="card-desc">Destruí los asteroides antes de que te destruyan.</div></div><div class="card-footer"><span>Niveles · Vidas</span><span class="cta">Jugar →</span></div></a>
+    <a class="card" href="juegos/tetris/"><div class="card-header"><div class="icon">🟦</div><div class="tags"><span class="tag puzzle">Puzzle</span></div></div><div><div class="card-title">Tetris</div><div class="card-desc">Completá líneas antes de llegar al tope.</div></div><div class="card-footer"><span>Niveles · Score</span><span class="cta">Jugar →</span></div></a>
+    <a class="card" href="juegos/pong/"><div class="card-header"><div class="icon">🏓</div><div class="tags"><span class="tag classic">Clásico</span></div></div><div><div class="card-title">Pong</div><div class="card-desc">El primer videojuego. 1 o 2 jugadores.</div></div><div class="card-footer"><span>1P vs CPU · 2P</span><span class="cta">Jugar →</span></div></a>
+    <a class="card" href="juegos/pacman/"><div class="card-header"><div class="icon">👻</div><div class="tags"><span class="tag arcade">Clásico</span></div></div><div><div class="card-title">Pac-Man</div><div class="card-desc">Comé puntos, esquivá fantasmas.</div></div><div class="card-footer"><span>Niveles · Vidas</span><span class="cta">Jugar →</span></div></a>
+    <a class="card" href="juegos/bubble-shooter/"><div class="card-header"><div class="icon">🫧</div><div class="tags"><span class="tag action">Acción</span></div></div><div><div class="card-title">Bubble Shooter</div><div class="card-desc">Apuntá y dispará. Juntá 3+ del mismo color para explotar.</div></div><div class="card-footer"><span>Niveles · Score</span><span class="cta">Jugar →</span></div></a>
+    <a class="card" href="juegos/zuma/"><div class="card-header"><div class="icon">🔮</div><div class="tags"><span class="tag action">Acción</span></div></div><div><div class="card-title">Zuma</div><div class="card-desc">Disparás desde el centro. Eliminá la cadena antes de que llegue al agujero.</div></div><div class="card-footer"><span>Niveles · Score</span><span class="cta">Jugar →</span></div></a>
   </div>
   <div class="section-label">Próximamente</div>
   <div class="games-grid">
-    <div class="card soon"><div class="card-header"><div class="icon soon">🏎️</div><div class="tags"><span class="tag soon">Próximamente</span></div></div><div><div class="card-title">Racing</div><div class="card-desc">Esquivá el tráfico a toda velocidad.</div></div><div class="card-footer"><span>En desarrollo</span></div></div>
-    <div class="card soon"><div class="card-header"><div class="icon soon">⚔️</div><div class="tags"><span class="tag soon">Próximamente</span></div></div><div><div class="card-title">Dungeon</div><div class="card-desc">Explorá mazmorras y derrotá enemigos.</div></div><div class="card-footer"><span>En desarrollo</span></div></div>
-    <div class="card soon"><div class="card-header"><div class="icon soon">🎯</div><div class="tags"><span class="tag soon">Próximamente</span></div></div><div><div class="card-title">Bubble Shooter</div><div class="card-desc">Apuntá y reventá burbujas del mismo color.</div></div><div class="card-footer"><span>En desarrollo</span></div></div>
-    <div class="card soon"><div class="card-header"><div class="icon soon">💣</div><div class="tags"><span class="tag soon">Próximamente</span></div></div><div><div class="card-title">Minesweeper</div><div class="card-desc">Encontrá las minas sin pisarlas.</div></div><div class="card-footer"><span>En desarrollo</span></div></div>
+    <div class="card soon"><div class="card-header"><div class="icon">🏎️</div><div class="tags"><span class="tag soon">Próximamente</span></div></div><div><div class="card-title">Racing</div><div class="card-desc">Esquivá el tráfico a toda velocidad.</div></div><div class="card-footer"><span>En desarrollo</span></div></div>
+    <div class="card soon"><div class="card-header"><div class="icon">⚔️</div><div class="tags"><span class="tag soon">Próximamente</span></div></div><div><div class="card-title">Dungeon</div><div class="card-desc">Explorá mazmorras y derrotá enemigos.</div></div><div class="card-footer"><span>En desarrollo</span></div></div>
+    <div class="card soon"><div class="card-header"><div class="icon">💣</div><div class="tags"><span class="tag soon">Próximamente</span></div></div><div><div class="card-title">Minesweeper</div><div class="card-desc">Encontrá las minas sin pisarlas.</div></div><div class="card-footer"><span>En desarrollo</span></div></div>
+    <div class="card soon"><div class="card-header"><div class="icon">🃏</div><div class="tags"><span class="tag soon">Próximamente</span></div></div><div><div class="card-title">Solitaire</div><div class="card-desc">El clásico de cartas. Organizá el mazo por palos.</div></div><div class="card-footer"><span>En desarrollo</span></div></div>
+    <div class="card soon"><div class="card-header"><div class="icon">🌊</div><div class="tags"><span class="tag soon">Próximamente</span></div></div><div><div class="card-title">Flappy Bird</div><div class="card-desc">Tap para volar. Esquivá los caños infinitamente.</div></div><div class="card-footer"><span>En desarrollo</span></div></div>
+    <div class="card soon"><div class="card-header"><div class="icon">🎰</div><div class="tags"><span class="tag soon">Próximamente</span></div></div><div><div class="card-title">Simon Says</div><div class="card-desc">Repetí la secuencia de colores. Hasta dónde llegás.</div></div><div class="card-footer"><span>En desarrollo</span></div></div>
   </div>
   <footer><span>◈ ARCADE</span><span>Colección personal de juegos</span></footer>
 </div>
