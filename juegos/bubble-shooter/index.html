@@ -277,13 +277,25 @@ function draw(){
     const pos=getCellPos(r,c);
     drawBubble(ctx,pos.x,pos.y,CELL/2-1,grid[r][c]);
   }
-  // aim line
+  // dotted trajectory with wall bounces
   if(!bullet.moving){
-    ctx.save(); ctx.strokeStyle='rgba(255,255,255,0.15)'; ctx.lineWidth=1; ctx.setLineDash([4,8]);
-    const len=200;
-    ctx.beginPath(); ctx.moveTo(bullet.x,bullet.y);
-    ctx.lineTo(bullet.x+Math.cos(aimAngle)*len,bullet.y+Math.sin(aimAngle)*len);
-    ctx.stroke(); ctx.setLineDash([]); ctx.restore();
+    ctx.save();
+    let tx=bullet.x, ty=bullet.y;
+    let tdx=Math.cos(aimAngle), tdy=Math.sin(aimAngle);
+    const dotR=3, dotGap=18, totalDots=18;
+    for(let i=1;i<=totalDots;i++){
+      tx+=tdx*dotGap; ty+=tdy*dotGap;
+      if(tx-bullet.r<0){ tx=bullet.r+(bullet.r-(tx-bullet.r)); tdx=Math.abs(tdx); }
+      if(tx+bullet.r>W){ tx=(W-bullet.r)-(tx+bullet.r-W); tdx=-Math.abs(tdx); }
+      if(ty<0) break;
+      const alpha=1-(i/totalDots)*0.75;
+      const size=dotR*(1-i/totalDots*0.5);
+      ctx.globalAlpha=alpha;
+      ctx.fillStyle='rgba(255,255,255,0.9)';
+      ctx.shadowColor='rgba(255,255,255,0.5)'; ctx.shadowBlur=4;
+      ctx.beginPath(); ctx.arc(tx,ty,size,0,Math.PI*2); ctx.fill();
+    }
+    ctx.restore();
   }
   // bullet
   drawBubble(ctx,bullet.x,bullet.y,bullet.r,bullet.color);
@@ -303,8 +315,10 @@ function shoot(){
 
 function updateAim(e){
   const rect=document.getElementById('gameCanvas').getBoundingClientRect();
-  const cx=e.clientX||e.touches[0].clientX;
-  const cy=e.clientY||e.touches[0].clientY;
+  let cx,cy;
+  if(e.touches&&e.touches.length>0){ cx=e.touches[0].clientX; cy=e.touches[0].clientY; }
+  else if(e.changedTouches&&e.changedTouches.length>0){ cx=e.changedTouches[0].clientX; cy=e.changedTouches[0].clientY; }
+  else{ cx=e.clientX; cy=e.clientY; }
   const dx=cx-rect.left-bullet.x, dy=cy-rect.top-bullet.y;
   aimAngle=Math.atan2(dy,dx);
   if(aimAngle>-0.1) aimAngle=-0.1;
@@ -322,7 +336,14 @@ const canvas=document.getElementById('gameCanvas');
 canvas.addEventListener('mousemove',e=>{if(gameRunning&&!bullet.moving) updateAim(e);});
 canvas.addEventListener('touchmove',e=>{e.preventDefault();if(gameRunning&&!bullet.moving) updateAim(e);},{passive:false});
 canvas.addEventListener('click',e=>{updateAim(e);shoot();});
-canvas.addEventListener('touchend',e=>{e.preventDefault();updateAim(e);shoot();},{passive:false});
+canvas.addEventListener('touchmove',e=>{
+  e.preventDefault();
+  if(gameRunning&&!bullet.moving) updateAim(e);
+},{passive:false});
+canvas.addEventListener('touchend',e=>{
+  e.preventDefault();
+  if(gameRunning&&!bullet.moving){ updateAim(e); shoot(); }
+},{passive:false});
 
 document.addEventListener('keydown',e=>{
   if(e.key==='ArrowLeft') aimAngle=Math.max(-Math.PI+0.1,aimAngle-0.08);
