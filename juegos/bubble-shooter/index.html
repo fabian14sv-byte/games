@@ -74,7 +74,10 @@ function resize(){
   const availH=window.innerHeight-hudH-nextH-20;
   W=maxW-2; H=Math.min(availH,Math.round(W*1.5));
   const canvas=document.getElementById('gameCanvas');
-  canvas.width=W; canvas.height=H;
+  const dpr=window.devicePixelRatio||1;
+  canvas.width=Math.round(W*dpr); canvas.height=Math.round(H*dpr);
+  canvas.style.width=W+'px'; canvas.style.height=H+'px';
+  ctx=canvas.getContext('2d'); ctx.scale(dpr,dpr);
   wrap.style.width=W+'px'; wrap.style.height=H+'px';
   CELL=Math.floor(W/10);
   COLS=Math.floor(W/CELL);
@@ -262,8 +265,6 @@ function drawBubble(ctx,x,y,r,color){
 }
 
 function draw(){
-  const canvas=document.getElementById('gameCanvas');
-  const ctx=canvas.getContext('2d');
   ctx.fillStyle='#06060e'; ctx.fillRect(0,0,W,H);
   // danger line
   const dangerY=ROWS_VISIBLE*CELL;
