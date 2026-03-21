@@ -78,7 +78,7 @@ function resize(){
   const dpr=window.devicePixelRatio||1;
   gameCanvas.width=Math.round(W*dpr); gameCanvas.height=Math.round(H*dpr);
   gameCanvas.style.width=W+'px'; gameCanvas.style.height=H+'px';
-  ctx=gameCanvas.getContext('2d'); ctx.scale(dpr,dpr);
+  ctx=gameCanvas.getContext('2d'); ctx.setTransform(1,0,0,1,0,0); ctx.scale(dpr,dpr);
   wrap.style.width=W+'px'; wrap.style.height=H+'px';
   CELL=Math.floor(W/10);
   COLS=Math.floor(W/CELL);
