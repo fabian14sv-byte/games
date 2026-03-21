@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>ZUMA</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<style>
+  :root{--bg:#06060e;--border:#1a1a35;--cyan:#00f5ff;--pink:#ff2d78;--gold:#ffc740;--text:#e8e8ff;--dim:#3a3a6a;}
+  *{margin:0;padding:0;box-sizing:border-box;}
+  html,body{width:100%;height:100%;overflow:hidden;background:var(--bg);}
+  body{font-family:'Share Tech Mono',monospace;color:var(--text);display:flex;flex-direction:column;align-items:center;user-select:none;-webkit-user-select:none;}
+  body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:999;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,0.025) 2px,rgba(0,0,0,0.025) 4px);}
+  .btn-back{position:fixed;top:14px;left:14px;z-index:500;display:inline-flex;align-items:center;gap:7px;font-family:'Orbitron',sans-serif;font-size:9px;letter-spacing:0.2em;color:var(--dim);text-decoration:none;text-transform:uppercase;padding:8px 14px;border-radius:8px;background:rgba(6,6,14,0.85);border:1px solid var(--border);backdrop-filter:blur(8px);}
+  .hud{width:100%;max-width:440px;display:flex;align-items:center;justify-content:space-between;padding:52px 16px 4px;flex-shrink:0;}
+  .hud-title{font-family:'Orbitron',sans-serif;font-weight:900;font-size:16px;letter-spacing:0.2em;background:linear-gradient(90deg,var(--gold),var(--cyan));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+  .stat{display:flex;flex-direction:column;align-items:center;}
+  .stat-label{font-size:7px;letter-spacing:0.25em;color:var(--dim);text-transform:uppercase;}
+  .stat-val{font-family:'Orbitron',sans-serif;font-size:13px;font-weight:700;color:var(--gold);}
+  .canvas-wrap{position:relative;flex-shrink:0;border:1px solid var(--border);border-radius:8px;overflow:hidden;box-shadow:0 0 30px rgba(255,199,64,0.06);cursor:crosshair;}
+  canvas{display:block;}
+  .overlay{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;background:rgba(6,6,14,0.92);backdrop-filter:blur(4px);z-index:10;}
+  .overlay.hidden{display:none;}
+  .overlay-title{font-family:'Orbitron',sans-serif;font-weight:900;font-size:clamp(22px,5vw,30px);letter-spacing:0.15em;text-align:center;}
+  .ot-s{color:var(--gold);filter:drop-shadow(0 0 20px var(--gold));}
+  .ot-w{color:var(--cyan);filter:drop-shadow(0 0 20px var(--cyan));}
+  .ot-l{color:var(--pink);filter:drop-shadow(0 0 20px var(--pink));}
+  .overlay-sub{font-size:11px;color:var(--dim);letter-spacing:0.12em;text-align:center;line-height:2;}
+  .btn-play{font-family:'Orbitron',sans-serif;font-size:10px;letter-spacing:0.25em;padding:11px 26px;border-radius:8px;border:1px solid var(--gold);background:rgba(255,199,64,0.1);color:var(--gold);cursor:pointer;transition:all 0.2s;text-transform:uppercase;-webkit-tap-highlight-color:transparent;}
+  .btn-play:active{background:rgba(255,199,64,0.2);}
+</style>
+</head>
+<body>
+<a class="btn-back" href="../../index.html"><span style="font-size:13px">←</span> Inicio</a>
+<div class="hud">
+  <div class="hud-title">ZUMA</div>
+  <div style="display:flex;gap:16px">
+    <div class="stat"><div class="stat-label">Score</div><div class="stat-val" id="scoreVal">0</div></div>
+    <div class="stat"><div class="stat-label">Nivel</div><div class="stat-val" id="levelVal">1</div></div>
+  </div>
+</div>
+<div class="canvas-wrap" id="canvasWrap">
+  <canvas id="gameCanvas"></canvas>
+  <div class="overlay" id="overlayStart">
+    <div class="overlay-title ot-s">ZUMA</div>
+    <div class="overlay-sub">Disparás bolitas desde el centro<br>Juntá 3+ del mismo color para eliminar<br>No dejes que lleguen al agujero</div>
+    <button class="btn-play" onclick="startGame()">▶ Jugar</button>
+  </div>
+  <div class="overlay hidden" id="overlayWin">
+    <div class="overlay-title ot-w">¡NIVEL LIMPIO!</div>
+    <div class="overlay-sub" id="winScore"></div>
+    <button class="btn-play" onclick="nextLevel()">▶ Siguiente</button>
+  </div>
+  <div class="overlay hidden" id="overlayLose">
+    <div class="overlay-title ot-l">GAME OVER</div>
+    <div class="overlay-sub" id="loseScore"></div>
+    <button class="btn-play" onclick="startGame()">↺ Reintentar</button>
+  </div>
+</div>
+
+<script>
+const COLORS=['#ff2d78','#00f5ff','#ffc740','#2efc98','#a855f7','#ff8c00'];
+let W,H,CX,CY,R_CANNON;
+let chain,bullet,score,level,gameRunning,animId,aimAngle=0,particles=[];
+const BALL_R=13;
+const SPEED_BASE=0.8;
+
+function resize(){
+  const wrap=document.getElementById('canvasWrap');
+  const hudH=document.querySelector('.hud').offsetHeight;
+  const maxW=Math.min(window.innerWidth,440);
+  const availH=window.innerHeight-hudH-16;
+  W=maxW-2; H=Math.min(availH,W);
+  const canvas=document.getElementById('gameCanvas');
+  canvas.width=W; canvas.height=H;
+  wrap.style.width=W+'px'; wrap.style.height=H+'px';
+  CX=W/2; CY=H/2; R_CANNON=Math.min(W,H)*0.07;
+}
+
+// Path: spiral from outside inward
+function buildPath(){
+  const pts=[];
+  const turns=2+level*0.3;
+  const steps=Math.round(300+level*30);
+  for(let i=0;i<steps;i++){
+    const t=i/steps;
+    const angle=t*Math.PI*2*turns;
+    const maxR=Math.min(W,H)*0.44;
+    const r=maxR*(1-t*0.85);
+    pts.push({x:CX+Math.cos(angle)*r, y:CY+Math.sin(angle)*r});
+  }
+  return pts;
+}
+
+function rndColor(){
+  const n=Math.min(3+Math.floor(level/2),COLORS.length);
+  return COLORS[Math.floor(Math.random()*n)];
+}
+
+function startGame(){
+  resize(); score=0; level=1; gameRunning=true; particles=[];
+  initLevel(); updateHUD(); hideOverlays();
+  if(animId) cancelAnimationFrame(animId);
+  loop();
+}
+
+function nextLevel(){
+  level++; gameRunning=true; particles=[];
+  initLevel(); updateHUD(); hideOverlays();
+}
+
+function initLevel(){
+  const path=buildPath();
+  const count=Math.min(30+level*8,80);
+  chain={
+    path, head:0, // index of leading ball
+    balls:[], speed:SPEED_BASE+level*0.15,
+    done:false
+  };
+  for(let i=0;i<count;i++){
+    chain.balls.push({color:rndColor(), t:-i*0.012, popping:false});
+  }
+  spawnBullet();
+}
+
+function spawnBullet(){
+  bullet={x:CX,y:CY,color:rndColor(),moving:false,vx:0,vy:0,r:BALL_R};
+}
+
+function getPosOnPath(t,path){
+  if(!path.length) return{x:CX,y:CY};
+  const idx=Math.max(0,Math.min(path.length-1,Math.floor(t*path.length)));
+  return path[idx];
+}
+
+function loop(){
+  if(!gameRunning) return;
+  update(); draw();
+  animId=requestAnimationFrame(loop);
+}
+
+function update(){
+  // move chain
+  chain.balls.forEach(b=>{ b.t+=chain.speed*0.001; });
+  // remove balls that fell off end
+  const fallen=chain.balls.filter(b=>b.t>=1);
+  if(fallen.length>0){
+    gameRunning=false; cancelAnimationFrame(animId);
+    document.getElementById('loseScore').textContent=`Score: ${score}`;
+    showOverlay('overlayLose'); return;
+  }
+  // move bullet
+  if(bullet.moving){
+    bullet.x+=bullet.vx; bullet.y+=bullet.vy;
+    // off screen
+    if(bullet.x<-50||bullet.x>W+50||bullet.y<-50||bullet.y>H+50){spawnBullet(); return;}
+    // collision with chain
+    for(let i=0;i<chain.balls.length;i++){
+      const b=chain.balls[i];
+      const pos=getPosOnPath(b.t,chain.path);
+      if(Math.hypot(bullet.x-pos.x,bullet.y-pos.y)<BALL_R*1.8){
+        // insert near this ball
+        const newBall={color:bullet.color, t:b.t-0.005};
+        chain.balls.splice(i,0,newBall);
+        checkMatches(i);
+        spawnBullet();
+        return;
+      }
+    }
+  }
+  // particles
+  particles=particles.filter(p=>{p.x+=p.vx;p.y+=p.vy;p.vy+=0.05;p.life-=0.035;return p.life>0;});
+  // win check
+  if(chain.balls.length===0){
+    gameRunning=false; cancelAnimationFrame(animId);
+    document.getElementById('winScore').textContent=`Score: ${score}`;
+    showOverlay('overlayWin');
+  }
+}
+
+function checkMatches(idx){
+  const color=chain.balls[idx].color;
+  let start=idx,end=idx;
+  while(start>0&&chain.balls[start-1].color===color) start--;
+  while(end<chain.balls.length-1&&chain.balls[end+1].color===color) end++;
+  const count=end-start+1;
+  if(count>=3){
+    for(let i=start;i<=end;i++){
+      const pos=getPosOnPath(chain.balls[i].t,chain.path);
+      spawnParticles(pos.x,pos.y,color);
+    }
+    chain.balls.splice(start,count);
+    score+=count*10*level; updateHUD();
+    // cascade
+    if(start<chain.balls.length&&start>0&&chain.balls[start-1].color===chain.balls[start].color) checkMatches(start);
+  }
+}
+
+function spawnParticles(x,y,color){
+  for(let i=0;i<10;i++){
+    const a=Math.random()*Math.PI*2,s=Math.random()*3+1;
+    particles.push({x,y,vx:Math.cos(a)*s,vy:Math.sin(a)*s,life:1,color,r:Math.random()*3+2});
+  }
+}
+
+function draw(){
+  const canvas=document.getElementById('gameCanvas');
+  const ctx=canvas.getContext('2d');
+  ctx.fillStyle='#06060e'; ctx.fillRect(0,0,W,H);
+
+  // draw path faintly
+  ctx.save(); ctx.strokeStyle='rgba(255,255,255,0.04)'; ctx.lineWidth=BALL_R*2.2;
+  ctx.lineCap='round'; ctx.lineJoin='round'; ctx.beginPath();
+  chain.path.forEach((p,i)=>i===0?ctx.moveTo(p.x,p.y):ctx.lineTo(p.x,p.y));
+  ctx.stroke(); ctx.restore();
+
+  // draw hole
+  ctx.save(); ctx.shadowColor='#ff2d78'; ctx.shadowBlur=20;
+  ctx.strokeStyle='#ff2d78'; ctx.lineWidth=2;
+  ctx.beginPath(); ctx.arc(chain.path[chain.path.length-1].x,chain.path[chain.path.length-1].y,12,0,Math.PI*2); ctx.stroke();
+  ctx.restore();
+
+  // draw chain
+  chain.balls.forEach(b=>{
+    const pos=getPosOnPath(b.t,chain.path);
+    drawBall(ctx,pos.x,pos.y,b.color);
+  });
+
+  // aim line
+  if(!bullet.moving){
+    ctx.save(); ctx.strokeStyle='rgba(255,255,255,0.12)'; ctx.lineWidth=1; ctx.setLineDash([4,8]);
+    ctx.beginPath(); ctx.moveTo(CX,CY); ctx.lineTo(CX+Math.cos(aimAngle)*120,CY+Math.sin(aimAngle)*120);
+    ctx.stroke(); ctx.setLineDash([]); ctx.restore();
+  }
+
+  // cannon
+  ctx.save(); ctx.fillStyle='#1a1a2e'; ctx.strokeStyle='rgba(255,199,64,0.5)'; ctx.lineWidth=2;
+  ctx.shadowColor='#ffc740'; ctx.shadowBlur=12;
+  ctx.beginPath(); ctx.arc(CX,CY,R_CANNON,0,Math.PI*2); ctx.fill(); ctx.stroke();
+  // barrel
+  const blen=R_CANNON+8;
+  ctx.strokeStyle='#ffc740'; ctx.lineWidth=6; ctx.lineCap='round';
+  ctx.beginPath(); ctx.moveTo(CX,CY); ctx.lineTo(CX+Math.cos(aimAngle)*blen,CY+Math.sin(aimAngle)*blen); ctx.stroke();
+  // bullet preview
+  drawBall(ctx,CX,CY,bullet.color);
+  ctx.restore();
+
+  // moving bullet
+  if(bullet.moving) drawBall(ctx,bullet.x,bullet.y,bullet.color);
+
+  // particles
+  particles.forEach(p=>{
+    ctx.save(); ctx.globalAlpha=p.life; ctx.fillStyle=p.color; ctx.shadowColor=p.color; ctx.shadowBlur=8;
+    ctx.beginPath(); ctx.arc(p.x,p.y,p.r,0,Math.PI*2); ctx.fill(); ctx.restore();
+  });
+}
+
+function drawBall(ctx,x,y,color){
+  ctx.save();
+  ctx.shadowColor=color; ctx.shadowBlur=12;
+  const g=ctx.createRadialGradient(x-BALL_R*0.3,y-BALL_R*0.3,BALL_R*0.1,x,y,BALL_R);
+  g.addColorStop(0,'rgba(255,255,255,0.6)'); g.addColorStop(0.4,color); g.addColorStop(1,color+'99');
+  ctx.fillStyle=g; ctx.beginPath(); ctx.arc(x,y,BALL_R,0,Math.PI*2); ctx.fill();
+  ctx.restore();
+}
+
+function shoot(){
+  if(!gameRunning||bullet.moving) return;
+  const spd=14;
+  bullet.vx=Math.cos(aimAngle)*spd; bullet.vy=Math.sin(aimAngle)*spd;
+  bullet.moving=true;
+}
+
+function updateAim(clientX,clientY){
+  const rect=document.getElementById('gameCanvas').getBoundingClientRect();
+  aimAngle=Math.atan2(clientY-rect.top-CY,clientX-rect.left-CX);
+}
+
+function updateHUD(){
+  document.getElementById('scoreVal').textContent=score;
+  document.getElementById('levelVal').textContent=level;
+}
+function showOverlay(id){['overlayStart','overlayWin','overlayLose'].forEach(o=>document.getElementById(o).classList.toggle('hidden',o!==id));}
+function hideOverlays(){['overlayStart','overlayWin','overlayLose'].forEach(o=>document.getElementById(o).classList.add('hidden'));}
+
+const canvas=document.getElementById('gameCanvas');
+canvas.addEventListener('mousemove',e=>{if(gameRunning) updateAim(e.clientX,e.clientY);});
+canvas.addEventListener('touchmove',e=>{e.preventDefault();if(gameRunning) updateAim(e.touches[0].clientX,e.touches[0].clientY);},{passive:false});
+canvas.addEventListener('click',e=>{updateAim(e.clientX,e.clientY);shoot();});
+canvas.addEventListener('touchend',e=>{e.preventDefault();updateAim(e.changedTouches[0].clientX,e.changedTouches[0].clientY);shoot();},{passive:false});
+document.addEventListener('keydown',e=>{if(e.key===' '){e.preventDefault();shoot();}});
+window.addEventListener('resize',resize);
+resize();
+</script>
+</body>
+</html>
