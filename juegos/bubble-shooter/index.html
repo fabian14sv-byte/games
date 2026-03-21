@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>BUBBLE SHOOTER</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<style>
+  :root{--bg:#06060e;--border:#1a1a35;--cyan:#00f5ff;--pink:#ff2d78;--gold:#ffc740;--text:#e8e8ff;--dim:#3a3a6a;}
+  *{margin:0;padding:0;box-sizing:border-box;}
+  html,body{width:100%;height:100%;overflow:hidden;background:var(--bg);}
+  body{font-family:'Share Tech Mono',monospace;color:var(--text);display:flex;flex-direction:column;align-items:center;user-select:none;-webkit-user-select:none;}
+  body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:999;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,0.025) 2px,rgba(0,0,0,0.025) 4px);}
+  .btn-back{position:fixed;top:14px;left:14px;z-index:500;display:inline-flex;align-items:center;gap:7px;font-family:'Orbitron',sans-serif;font-size:9px;letter-spacing:0.2em;color:var(--dim);text-decoration:none;text-transform:uppercase;padding:8px 14px;border-radius:8px;background:rgba(6,6,14,0.85);border:1px solid var(--border);backdrop-filter:blur(8px);}
+  .hud{width:100%;max-width:380px;display:flex;align-items:center;justify-content:space-between;padding:52px 16px 4px;flex-shrink:0;}
+  .hud-title{font-family:'Orbitron',sans-serif;font-weight:900;font-size:14px;letter-spacing:0.15em;background:linear-gradient(90deg,var(--pink),var(--gold));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+  .stat{display:flex;flex-direction:column;align-items:center;}
+  .stat-label{font-size:7px;letter-spacing:0.25em;color:var(--dim);text-transform:uppercase;}
+  .stat-val{font-family:'Orbitron',sans-serif;font-size:13px;font-weight:700;color:var(--cyan);}
+  .canvas-wrap{position:relative;flex-shrink:0;border:1px solid var(--border);border-radius:8px;overflow:hidden;box-shadow:0 0 30px rgba(255,45,120,0.06);}
+  canvas{display:block;cursor:crosshair;}
+  .overlay{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;background:rgba(6,6,14,0.92);backdrop-filter:blur(4px);z-index:10;}
+  .overlay.hidden{display:none;}
+  .overlay-title{font-family:'Orbitron',sans-serif;font-weight:900;font-size:clamp(20px,5vw,28px);letter-spacing:0.15em;text-align:center;}
+  .ot-s{color:var(--pink);filter:drop-shadow(0 0 20px var(--pink));}
+  .ot-w{color:var(--cyan);filter:drop-shadow(0 0 20px var(--cyan));}
+  .ot-l{color:var(--pink);filter:drop-shadow(0 0 20px var(--pink));}
+  .overlay-sub{font-size:11px;color:var(--dim);letter-spacing:0.12em;text-align:center;line-height:2;}
+  .btn-play{font-family:'Orbitron',sans-serif;font-size:10px;letter-spacing:0.25em;padding:11px 26px;border-radius:8px;border:1px solid var(--pink);background:rgba(255,45,120,0.1);color:var(--pink);cursor:pointer;transition:all 0.2s;text-transform:uppercase;-webkit-tap-highlight-color:transparent;}
+  .btn-play:active{background:rgba(255,45,120,0.2);}
+  .next-bubble{width:100%;max-width:380px;display:flex;align-items:center;justify-content:center;gap:12px;padding:4px 0;font-size:10px;color:var(--dim);letter-spacing:0.15em;flex-shrink:0;}
+</style>
+</head>
+<body>
+<a class="btn-back" href="../../index.html"><span style="font-size:13px">←</span> Inicio</a>
+<div class="hud">
+  <div class="hud-title">BUBBLE<br>SHOOTER</div>
+  <div style="display:flex;gap:16px">
+    <div class="stat"><div class="stat-label">Score</div><div class="stat-val" id="scoreVal">0</div></div>
+    <div class="stat"><div class="stat-label">Nivel</div><div class="stat-val" id="levelVal">1</div></div>
+  </div>
+</div>
+<div class="canvas-wrap" id="canvasWrap">
+  <canvas id="gameCanvas"></canvas>
+  <div class="overlay" id="overlayStart">
+    <div class="overlay-title ot-s">BUBBLE<br>SHOOTER</div>
+    <div class="overlay-sub">Apuntá y dispará · Juntá 3+<br>del mismo color para explotar</div>
+    <button class="btn-play" onclick="startGame()">▶ Jugar</button>
+  </div>
+  <div class="overlay hidden" id="overlayWin">
+    <div class="overlay-title ot-w">¡LIMPIO!</div>
+    <div class="overlay-sub" id="winScore"></div>
+    <button class="btn-play" onclick="nextLevel()">▶ Nivel siguiente</button>
+  </div>
+  <div class="overlay hidden" id="overlayLose">
+    <div class="overlay-title ot-l">GAME OVER</div>
+    <div class="overlay-sub" id="loseScore"></div>
+    <button class="btn-play" onclick="startGame()">↺ Reintentar</button>
+  </div>
+</div>
+<div class="next-bubble">SIGUIENTE: <canvas id="nextCanvas" width="28" height="28"></canvas></div>
+
+<script>
+const COLORS=['#ff2d78','#00f5ff','#ffc740','#2efc98','#a855f7','#ff8c00'];
+let W,H,CELL,COLS,ROWS_VISIBLE;
+let grid,bullet,nextColor,score,level,gameRunning,animId,aimAngle;
+let particles=[];
+
+function resize(){
+  const wrap=document.getElementById('canvasWrap');
+  const hudH=document.querySelector('.hud').offsetHeight;
+  const nextH=document.querySelector('.next-bubble').offsetHeight;
+  const maxW=Math.min(window.innerWidth,380);
+  const availH=window.innerHeight-hudH-nextH-20;
+  W=maxW-2; H=Math.min(availH,Math.round(W*1.5));
+  const canvas=document.getElementById('gameCanvas');
+  canvas.width=W; canvas.height=H;
+  wrap.style.width=W+'px'; wrap.style.height=H+'px';
+  CELL=Math.floor(W/10);
+  COLS=Math.floor(W/CELL);
+  ROWS_VISIBLE=Math.floor((H*0.75)/CELL);
+}
+
+function rndColor(n){
+  const pool=COLORS.slice(0,Math.min(n||4,COLORS.length));
+  return pool[Math.floor(Math.random()*pool.length)];
+}
+
+function initGrid(rows){
+  grid=[];
+  const colors=Math.min(3+level,COLORS.length);
+  for(let r=0;r<rows;r++){
+    const row=[];
+    for(let c=0;c<COLS;c++) row.push(Math.random()<0.85?rndColor(colors):null);
+    grid.push(row);
+  }
+}
+
+function startGame(){
+  resize(); score=0; level=1; gameRunning=true; aimAngle=-Math.PI/2;
+  initGrid(Math.min(5+level,10));
+  nextColor=rndColor(3+level);
+  spawnBullet(); updateHUD(); hideOverlays(); drawNext();
+  if(animId) cancelAnimationFrame(animId);
+  loop();
+}
+
+function nextLevel(){
+  level++; gameRunning=true; aimAngle=-Math.PI/2;
+  initGrid(Math.min(5+level,10));
+  spawnBullet(); updateHUD(); hideOverlays(); drawNext();
+}
+
+function spawnBullet(){
+  const color=nextColor;
+  nextColor=rndColor(Math.min(3+level,COLORS.length));
+  drawNext();
+  bullet={x:W/2,y:H-CELL,vx:0,vy:0,r:CELL/2-1,color,moving:false};
+}
+
+function drawNext(){
+  const canvas=document.getElementById('nextCanvas');
+  const ctx=canvas.getContext('2d');
+  ctx.clearRect(0,0,28,28);
+  drawBubble(ctx,14,14,11,nextColor);
+}
+
+function getCellPos(r,c){
+  const offset=(r%2===0)?0:CELL/2;
+  return{x:c*CELL+CELL/2+offset,y:r*CELL+CELL/2};
+}
+
+function loop(){
+  if(!gameRunning) return;
+  update(); draw();
+  animId=requestAnimationFrame(loop);
+}
+
+function update(){
+  if(!bullet.moving) return;
+  bullet.x+=bullet.vx; bullet.y+=bullet.vy;
+  // wall bounce
+  if(bullet.x-bullet.r<0){bullet.x=bullet.r;bullet.vx=Math.abs(bullet.vx);}
+  if(bullet.x+bullet.r>W){bullet.x=W-bullet.r;bullet.vx=-Math.abs(bullet.vx);}
+  // top wall
+  if(bullet.y-bullet.r<0){landBullet(); return;}
+  // check collision with grid
+  for(let r=0;r<grid.length;r++){
+    for(let c=0;c<grid[r].length;c++){
+      if(!grid[r][c]) continue;
+      const pos=getCellPos(r,c);
+      if(Math.hypot(bullet.x-pos.x,bullet.y-pos.y)<CELL-2){landBullet();return;}
+    }
+  }
+  // particles
+  particles=particles.filter(p=>{p.x+=p.vx;p.y+=p.vy;p.vy+=0.06;p.life-=0.04;return p.life>0;});
+}
+
+function landBullet(){
+  // find nearest empty cell
+  let best=null,bestDist=Infinity;
+  for(let r=0;r<grid.length+2;r++){
+    if(!grid[r]) grid[r]=Array(COLS).fill(null);
+    for(let c=0;c<COLS;c++){
+      if(grid[r][c]) continue;
+      const pos=getCellPos(r,c);
+      const d=Math.hypot(bullet.x-pos.x,bullet.y-pos.y);
+      if(d<bestDist){bestDist=d;best={r,c};}
+    }
+  }
+  if(best){
+    grid[best.r][best.c]=bullet.color;
+    popMatches(best.r,best.c);
+    removeFloating();
+  }
+  // check lose
+  if(grid.length>ROWS_VISIBLE+4){
+    gameRunning=false; cancelAnimationFrame(animId);
+    document.getElementById('loseScore').textContent=`Score: ${score}`;
+    showOverlay('overlayLose'); return;
+  }
+  // check win
+  if(grid.every(row=>row.every(c=>!c))){
+    gameRunning=false; cancelAnimationFrame(animId);
+    document.getElementById('winScore').textContent=`Score: ${score}`;
+    showOverlay('overlayWin'); return;
+  }
+  spawnBullet();
+}
+
+function getNeighbors(r,c){
+  const even=r%2===0;
+  return[[-1,even?-1:0],[-1,even?0:1],[0,-1],[0,1],[1,even?-1:0],[1,even?0:1]]
+    .map(([dr,dc])=>({r:r+dr,c:c+dc}))
+    .filter(({r,c})=>r>=0&&r<grid.length&&c>=0&&c<COLS);
+}
+
+function floodFill(r,c,color,visited=new Set()){
+  const key=`${r},${c}`;
+  if(visited.has(key)) return[];
+  if(!grid[r]||grid[r][c]!==color) return[];
+  visited.add(key);
+  const result=[{r,c}];
+  getNeighbors(r,c).forEach(n=>result.push(...floodFill(n.r,n.c,color,visited)));
+  return result;
+}
+
+function popMatches(r,c){
+  const color=grid[r][c];
+  const group=floodFill(r,c,color);
+  if(group.length>=3){
+    group.forEach(({r,c})=>{
+      const pos=getCellPos(r,c);
+      spawnParticles(pos.x,pos.y,color);
+      grid[r][c]=null;
+    });
+    score+=group.length*10*(level); updateHUD();
+  }
+}
+
+function removeFloating(){
+  // mark all connected to top row
+  const connected=new Set();
+  function markConnected(r,c){
+    const key=`${r},${c}`;
+    if(connected.has(key)||!grid[r]||!grid[r][c]) return;
+    connected.add(key);
+    getNeighbors(r,c).forEach(n=>markConnected(n.r,n.c));
+  }
+  for(let c=0;c<COLS;c++) if(grid[0]&&grid[0][c]) markConnected(0,c);
+  // remove floating
+  for(let r=0;r<grid.length;r++) for(let c=0;c<COLS;c++){
+    if(grid[r]&&grid[r][c]&&!connected.has(`${r},${c}`)){
+      const pos=getCellPos(r,c); spawnParticles(pos.x,pos.y,grid[r][c]);
+      score+=5; grid[r][c]=null;
+    }
+  }
+  updateHUD();
+}
+
+function spawnParticles(x,y,color){
+  for(let i=0;i<8;i++){
+    const a=Math.random()*Math.PI*2,s=Math.random()*3+1;
+    particles.push({x,y,vx:Math.cos(a)*s,vy:Math.sin(a)*s,life:1,color,r:Math.random()*3+1});
+  }
+}
+
+function drawBubble(ctx,x,y,r,color){
+  ctx.save();
+  ctx.shadowColor=color; ctx.shadowBlur=10;
+  const g=ctx.createRadialGradient(x-r*0.3,y-r*0.3,r*0.1,x,y,r);
+  g.addColorStop(0,'rgba(255,255,255,0.5)'); g.addColorStop(0.4,color); g.addColorStop(1,color+'aa');
+  ctx.fillStyle=g; ctx.beginPath(); ctx.arc(x,y,r,0,Math.PI*2); ctx.fill();
+  ctx.restore();
+}
+
+function draw(){
+  const canvas=document.getElementById('gameCanvas');
+  const ctx=canvas.getContext('2d');
+  ctx.fillStyle='#06060e'; ctx.fillRect(0,0,W,H);
+  // danger line
+  const dangerY=ROWS_VISIBLE*CELL;
+  ctx.strokeStyle='rgba(255,45,120,0.2)'; ctx.lineWidth=1; ctx.setLineDash([4,6]);
+  ctx.beginPath(); ctx.moveTo(0,dangerY); ctx.lineTo(W,dangerY); ctx.stroke();
+  ctx.setLineDash([]);
+  // grid
+  for(let r=0;r<grid.length;r++) for(let c=0;c<grid[r].length;c++){
+    if(!grid[r][c]) continue;
+    const pos=getCellPos(r,c);
+    drawBubble(ctx,pos.x,pos.y,CELL/2-1,grid[r][c]);
+  }
+  // aim line
+  if(!bullet.moving){
+    ctx.save(); ctx.strokeStyle='rgba(255,255,255,0.15)'; ctx.lineWidth=1; ctx.setLineDash([4,8]);
+    const len=200;
+    ctx.beginPath(); ctx.moveTo(bullet.x,bullet.y);
+    ctx.lineTo(bullet.x+Math.cos(aimAngle)*len,bullet.y+Math.sin(aimAngle)*len);
+    ctx.stroke(); ctx.setLineDash([]); ctx.restore();
+  }
+  // bullet
+  drawBubble(ctx,bullet.x,bullet.y,bullet.r,bullet.color);
+  // particles
+  particles.forEach(p=>{
+    ctx.save(); ctx.globalAlpha=p.life; ctx.fillStyle=p.color; ctx.shadowColor=p.color; ctx.shadowBlur=6;
+    ctx.beginPath(); ctx.arc(p.x,p.y,p.r,0,Math.PI*2); ctx.fill(); ctx.restore();
+  });
+}
+
+function shoot(){
+  if(!gameRunning||bullet.moving) return;
+  const spd=12;
+  bullet.vx=Math.cos(aimAngle)*spd; bullet.vy=Math.sin(aimAngle)*spd;
+  bullet.moving=true;
+}
+
+function updateAim(e){
+  const rect=document.getElementById('gameCanvas').getBoundingClientRect();
+  const cx=e.clientX||e.touches[0].clientX;
+  const cy=e.clientY||e.touches[0].clientY;
+  const dx=cx-rect.left-bullet.x, dy=cy-rect.top-bullet.y;
+  aimAngle=Math.atan2(dy,dx);
+  if(aimAngle>-0.1) aimAngle=-0.1;
+  if(aimAngle<-Math.PI+0.1) aimAngle=-Math.PI+0.1;
+}
+
+function updateHUD(){
+  document.getElementById('scoreVal').textContent=score;
+  document.getElementById('levelVal').textContent=level;
+}
+function showOverlay(id){['overlayStart','overlayWin','overlayLose'].forEach(o=>document.getElementById(o).classList.toggle('hidden',o!==id));}
+function hideOverlays(){['overlayStart','overlayWin','overlayLose'].forEach(o=>document.getElementById(o).classList.add('hidden'));}
+
+const canvas=document.getElementById('gameCanvas');
+canvas.addEventListener('mousemove',e=>{if(gameRunning&&!bullet.moving) updateAim(e);});
+canvas.addEventListener('touchmove',e=>{e.preventDefault();if(gameRunning&&!bullet.moving) updateAim(e);},{passive:false});
+canvas.addEventListener('click',e=>{updateAim(e);shoot();});
+canvas.addEventListener('touchend',e=>{e.preventDefault();updateAim(e);shoot();},{passive:false});
+
+document.addEventListener('keydown',e=>{
+  if(e.key==='ArrowLeft') aimAngle=Math.max(-Math.PI+0.1,aimAngle-0.08);
+  if(e.key==='ArrowRight') aimAngle=Math.min(-0.1,aimAngle+0.08);
+  if(e.key===' '){e.preventDefault();shoot();}
+});
+
+window.addEventListener('resize',()=>{if(gameRunning){resize();}});
+resize();
+</script>
+</body>
+</html>
