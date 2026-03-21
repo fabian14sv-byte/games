@@ -150,9 +150,9 @@ document.addEventListener('DOMContentLoaded',()=>{
   // Prevent card navigation when in edit mode
   grid.addEventListener('click',e=>{
     if(!editMode) return;
-    const card=e.target.closest('.card[data-id]');
-    if(card) e.preventDefault();
-  });
+    e.preventDefault();
+    e.stopPropagation();
+  },true);
 
   // Desktop: drag from handle
   grid.addEventListener('mousedown',e=>{
