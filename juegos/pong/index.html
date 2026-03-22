@@ -129,18 +129,18 @@
         <div class="cfg-row">
           <div class="cfg-label" style="margin-bottom:14px">Color de pelota</div>
           <div style="display:grid;grid-template-columns:repeat(4,54px);gap:8px;">
-            <div class="ball-swatch active" data-color="#ff0044" onclick="setBallColor('#ff0044',this)"><canvas width="44" height="44" style="width:44px;height:44px;border-radius:50%;display:block"></canvas></div>
-            <div class="ball-swatch " data-color="#ff6600" onclick="setBallColor('#ff6600',this)"><canvas width="44" height="44" style="width:44px;height:44px;border-radius:50%;display:block"></canvas></div>
-            <div class="ball-swatch " data-color="#ffee00" onclick="setBallColor('#ffee00',this)"><canvas width="44" height="44" style="width:44px;height:44px;border-radius:50%;display:block"></canvas></div>
-            <div class="ball-swatch " data-color="#00ff44" onclick="setBallColor('#00ff44',this)"><canvas width="44" height="44" style="width:44px;height:44px;border-radius:50%;display:block"></canvas></div>
-            <div class="ball-swatch " data-color="#00aaff" onclick="setBallColor('#00aaff',this)"><canvas width="44" height="44" style="width:44px;height:44px;border-radius:50%;display:block"></canvas></div>
-            <div class="ball-swatch " data-color="#aa00ff" onclick="setBallColor('#aa00ff',this)"><canvas width="44" height="44" style="width:44px;height:44px;border-radius:50%;display:block"></canvas></div>
-            <div class="ball-swatch " data-color="#ff00aa" onclick="setBallColor('#ff00aa',this)"><canvas width="44" height="44" style="width:44px;height:44px;border-radius:50%;display:block"></canvas></div>
-            <div class="ball-swatch " data-color="#00ffff" onclick="setBallColor('#00ffff',this)"><canvas width="44" height="44" style="width:44px;height:44px;border-radius:50%;display:block"></canvas></div>
-            <div class="ball-swatch " data-color="#ffffff" onclick="setBallColor('#ffffff',this)"><canvas width="44" height="44" style="width:44px;height:44px;border-radius:50%;display:block"></canvas></div>
-            <div class="ball-swatch " data-color="#ff88cc" onclick="setBallColor('#ff88cc',this)"><canvas width="44" height="44" style="width:44px;height:44px;border-radius:50%;display:block"></canvas></div>
-            <div class="ball-swatch " data-color="#44ffcc" onclick="setBallColor('#44ffcc',this)"><canvas width="44" height="44" style="width:44px;height:44px;border-radius:50%;display:block"></canvas></div>
-            <div class="ball-swatch " data-color="#aaffaa" onclick="setBallColor('#aaffaa',this)"><canvas width="44" height="44" style="width:44px;height:44px;border-radius:50%;display:block"></canvas></div>
+            <div class="ball-swatch " data-color="#ff5577" onclick="setBallColor('#ff5577',this)"><canvas width="44" height="44" style="width:44px;height:44px;border-radius:50%;display:block"></canvas></div>
+            <div class="ball-swatch " data-color="#ff8833" onclick="setBallColor('#ff8833',this)"><canvas width="44" height="44" style="width:44px;height:44px;border-radius:50%;display:block"></canvas></div>
+            <div class="ball-swatch " data-color="#ffcc22" onclick="setBallColor('#ffcc22',this)"><canvas width="44" height="44" style="width:44px;height:44px;border-radius:50%;display:block"></canvas></div>
+            <div class="ball-swatch " data-color="#99dd33" onclick="setBallColor('#99dd33',this)"><canvas width="44" height="44" style="width:44px;height:44px;border-radius:50%;display:block"></canvas></div>
+            <div class="ball-swatch active" data-color="#22bb88" onclick="setBallColor('#22bb88',this)"><canvas width="44" height="44" style="width:44px;height:44px;border-radius:50%;display:block"></canvas></div>
+            <div class="ball-swatch " data-color="#4499ee" onclick="setBallColor('#4499ee',this)"><canvas width="44" height="44" style="width:44px;height:44px;border-radius:50%;display:block"></canvas></div>
+            <div class="ball-swatch " data-color="#8844dd" onclick="setBallColor('#8844dd',this)"><canvas width="44" height="44" style="width:44px;height:44px;border-radius:50%;display:block"></canvas></div>
+            <div class="ball-swatch " data-color="#ff5544" onclick="setBallColor('#ff5544',this)"><canvas width="44" height="44" style="width:44px;height:44px;border-radius:50%;display:block"></canvas></div>
+            <div class="ball-swatch " data-color="#ee9911" onclick="setBallColor('#ee9911',this)"><canvas width="44" height="44" style="width:44px;height:44px;border-radius:50%;display:block"></canvas></div>
+            <div class="ball-swatch " data-color="#22bbaa" onclick="setBallColor('#22bbaa',this)"><canvas width="44" height="44" style="width:44px;height:44px;border-radius:50%;display:block"></canvas></div>
+            <div class="ball-swatch " data-color="#5577ee" onclick="setBallColor('#5577ee',this)"><canvas width="44" height="44" style="width:44px;height:44px;border-radius:50%;display:block"></canvas></div>
+            <div class="ball-swatch " data-color="#aa55ee" onclick="setBallColor('#aa55ee',this)"><canvas width="44" height="44" style="width:44px;height:44px;border-radius:50%;display:block"></canvas></div>
           </div>
         </div>
       </div>
@@ -189,7 +189,7 @@ let cfg = {
   maxBlocks: 0,     // 0-4 static blocks
   nitroCount: 6,    // 0-6 nitro orbs
   nitroAt: 8,       // rally count to spawn nitros
-  ballColor: '#00ccff',
+  ballColor: '#22bb88',
   winScore: 7,
   dynamicBlock: true,
   dynamicAt: 30
@@ -1124,22 +1124,19 @@ function draw() {
         ctx.strokeStyle='rgba(255,255,255,0.5)'; ctx.lineWidth=0.8; ctx.stroke();
       }
     } else {
-      // Normal ball - color from config
-      const bc = cfg.ballColor || '#00ccff';
-      ctx.shadowColor = bc; ctx.shadowBlur = 5;
-      const gn = ctx.createRadialGradient(bx-ballR*0.35, by-ballR*0.4, ballR*0.05, bx, by, ballR);
-      gn.addColorStop(0, '#ffffff');
-      gn.addColorStop(0.25, bc);
-      gn.addColorStop(0.7, bc);
-      gn.addColorStop(1, 'rgba(0,10,30,0.8)');
+      // Normal ball — nitro style with player color
+      const bc = cfg.ballColor || '#55ddaa';
+      ctx.globalAlpha = 0.07; ctx.fillStyle = bc;
+      ctx.beginPath(); ctx.arc(bx, by, ballR*1.35, 0, Math.PI*2); ctx.fill();
+      ctx.globalAlpha = 1;
+      ctx.shadowColor = bc; ctx.shadowBlur = 20;
+      const gn = ctx.createRadialGradient(bx-ballR*0.25, by-ballR*0.3, ballR*0.05, bx, by, ballR);
+      gn.addColorStop(0,'#fff'); gn.addColorStop(0.35,bc); gn.addColorStop(0.8,bc);
+      gn.addColorStop(1,'rgba(0,0,20,0.85)');
       ctx.fillStyle = gn;
       ctx.beginPath(); ctx.arc(bx, by, ballR, 0, Math.PI*2); ctx.fill();
+      ctx.strokeStyle='rgba(255,255,255,0.5)'; ctx.lineWidth=0.8; ctx.stroke();
       ctx.shadowBlur = 0;
-      const hl2 = ctx.createRadialGradient(bx-ballR*0.3, by-ballR*0.35, 0, bx-ballR*0.2, by-ballR*0.25, ballR*0.45);
-      hl2.addColorStop(0, 'rgba(255,255,255,0.5)');
-      hl2.addColorStop(1, 'rgba(255,255,255,0)');
-      ctx.fillStyle = hl2;
-      ctx.beginPath(); ctx.arc(bx, by, ballR, 0, Math.PI*2); ctx.fill();
     }
     ctx.restore();
   }
@@ -1282,55 +1279,48 @@ function closeSubMenu() {
 
 function setBallColor(color, btn) {
   cfg.ballColor = color;
-  // Redraw all balls - deselected state
   document.querySelectorAll('.ball-swatch').forEach(b => {
     b.style.transform = '';
     const c = b.getAttribute('data-color');
     const cv = b.querySelector('canvas');
-    if (cv) drawBallOnCanvas(cv, c);
+    if (cv) drawBallOnCanvas(cv, c, false);
   });
-  // Pop animation
-  btn.style.transform = 'scale(1.25)';
-  setTimeout(() => { btn.style.transform = 'scale(1.0)'; }, 160);
-  // Draw selected ball with glowing ring ON the canvas
   const cv = btn.querySelector('canvas');
-  if (cv) {
-    setTimeout(() => drawBallOnCanvas(cv, color, true), 80);
-  }
+  if (cv) drawBallOnCanvas(cv, color, true);
 }
 
 function drawBallOnCanvas(canvas, color, selected) {
   if (!canvas) return;
+  const dpr = window.devicePixelRatio || 2;
+  const css = 44;
+  canvas.width = css * dpr;
+  canvas.height = css * dpr;
+  canvas.style.width = css + 'px';
+  canvas.style.height = css + 'px';
   const ctx2 = canvas.getContext('2d');
-  const s = canvas.width;
-  ctx2.clearRect(0, 0, s, s);
-  const r = s * 0.38; // ball radius - smaller to leave room for ring
-  const cx = s/2, cy = s/2;
-  // glow
-  ctx2.shadowColor = color; ctx2.shadowBlur = selected ? s*0.4 : s*0.2;
-  // main gradient
-  const g = ctx2.createRadialGradient(cx-r*0.3, cy-r*0.35, r*0.05, cx, cy, r);
-  g.addColorStop(0, '#fff');
-  g.addColorStop(0.28, color);
-  g.addColorStop(0.75, color);
-  g.addColorStop(1, 'rgba(0,0,20,0.85)');
+  ctx2.scale(dpr, dpr);
+  ctx2.clearRect(0, 0, css, css);
+  const cx = css / 2, cy = css / 2;
+  const r = css * 0.34;
+
+  // nitro-style gradient ball
+  ctx2.globalAlpha = 0.07; ctx2.fillStyle = color;
+  ctx2.beginPath(); ctx2.arc(cx, cy, r*1.35, 0, Math.PI*2); ctx2.fill();
+  ctx2.globalAlpha = 1;
+  ctx2.shadowColor = color; ctx2.shadowBlur = selected ? 22 : 14;
+  const g = ctx2.createRadialGradient(cx-r*0.25, cy-r*0.3, r*0.05, cx, cy, r);
+  g.addColorStop(0,'#fff'); g.addColorStop(0.35,color); g.addColorStop(0.8,color);
+  g.addColorStop(1,'rgba(0,0,20,0.85)');
   ctx2.fillStyle = g;
   ctx2.beginPath(); ctx2.arc(cx, cy, r, 0, Math.PI*2); ctx2.fill();
+  ctx2.strokeStyle='rgba(255,255,255,0.5)'; ctx2.lineWidth=0.8; ctx2.stroke();
   ctx2.shadowBlur = 0;
-  // specular
-  const hl = ctx2.createRadialGradient(cx-r*0.3, cy-r*0.35, 0, cx-r*0.15, cy-r*0.2, r*0.4);
-  hl.addColorStop(0, 'rgba(255,255,255,0.75)');
-  hl.addColorStop(1, 'rgba(255,255,255,0)');
-  ctx2.fillStyle = hl;
-  ctx2.beginPath(); ctx2.arc(cx, cy, r, 0, Math.PI*2); ctx2.fill();
-  // selection ring drawn ON canvas
+
+  // selection: white inner ring
   if (selected) {
-    ctx2.strokeStyle = '#ffffff';
-    ctx2.lineWidth = 2.5;
-    ctx2.shadowColor = '#fff';
-    ctx2.shadowBlur = 8;
-    ctx2.beginPath(); ctx2.arc(cx, cy, r + 4, 0, Math.PI*2); ctx2.stroke();
-    ctx2.shadowBlur = 0;
+    ctx2.strokeStyle = 'rgba(255,255,255,0.85)';
+    ctx2.lineWidth = 1.5;
+    ctx2.beginPath(); ctx2.arc(cx, cy, r - 2, 0, Math.PI*2); ctx2.stroke();
   }
 }
 
