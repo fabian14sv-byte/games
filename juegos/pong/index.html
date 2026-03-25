@@ -40,26 +40,12 @@
 <div class="wrap" id="wrap">
   <canvas id="gc"></canvas>
   <div class="overlay" id="ovMenu" style="overflow-y:auto;padding:24px 20px;gap:0">
-    <div class="ov-title" id="menuTitle" style="color:var(--cyan);filter:drop-shadow(0 0 20px var(--cyan));margin-bottom:20px">ARCADE</div>
+    <div class="ov-title" id="menuTitle" style="color:var(--cyan);filter:drop-shadow(0 0 20px var(--cyan));margin-bottom:20px">PONG</div>
 
-    <!-- ── PANTALLA: ELEGIR JUEGO ── -->
-    <div id="menuGames" style="width:100%;max-width:320px;display:flex;flex-direction:column;gap:12px;margin-bottom:16px">
-      <button class="btn" onclick="selectGame('pong')" style="padding:15px;display:flex;flex-direction:column;gap:3px;align-items:flex-start">
-        <span style="font-size:15px;letter-spacing:0.2em">PONG</span>
-        <span style="color:var(--dim);font-size:9px;letter-spacing:0.1em">1P vs IA · 2P · Supervivencia</span>
-      </button>
-      <button class="btn" onclick="selectGame('ark')" style="padding:15px;display:flex;flex-direction:column;gap:3px;align-items:flex-start;border-color:#ffb400;background:rgba(255,180,0,0.08);color:#ffb400">
-        <span style="font-size:15px;letter-spacing:0.2em">ARKANOID</span>
-        <span style="color:rgba(255,180,0,0.5);font-size:9px;letter-spacing:0.1em">Clásico · Sin fin</span>
-      </button>
-    </div>
+
 
     <!-- ── PANTALLA: MODOS DE PONG ── -->
-    <div id="menuMain" style="display:none;width:100%;max-width:320px;flex-direction:column;gap:12px;margin-bottom:16px">
-      <div style="display:flex;align-items:center;gap:10px;margin-bottom:4px">
-        <button onclick="backToGames()" class="btn" style="padding:6px 14px;font-size:11px">← Volver</button>
-        <span style="font-family:'Orbitron',monospace;font-size:14px;color:var(--cyan);letter-spacing:3px">PONG</span>
-      </div>
+    <div id="menuMain" style="display:flex;width:100%;max-width:320px;flex-direction:column;gap:12px;margin-bottom:16px">
       <button class="btn" onclick="selectMode(1)" style="padding:15px;display:flex;flex-direction:column;gap:3px;align-items:flex-start">
         <span style="font-size:13px">👤 1 JUGADOR</span>
         <span style="color:var(--dim);font-size:9px;letter-spacing:0.1em">VS IA · Dificultad adaptativa</span>
@@ -75,22 +61,7 @@
       <div id="recordsDisplay" style="padding:11px 12px;border:1px solid var(--border);border-radius:8px;font-size:10px;color:var(--dim);line-height:1.9;letter-spacing:0.08em"></div>
     </div>
 
-    <!-- ── PANTALLA: MODOS DE ARKANOID ── -->
-    <div id="menuArk" style="display:none;width:100%;max-width:320px;flex-direction:column;gap:12px;margin-bottom:16px">
-      <div style="display:flex;align-items:center;gap:10px;margin-bottom:4px">
-        <button onclick="backToGames()" class="btn" style="padding:6px 14px;font-size:11px">← Volver</button>
-        <span style="font-family:'Orbitron',monospace;font-size:14px;color:#ffb400;letter-spacing:3px">ARKANOID</span>
-      </div>
-      <button class="btn" onclick="selectMode('arkNormal')" style="padding:15px;display:flex;flex-direction:column;gap:3px;align-items:flex-start;border-color:#ffb400;background:rgba(255,180,0,0.08);color:#ffb400">
-        <span style="font-size:13px">▶ CLÁSICO</span>
-        <span style="color:rgba(255,180,0,0.5);font-size:9px;letter-spacing:0.1em">Completá los 7 niveles</span>
-      </button>
-      <button class="btn" onclick="selectMode('arkEndless')" style="padding:15px;display:flex;flex-direction:column;gap:3px;align-items:flex-start;border-color:#ff2d78;background:rgba(255,45,120,0.08);color:#ff2d78">
-        <span style="font-size:13px">⚡ SIN FIN</span>
-        <span style="color:rgba(255,45,120,0.5);font-size:9px;letter-spacing:0.1em">Niveles infinitos · ¿Hasta dónde?</span>
-      </button>
-      <div id="arkRecordsDisplay" style="padding:11px 12px;border:1px solid var(--border);border-radius:8px;font-size:10px;color:var(--dim);line-height:1.9;letter-spacing:0.08em"></div>
-    </div>
+
 
     <div class="ov-sub" id="menuSub" style="margin-bottom:0">Deslizá el dedo para mover</div>
 
@@ -168,28 +139,7 @@
         </div>
       </div>
 
-      <!-- ·· Sección: GAMEPLAY ARK ·· -->
-      <div id="secGameplayArk" style="display:none;flex-direction:column;gap:14px">
-        <div class="cfg-row">
-          <div class="cfg-label">Vidas <span class="cfg-val" id="lLives">3</span></div>
-          <div class="cfg-track">
-            <input type="range" min="1" max="5" value="3" id="sLives" oninput="arkCfg.lives=+this.value;document.getElementById('lLives').textContent=this.value">
-            <div class="cfg-ticks"><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span></div>
-          </div>
-        </div>
-        <div class="cfg-row">
-          <div class="cfg-label">Velocidad inicial <span class="cfg-val" id="lArkSpeed">Normal</span></div>
-          <div class="cfg-track">
-            <input type="range" min="1" max="3" value="2" id="sArkSpeed" oninput="arkCfg.speed=+this.value;document.getElementById('lArkSpeed').textContent=['Lenta','Normal','Rápida'][this.value-1]">
-            <div class="cfg-ticks"><span>Lenta</span><span>Normal</span><span>Rápida</span></div>
-          </div>
-        </div>
-        <div class="cfg-row" style="align-items:center;flex-direction:row;justify-content:space-between">
-          <div class="cfg-label" style="margin-bottom:0">Power-ups</div>
-          <button id="btnPU" onclick="arkCfg.powerups=!arkCfg.powerups;document.getElementById('btnPU').textContent=arkCfg.powerups?'✓ Sí':'✗ No';document.getElementById('lPowerups').textContent=arkCfg.powerups?'Sí':'No'" class="btn" style="padding:6px 16px;font-size:10px">✓ Sí</button>
-          <span id="lPowerups" style="display:none">Sí</span>
-        </div>
-      </div>
+
 
       <!-- ·· Sección: ESTILO ·· -->
       <div id="secEstilo" style="display:none;flex-direction:column;gap:18px">
@@ -219,14 +169,14 @@
               <div class="ball-swatch" data-color="#ff8833" onclick="setBallColor('#ff8833',this)"><canvas style="width:44px;height:44px;border-radius:50%;display:block"></canvas></div>
               <div class="ball-swatch" data-color="#ffcc22" onclick="setBallColor('#ffcc22',this)"><canvas style="width:44px;height:44px;border-radius:50%;display:block"></canvas></div>
               <div class="ball-swatch" data-color="#99dd33" onclick="setBallColor('#99dd33',this)"><canvas style="width:44px;height:44px;border-radius:50%;display:block"></canvas></div>
-              <div class="ball-swatch active" data-color="#22bb88" onclick="setBallColor('#22bb88',this)"><canvas style="width:44px;height:44px;border-radius:50%;display:block"></canvas></div>
+              <div class="ball-swatch" data-color="#22bb88" onclick="setBallColor('#22bb88',this)"><canvas style="width:44px;height:44px;border-radius:50%;display:block"></canvas></div>
               <div class="ball-swatch" data-color="#4499ee" onclick="setBallColor('#4499ee',this)"><canvas style="width:44px;height:44px;border-radius:50%;display:block"></canvas></div>
               <div class="ball-swatch" data-color="#8844dd" onclick="setBallColor('#8844dd',this)"><canvas style="width:44px;height:44px;border-radius:50%;display:block"></canvas></div>
               <div class="ball-swatch" data-color="#ff5544" onclick="setBallColor('#ff5544',this)"><canvas style="width:44px;height:44px;border-radius:50%;display:block"></canvas></div>
               <div class="ball-swatch" data-color="#ee9911" onclick="setBallColor('#ee9911',this)"><canvas style="width:44px;height:44px;border-radius:50%;display:block"></canvas></div>
               <div class="ball-swatch" data-color="#22bbaa" onclick="setBallColor('#22bbaa',this)"><canvas style="width:44px;height:44px;border-radius:50%;display:block"></canvas></div>
               <div class="ball-swatch" data-color="#5577ee" onclick="setBallColor('#5577ee',this)"><canvas style="width:44px;height:44px;border-radius:50%;display:block"></canvas></div>
-              <div class="ball-swatch" data-color="#aa55ee" onclick="setBallColor('#aa55ee',this)"><canvas style="width:44px;height:44px;border-radius:50%;display:block"></canvas></div>
+              <div class="ball-swatch active" data-color="#c8a8f0" onclick="setBallColor('#c8a8f0',this)"><canvas style="width:44px;height:44px;border-radius:50%;display:block"></canvas></div>
         </div>
       </div>
 
@@ -234,12 +184,20 @@
 
   </div><!-- end ovMenu -->
 
-  <div class="overlay hidden" id="ovPause">
-    <div class="ov-title" style="color:var(--cyan);filter:drop-shadow(0 0 20px var(--cyan))">PAUSA</div>
-    <div class="ov-sub" id="pauseScore"></div>
-    <div class="btn-row">
-      <button class="btn" onclick="resumeGame()">▶ Continuar</button>
-      <button class="btn" onclick="showMenu()">⌂ Menú</button>
+  <div id="ovPause" style="display:none;position:absolute;z-index:20;
+    background:rgba(6,6,14,0.82);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);
+    border:1px solid rgba(255,255,255,0.09);border-radius:14px;
+    padding:22px 20px 18px;width:min(200px,60vw);
+    flex-direction:column;align-items:center;gap:0;
+    box-shadow:0 8px 40px rgba(0,0,0,0.8);">
+    <div style="font-family:'Orbitron',sans-serif;font-weight:700;font-size:13px;
+      letter-spacing:0.3em;color:rgba(255,255,255,0.70);margin-bottom:4px">⏸ PAUSA</div>
+    <div id="pauseScore" style="font-size:9px;color:rgba(255,255,255,0.30);letter-spacing:0.1em;margin-bottom:14px"></div>
+    <div style="display:flex;flex-direction:column;gap:7px;width:100%">
+      <button class="btn" onclick="resumeGame()" style="padding:9px;letter-spacing:0.2em;width:100%;font-size:9px">▶ Continuar</button>
+      <button class="btn" onclick="showMenu()" style="padding:8px;letter-spacing:0.15em;width:100%;font-size:9px;opacity:0.72">⌂ Menú</button>
+      <button class="btn" onclick="toggleSound()" id="pauseSoundBtn" style="padding:7px;letter-spacing:0.12em;width:100%;font-size:8px;opacity:0.52">🔊 Sonido</button>
+      <button class="btn" onclick="goToHome()" style="padding:7px;letter-spacing:0.12em;width:100%;font-size:8px;opacity:0.38;border-color:rgba(0,245,255,0.22)">← Inicio</button>
     </div>
   </div>
   <div class="overlay hidden" id="ovEnd">
@@ -267,6 +225,19 @@ let running = false, animId = null;
 let p1x, p2x, s1, s2;
 let bx, by, bvx, bvy, bspin=0, bNitroTimer=0, bNitroColor=null, preNitroSpd=0;
 const NITRO_DURATION = 674; // 11.23s
+const SPIN_NITRO         = 0.85;   // spin multiplier from paddle when nitro active
+const SPIN_NORMAL        = 0.3;    // spin multiplier from paddle normal
+const SPIN_VEL_NITRO     = 0.015;  // spin-to-bvx transfer during nitro
+const SPIN_VEL_NORMAL    = 0.012;  // spin-to-bvx transfer normal
+const SPIN_DECAY_NITRO   = 0.992;  // spin decay factor during nitro
+const SPIN_DECAY_NORMAL  = 0.97;   // spin decay factor normal
+const SPIN_WALL_DECAY    = 0.40;   // spin fraction remaining after wall bounce
+const HIT_FLASH_DECAY    = 0.07;   // p1/p2HitFlash decay per frame
+const NITRO_IMPACT_DECAY = 0.04;   // p1/p2NitroImpact decay per frame
+const NITRO_WIDTH_LERP   = 0.08;   // paddle width interpolation factor
+const NITRO_WIDTH_SCALE  = 0.35;   // extra paddle width multiplier during nitro
+const WALL_NITRO_BOOST   = 1.05;   // speed multiplier when nitro ball hits wall
+const WALL_NITRO_ANGLE   = 0.78;   // |bvx| reduction factor for tighter wall angle
 
 // ── CONFIG ──
 let cfg = {
@@ -274,14 +245,19 @@ let cfg = {
   maxBlocks: 0,     // 0-4 static blocks
   nitroCount: 6,    // 0-6 nitro orbs
   nitroAt: 8,       // rally count to spawn nitros
-  ballColor: '#22bb88',
+  ballColor: '#c8a8f0',
   winScore: 7,
   dynamicBlock: true,
   dynamicAt: 30
 };
-let dyingBlocks = [], nitroTrail = [], stars = [], floatingNums = [], horizPulse = 0, colorTime = 0, nitroWarning = false, nitroWarnPositions = [];
+let dyingBlocks = [], nitroTrail = [], ballTrail = [], stars = [], floatingNums = [], horizPulse = 0, colorTime = 0, nitroWarning = false, nitroWarnPositions = [];
+let wallFlashLeft = 0, wallFlashRight = 0; // 0..1, flash on side wall hit
+let wallNitroFlowOffset = 0;
 let _hue = 280, _bgS = 60; // updated each frame by drawBackground, used by draw()
 let bgStyle = 0; // 0=Synthwave, 1=Deep Space, 2=Matrix, 3=Lava
+// Nitro impact screen effects
+let nitroHitFlash = 0, nitroHitColor = '#fff'; // full-screen flash on nitro collision
+let shakeMag = 0, shakeX = 0, shakeY = 0;      // screen shake on nitro collision
 
 // Adaptive difficulty
 let adaptiveDiff = 3.0; // float 1-5
@@ -306,6 +282,7 @@ let particles = [];
 let p1vel = 0, p2vel = 0, p2Error = 0, p2ErrorTimer = 0; // paddle velocity for angle control
 let p1NitroWidth = 0, p2NitroWidth = 0; // extra width during nitro (0..1)
 let p1HitFlash = 0, p2HitFlash = 0; // hit flash timer (0..1)
+let p1NitroImpact = 0, p2NitroImpact = 0; // 0..1, electric shock visual
 let prevP1x, prevP2x;
 
 // Touch tracking
@@ -332,8 +309,9 @@ function startGame(m) {
   p2x = W/2 - PW/2;
   prevP1x = p1x; prevP2x = p2x;
   p1vel = 0; p2vel = 0; p2Error = 0; p2ErrorTimer = 0;
-  p1NitroWidth = 0; p2NitroWidth = 0; p1HitFlash = 0; p2HitFlash = 0;
-  particles = []; rally = 0; obstacles = []; boostZones = []; dyingBlocks = []; nitroTrail = []; floatingNums = []; paused = false;
+  p1NitroWidth = 0; p2NitroWidth = 0; p1HitFlash = 0; p2HitFlash = 0; p1NitroImpact = 0; p2NitroImpact = 0;
+  particles = []; rally = 0; obstacles = []; boostZones = []; dyingBlocks = []; nitroTrail = []; ballTrail = []; floatingNums = []; paused = false;
+  nitroHitFlash = 0; shakeMag = 0; shakeX = 0; shakeY = 0;
   initStars(); document.getElementById('pauseBtn').textContent='⏸';
   hideOverlays();
   running = true;
@@ -394,8 +372,8 @@ function update() {
   const p2y = Math.round(H*0.04);
 
   // Effective paddle widths (includes nitro expansion)
-  const p1ExtraW = p1NitroWidth * PW * 0.35;
-  const p2ExtraW = p2NitroWidth * PW * 0.35;
+  const p1ExtraW = p1NitroWidth * PW * NITRO_WIDTH_SCALE;
+  const p2ExtraW = p2NitroWidth * PW * NITRO_WIDTH_SCALE;
   const p1EffW = PW + p1ExtraW;
   const p2EffW = PW + p2ExtraW;
   const p1EffX = p1x - p1ExtraW / 2;
@@ -485,9 +463,9 @@ function update() {
   }
 
   // Move ball
-  bvx += bspin * 0.012;
+  bvx += bspin * (bNitroTimer > 0 ? SPIN_VEL_NITRO : SPIN_VEL_NORMAL);
   // slower spin decay during nitro for sustained curve
-  bspin *= bNitroTimer > 0 ? 0.992 : 0.97;
+  bspin *= bNitroTimer > 0 ? SPIN_DECAY_NITRO : SPIN_DECAY_NORMAL;
   // Nitro decay
   if (bNitroTimer > 0) {
     bNitroTimer--;
@@ -501,10 +479,15 @@ function update() {
   const p2NitroActive = bNitroTimer > 0 && bNitroColor === '#ff2d78';
   const _p1Target = p1NitroActive ? 1 : 0;
   const _p2Target = p2NitroActive ? 1 : 0;
-  p1NitroWidth = Math.max(0, Math.min(1, p1NitroWidth + (_p1Target - p1NitroWidth) * 0.08));
-  p2NitroWidth = Math.max(0, Math.min(1, p2NitroWidth + (_p2Target - p2NitroWidth) * 0.08));
-  p1HitFlash = Math.max(0, p1HitFlash - 0.07);
-  p2HitFlash = Math.max(0, p2HitFlash - 0.07);
+  p1NitroWidth = Math.max(0, Math.min(1, p1NitroWidth + (_p1Target - p1NitroWidth) * NITRO_WIDTH_LERP));
+  p2NitroWidth = Math.max(0, Math.min(1, p2NitroWidth + (_p2Target - p2NitroWidth) * NITRO_WIDTH_LERP));
+  p1HitFlash = Math.max(0, p1HitFlash - HIT_FLASH_DECAY);
+  p2HitFlash = Math.max(0, p2HitFlash - HIT_FLASH_DECAY);
+  wallFlashLeft  = Math.max(0, wallFlashLeft  - 0.12);
+  wallFlashRight = Math.max(0, wallFlashRight - 0.12);
+  wallNitroFlowOffset = (wallNitroFlowOffset + (bNitroTimer > 0 ? 0.018 : 0)) % 1;
+  p1NitroImpact = Math.max(0, p1NitroImpact - NITRO_IMPACT_DECAY);
+  p2NitroImpact = Math.max(0, p2NitroImpact - NITRO_IMPACT_DECAY);
   bx += bvx; by += bvy;
 
   // Survival mode: increase speed over time
@@ -515,8 +498,34 @@ function update() {
   }
 
   // Side walls
-  if (bx - BR < 0) { bx = BR; bvx = Math.abs(bvx); bspin *= -0.5; sndWall(); }
-  if (bx + BR > W) { bx = W - BR; bvx = -Math.abs(bvx); bspin *= -0.5; sndWall(); }
+  if (bx - BR < 0) { bx = BR; bvx = Math.abs(bvx); bspin *= SPIN_WALL_DECAY; sndWall(); wallFlashLeft = 1.0;
+    if (bNitroTimer > 0 && bNitroColor !== null) {
+      const isCyan = bNitroColor === '#00f5ff';
+      const towardOpponent = isCyan ? (bvy < 0) : (bvy > 0);
+      if (towardOpponent) {
+        const spd = Math.sqrt(bvx*bvx+bvy*bvy) * WALL_NITRO_BOOST;
+        const newBvxAbs = Math.abs(bvx) * WALL_NITRO_ANGLE;
+        const newBvyAbs = Math.sqrt(Math.max(0, spd*spd - newBvxAbs*newBvxAbs));
+        bvx = Math.sign(bvx) * newBvxAbs;
+        bvy = Math.sign(bvy) * newBvyAbs;
+        capSpeed();
+      }
+    }
+  }
+  if (bx + BR > W) { bx = W - BR; bvx = -Math.abs(bvx); bspin *= SPIN_WALL_DECAY; sndWall(); wallFlashRight = 1.0;
+    if (bNitroTimer > 0 && bNitroColor !== null) {
+      const isCyan = bNitroColor === '#00f5ff';
+      const towardOpponent = isCyan ? (bvy < 0) : (bvy > 0);
+      if (towardOpponent) {
+        const spd = Math.sqrt(bvx*bvx+bvy*bvy) * WALL_NITRO_BOOST;
+        const newBvxAbs = Math.abs(bvx) * WALL_NITRO_ANGLE;
+        const newBvyAbs = Math.sqrt(Math.max(0, spd*spd - newBvxAbs*newBvxAbs));
+        bvx = Math.sign(bvx) * newBvxAbs;
+        bvy = Math.sign(bvy) * newBvyAbs;
+        capSpeed();
+      }
+    }
+  }
 
   // P1 paddle (bottom) - physics deflection
   if (bvy > 0 && by+BR >= p1y && by+BR <= p1y+PH+8 && bx >= p1EffX-4 && bx <= p1EffX+p1EffW+4) {
@@ -530,10 +539,18 @@ function update() {
     bvy = -Math.cos(angle) * spd;
     if (Math.abs(bvy) < spd*0.2) bvy = -spd*0.3;
     by = p1y - BR - 1;
-    bspin = p1vel * 0.3;
+    bspin = p1vel * (p1NitroActive ? SPIN_NITRO : SPIN_NORMAL);
     p1HitFlash = 1.0;
     capSpeed();
-    sndHit();
+    const _p1IsFirstBurst = bNitroTimer > NITRO_DURATION - 48;
+    if (_p1IsFirstBurst && p2NitroActive) {
+      p1NitroImpact = 1.0;
+      nitroHitFlash = 1.0; nitroHitColor = '#ff2d78';
+      shakeMag = 9;
+      sndNitroHit();
+    } else {
+      sndHit();
+    }
     onRallyHit();
   }
 
@@ -549,10 +566,18 @@ function update() {
     bvy = Math.cos(angle) * spd;
     if (Math.abs(bvy) < spd*0.2) bvy = spd*0.3;
     by = p2y + PH + BR + 1;
-    bspin = p2vel * 0.3;
+    bspin = p2vel * (p2NitroActive ? SPIN_NITRO : SPIN_NORMAL);
     p2HitFlash = 1.0;
     capSpeed();
-    sndHit();
+    const _p2IsFirstBurst = bNitroTimer > NITRO_DURATION - 48;
+    if (_p2IsFirstBurst && p1NitroActive) {
+      p2NitroImpact = 1.0;
+      nitroHitFlash = 1.0; nitroHitColor = '#00f5ff';
+      shakeMag = 9;
+      sndNitroHit();
+    } else {
+      sndHit();
+    }
     onRallyHit();
   }
 
@@ -586,7 +611,7 @@ function goal(scorer) {
   goalScorer = scorer;
   state = 'goal';
   goalTimer = 120; // 2 seconds at 60fps
-  p1NitroWidth = 0; p2NitroWidth = 0; p1HitFlash = 0; p2HitFlash = 0;
+  p1NitroWidth = 0; p2NitroWidth = 0; p1HitFlash = 0; p2HitFlash = 0; p1NitroImpact = 0; p2NitroImpact = 0;
 
   // Big burst of particles at the scoring side
   const gy = scorer === 1 ? H * 0.15 : H * 0.85;
@@ -631,8 +656,8 @@ function spawnMovingBlock() {
     flash: 0,
     ghost: 1.0,
     moving: true,
-    vx: W * 0.0012 * (Math.random()<0.5?1:-1), // slow start
-    maxVx: W * 0.009   // gradual max
+    vx: W * 0.003 * (Math.random()<0.5?1:-1),  // visible start speed
+    maxVx: W * 0.013   // max speed cap
   });
 }
 
@@ -774,15 +799,11 @@ function checkObstacles() {
         }
         capSpeed(); sndWall();
         o.flash = 8;
+        if (o.moving) { const _spd = Math.abs(o.vx) * 1.18; o.vx = Math.sign(o.vx) * Math.min(_spd, o.maxVx); }
       }
     }
     if (o.flash > 0) o.flash--;
     if (o.moving) {
-      // gradually accelerate up to maxVx
-      const maxV = o.maxVx || W * 0.009;
-      if (Math.abs(o.vx) < maxV) {
-        o.vx *= 1.0018; // slow ramp up
-      }
       o.x += o.vx;
       if (o.x < 0) { o.x = 0; o.vx = Math.abs(o.vx); }
       if (o.x + o.w > W) { o.x = W - o.w; o.vx = -Math.abs(o.vx); }
@@ -825,7 +846,7 @@ function checkBoostZones() {
         const nvy = bvx*sin + bvy*cos;
         bvx = nvx; bvy = nvy;
         // add gentle persistent spin so path curves subtly
-        bspin = (Math.random()*1.2 + 0.6) * (bx < W/2 ? 1 : -1);
+        bspin = (Math.random()*2.2 + 1.4) * (bx < W/2 ? 1 : -1);
       }
       try { if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume(); } catch(e){}
       // Power-up explosion sound - big dramatic hit then rising sweep
@@ -984,24 +1005,139 @@ function drawBackground(style, fieldMid, fieldTop, fieldBot) {
   ctx.fillStyle=vigG; ctx.fillRect(0,0,W,H);
 }
 
-function draw() {
-  const p1y = H - PH - Math.round(H*0.10);
-  const p2y = Math.round(H*0.04);
-  const fieldMid = (p2y + PH + p1y) / 2;
+// ── PADDLE DRAWING (shared for P1 and P2) ──
+function drawPaddle(px, py, pvel, pNitroWidth, pHitFlash, pNitroImpact, nitroColor) {
+  const impactRingColor = nitroColor === '#ff2d78' ? '#00f5ff' : '#ff2d78';
+  const darkBodyA = nitroColor === '#ff2d78' ? 'rgba(60,0,20,0.97)' : 'rgba(0,40,55,0.97)';
+  const darkBodyB = nitroColor === '#ff2d78' ? 'rgba(30,0,10,0.96)' : 'rgba(0,15,22,0.96)';
+  const nitroActive = bNitroTimer > 0 && bNitroColor === nitroColor;
+  const nitroFrac = bNitroTimer / NITRO_DURATION;
+  const isEnding = nitroActive && nitroFrac < 0.30;
+  const blinkOn = isEnding ? (Math.floor(colorTime * 10) % 2 === 0) : true;
+  const extraW = pNitroWidth * PW * NITRO_WIDTH_SCALE;
+  const pw = PW + extraW;
+  const pxOff = px - extraW / 2;
+  const velGlow = Math.min(Math.abs(pvel) * 4, 18);
+  const nitroGlow = pNitroWidth * 38;
+  const outerBlur = 18 + velGlow + nitroGlow;
+  const innerBlur = 8 + velGlow * 0.5 + nitroGlow * 0.5;
+  const hitAlpha = pHitFlash * 0.45;
 
-  // === BACKGROUND ===
-  colorTime += 0.004;
-  // Clip background to game field (above bottom paddle)
-  ctx.save();
-  ctx.beginPath();
-  ctx.rect(0, 0, W, p1y + PH + Math.round(H*0.10));
-  ctx.clip();
-  drawBackground(bgStyle, fieldMid, p2y + PH, p1y);
-  ctx.restore();
-  // Fill area below game field with solid bg color
-  ctx.fillStyle = '#06060e';
-  ctx.fillRect(0, p1y + PH + Math.round(H*0.10), W, H);
+  // Hit flash ring
+  if (pHitFlash > 0) {
+    const expand = (1 - pHitFlash) * 8;
+    ctx.save();
+    ctx.globalAlpha = pHitFlash * 0.7;
+    ctx.shadowColor = nitroColor; ctx.shadowBlur = 20 * pHitFlash;
+    ctx.strokeStyle = '#ffffff';
+    ctx.lineWidth = 2;
+    ctx.beginPath(); ctx.roundRect(pxOff - expand, py - expand, pw + expand*2, PH + expand*2, PH/2 + expand); ctx.stroke();
+    ctx.restore();
+  }
 
+  // Nitro impact electric shock rings
+  if (pNitroImpact > 0) {
+    for (let ri = 0; ri < 3; ri++) {
+      const phase = 1 - Math.max(0, pNitroImpact - ri * 0.2);
+      if (phase <= 0 || phase >= 1) continue;
+      const ringExpand = phase * (18 + ri * 10);
+      const alpha = (1 - phase) * pNitroImpact * 0.85;
+      ctx.save();
+      ctx.globalAlpha = alpha;
+      ctx.strokeStyle = impactRingColor;
+      ctx.shadowColor = impactRingColor;
+      ctx.shadowBlur = 22;
+      ctx.lineWidth = 2.5 - ri * 0.5;
+      ctx.beginPath();
+      ctx.roundRect(pxOff - ringExpand, py - ringExpand, pw + ringExpand*2, PH + ringExpand*2, PH/2 + ringExpand);
+      ctx.stroke();
+      ctx.restore();
+    }
+  }
+
+  // Lateral motion halo — subtle horizontal-only taper
+  const _velAbs = Math.abs(pvel);
+  if (_velAbs > 0.6) {
+    const trailLen = Math.min(PW * 0.4, _velAbs * 2.5);
+    const trailEdgeX = pvel > 0 ? pxOff : pxOff + pw;
+    const trailTipX  = trailEdgeX - Math.sign(pvel) * trailLen;
+    ctx.save();
+    const grad = ctx.createLinearGradient(trailEdgeX, 0, trailTipX, 0);
+    grad.addColorStop(0, nitroColor);
+    grad.addColorStop(1, 'rgba(0,0,0,0)');
+    ctx.globalAlpha = Math.min(0.18, _velAbs * 0.022);
+    ctx.shadowColor = nitroColor; ctx.shadowBlur = 6;
+    ctx.fillStyle = grad;
+    const x1 = Math.min(trailEdgeX, trailTipX);
+    const x2 = Math.max(trailEdgeX, trailTipX);
+    const haloH = PH * 0.5;
+    ctx.beginPath(); ctx.roundRect(x1, py + PH * 0.25, x2 - x1, haloH, haloH / 2); ctx.fill();
+    ctx.restore();
+  }
+
+  // Paddle body
+  if (blinkOn) {
+    if (nitroActive) {
+      // Very dark body
+      ctx.save();
+      ctx.shadowColor = nitroColor; ctx.shadowBlur = innerBlur;
+      ctx.fillStyle = isEnding ? darkBodyA : darkBodyB;
+      ctx.beginPath(); ctx.roundRect(pxOff, py, pw, PH, PH/2); ctx.fill();
+      ctx.restore();
+      // Side neon glow
+      const pulse = isEnding
+        ? (0.5 + Math.sin(colorTime * 18) * 0.5)
+        : (0.6 + Math.sin(colorTime * 6) * 0.4);
+      const sideW = PH * 1.4;
+      ctx.save();
+      ctx.globalAlpha = 0.85 * pulse;
+      ctx.shadowColor = nitroColor; ctx.shadowBlur = 24;
+      ctx.fillStyle = nitroColor;
+      ctx.beginPath(); ctx.roundRect(pxOff, py, sideW, PH, PH/2); ctx.fill();
+      ctx.beginPath(); ctx.roundRect(pxOff + pw - sideW, py, sideW, PH, PH/2); ctx.fill();
+      ctx.restore();
+      // Thin outline glow
+      ctx.save();
+      ctx.shadowColor = nitroColor; ctx.shadowBlur = outerBlur;
+      ctx.strokeStyle = nitroColor; ctx.lineWidth = isEnding ? 2 : 1;
+      ctx.globalAlpha = isEnding ? 1.0 : 0.8;
+      ctx.beginPath(); ctx.roundRect(pxOff, py, pw, PH, PH/2); ctx.stroke();
+      ctx.restore();
+    } else {
+      // Normal: outer glow + solid
+      ctx.save();
+      ctx.globalAlpha = 0.55 + Math.min(Math.abs(pvel) * 0.04, 0.2);
+      ctx.shadowColor = nitroColor; ctx.shadowBlur = outerBlur;
+      ctx.fillStyle = nitroColor;
+      ctx.beginPath(); ctx.roundRect(pxOff, py, pw, PH, PH/2); ctx.fill();
+      ctx.restore();
+      ctx.save();
+      ctx.shadowColor = nitroColor; ctx.shadowBlur = innerBlur;
+      ctx.fillStyle = nitroColor;
+      ctx.beginPath(); ctx.roundRect(pxOff, py, pw, PH, PH/2); ctx.fill();
+      ctx.restore();
+    }
+    // Hit blink overlay
+    if (hitAlpha > 0) {
+      ctx.save();
+      ctx.globalAlpha = hitAlpha;
+      ctx.shadowColor = '#ffffff'; ctx.shadowBlur = 12;
+      ctx.fillStyle = '#ffffff';
+      ctx.beginPath(); ctx.roundRect(pxOff, py, pw, PH, PH/2); ctx.fill();
+      ctx.restore();
+    }
+  } else {
+    // Blink-off frame during nitro ending
+    ctx.save();
+    ctx.shadowColor = nitroColor; ctx.shadowBlur = 4;
+    ctx.fillStyle = nitroColor === '#ff2d78' ? 'rgba(255,45,120,0.18)' : 'rgba(0,245,255,0.18)';
+    ctx.beginPath(); ctx.roundRect(pxOff, py, pw, PH, PH/2); ctx.fill();
+    ctx.restore();
+  }
+}
+
+
+function drawField(p1y, p2y, fieldMid) {
   // Center line - exact midpoint between the two paddles
   ctx.setLineDash([]);
   ctx.strokeStyle = `hsla(${_hue},${_bgS}%,50%,0.35)`;
@@ -1009,6 +1145,96 @@ function draw() {
   ctx.shadowBlur = 0;
   ctx.beginPath(); ctx.moveTo(0, fieldMid); ctx.lineTo(W, fieldMid); ctx.stroke();
 
+  // Side walls — subtle neon white line always visible + flash on ball hit + nitro glow
+  {
+    const wallAlpha = 0.06; // always-on — very faint neon line
+    const wallBlur  = 3;
+    const wallNitroActive = bNitroTimer > 0 && bNitroColor !== null;
+    const wallNitroColor = wallNitroActive ? bNitroColor : '#ffffff';
+    const isCyanNitro = bNitroColor === '#00f5ff';
+    // flow direction: cyan→up (toward P2, y decreasing), magenta→down (toward P1, y increasing)
+    const flowDir = isCyanNitro ? -1 : 1;
+
+    // Left wall
+    const lFlash = wallFlashLeft;
+    ctx.save();
+    ctx.shadowColor = wallNitroActive ? wallNitroColor : '#ffffff';
+    ctx.shadowBlur  = wallBlur + lFlash * 14 + (wallNitroActive ? 10 : 0);
+    ctx.strokeStyle = wallNitroActive
+      ? wallNitroColor
+      : `rgba(255,255,255,${wallAlpha + lFlash * 0.30})`;
+    ctx.lineWidth   = 1;
+    ctx.globalAlpha = wallNitroActive ? 0.55 : 1;
+    ctx.beginPath(); ctx.moveTo(1, 0); ctx.lineTo(1, H); ctx.stroke();
+    ctx.globalAlpha = 1;
+    if (lFlash > 0) {
+      ctx.globalAlpha = lFlash * 0.09;
+      ctx.fillStyle = wallNitroActive ? wallNitroColor : '#ffffff';
+      ctx.fillRect(0, 0, 5, H);
+      ctx.globalAlpha = 1;
+    }
+    // Nitro flow dashes along left wall
+    if (wallNitroActive) {
+      ctx.globalAlpha = 0.7;
+      ctx.strokeStyle = wallNitroColor;
+      ctx.shadowColor = wallNitroColor;
+      ctx.shadowBlur = 8;
+      ctx.lineWidth = 2;
+      const segLen = H / 5;
+      for (let i = 0; i < 5; i++) {
+        const phase = ((wallNitroFlowOffset + colorTime * 0.008 + i / 5) % 1 + 1) % 1;
+        const yPos = (phase * H * flowDir + H * 2) % H;
+        const dashLen = segLen * 0.35;
+        ctx.beginPath();
+        ctx.moveTo(1, yPos);
+        ctx.lineTo(1, yPos + dashLen * flowDir);
+        ctx.stroke();
+      }
+      ctx.globalAlpha = 1;
+    }
+    ctx.restore();
+    // Right wall
+    const rFlash = wallFlashRight;
+    ctx.save();
+    ctx.shadowColor = wallNitroActive ? wallNitroColor : '#ffffff';
+    ctx.shadowBlur  = wallBlur + rFlash * 14 + (wallNitroActive ? 10 : 0);
+    ctx.strokeStyle = wallNitroActive
+      ? wallNitroColor
+      : `rgba(255,255,255,${wallAlpha + rFlash * 0.30})`;
+    ctx.lineWidth   = 1;
+    ctx.globalAlpha = wallNitroActive ? 0.55 : 1;
+    ctx.beginPath(); ctx.moveTo(W - 1, 0); ctx.lineTo(W - 1, H); ctx.stroke();
+    ctx.globalAlpha = 1;
+    if (rFlash > 0) {
+      ctx.globalAlpha = rFlash * 0.09;
+      ctx.fillStyle = wallNitroActive ? wallNitroColor : '#ffffff';
+      ctx.fillRect(W - 5, 0, 5, H);
+      ctx.globalAlpha = 1;
+    }
+    // Nitro flow dashes along right wall
+    if (wallNitroActive) {
+      ctx.globalAlpha = 0.7;
+      ctx.strokeStyle = wallNitroColor;
+      ctx.shadowColor = wallNitroColor;
+      ctx.shadowBlur = 8;
+      ctx.lineWidth = 2;
+      const segLen = H / 5;
+      for (let i = 0; i < 5; i++) {
+        const phase = ((wallNitroFlowOffset + colorTime * 0.008 + i / 5) % 1 + 1) % 1;
+        const yPos = (phase * H * flowDir + H * 2) % H;
+        const dashLen = segLen * 0.35;
+        ctx.beginPath();
+        ctx.moveTo(W - 1, yPos);
+        ctx.lineTo(W - 1, yPos + dashLen * flowDir);
+        ctx.stroke();
+      }
+      ctx.globalAlpha = 1;
+    }
+    ctx.restore();
+  }
+}
+
+function drawHUD(p1y, p2y, fieldMid) {
   // Scores - positioned relative to field thirds
   const fieldTop = p2y + PH;
   const fieldBot = p1y;
@@ -1038,7 +1264,9 @@ function draw() {
     ctx.fillText(`IA ${adaptiveDiff.toFixed(1)}`, W - 10, fieldMid);
     ctx.globalAlpha = 1; ctx.restore();
   }
+}
 
+function drawEffects(p1y, p2y) {
   // Goal screen flash
   if (goalFlashTimer > 0) {
     goalFlashTimer--;
@@ -1205,201 +1433,14 @@ function draw() {
     }
     ctx.restore();
   });
+}
 
-  // P2 paddle hit flash ring
-  if (p2HitFlash > 0) {
-    const p2ExtraWd = p2NitroWidth * PW * 0.35;
-    const pw2f = PW + p2ExtraWd;
-    const px2f = p2x - p2ExtraWd / 2;
-    ctx.save();
-    ctx.globalAlpha = p2HitFlash * 0.7;
-    ctx.shadowColor = '#ff2d78'; ctx.shadowBlur = 20 * p2HitFlash;
-    ctx.strokeStyle = '#ffffff';
-    ctx.lineWidth = 2;
-    const expand = (1 - p2HitFlash) * 8;
-    ctx.beginPath(); ctx.roundRect(px2f - expand, p2y - expand, pw2f + expand*2, PH + expand*2, PH/2 + expand); ctx.stroke();
-    ctx.restore();
-  }
-  // P2 paddle trail
-  if (Math.abs(p2vel) > 1.5) {
-    for (let ti = 3; ti >= 1; ti--) {
-      ctx.save();
-      ctx.globalAlpha = Math.min(0.25, Math.abs(p2vel)*0.03) * (ti/3);
-      ctx.shadowColor = '#ff2d78'; ctx.shadowBlur = 6;
-      ctx.fillStyle = '#ff2d78';
-      ctx.beginPath(); ctx.roundRect(p2x - p2vel*ti*0.4, p2y, PW, PH, PH/2); ctx.fill();
-      ctx.restore();
-    }
-  }
-  // P2 paddle
-  {
-    const p2NitroActive = bNitroTimer > 0 && bNitroColor === '#ff2d78';
-    const nitroFrac2 = bNitroTimer / NITRO_DURATION;
-    const isEnding2 = p2NitroActive && nitroFrac2 < 0.25;
-    const blinkOn2 = isEnding2 ? (Math.floor(colorTime * 8) % 2 === 0) : true;
-    const extraW2 = p2NitroWidth * PW * 0.35;
-    const pw2 = PW + extraW2;
-    const px2 = p2x - extraW2 / 2;
-    const velGlow2 = Math.min(Math.abs(p2vel) * 4, 18);
-    const nitroGlow2 = p2NitroWidth * 30;
-    const outerBlur2 = 18 + velGlow2 + nitroGlow2;
-    const innerBlur2 = 8 + velGlow2 * 0.5 + nitroGlow2 * 0.5;
-    // Hit blink: brief white flash on the paddle body
-    const hitAlpha2 = p2HitFlash * 0.45;
-    if (blinkOn2) {
-      // Nitro: dark body + intense side neon streaks
-      if (p2NitroActive) {
-        // Dark body
-        ctx.save();
-        ctx.shadowColor = '#ff2d78'; ctx.shadowBlur = innerBlur2;
-        ctx.fillStyle = `rgba(80,0,30,0.92)`;
-        ctx.beginPath(); ctx.roundRect(px2, p2y, pw2, PH, PH/2); ctx.fill();
-        ctx.restore();
-        // Side neon glow (left and right edges)
-        const pulse2 = 0.6 + Math.sin(colorTime * 6) * 0.4;
-        const sideW = PH * 1.2;
-        ctx.save();
-        ctx.globalAlpha = 0.7 * pulse2;
-        ctx.shadowColor = '#ff2d78'; ctx.shadowBlur = 20;
-        ctx.fillStyle = '#ff2d78';
-        ctx.beginPath(); ctx.roundRect(px2, p2y, sideW, PH, PH/2); ctx.fill();
-        ctx.beginPath(); ctx.roundRect(px2 + pw2 - sideW, p2y, sideW, PH, PH/2); ctx.fill();
-        ctx.restore();
-        // Thin outline glow
-        ctx.save();
-        ctx.shadowColor = '#ff2d78'; ctx.shadowBlur = outerBlur2;
-        ctx.strokeStyle = '#ff2d78'; ctx.lineWidth = 1;
-        ctx.globalAlpha = 0.8;
-        ctx.beginPath(); ctx.roundRect(px2, p2y, pw2, PH, PH/2); ctx.stroke();
-        ctx.restore();
-      } else {
-        // Normal: outer glow + solid
-        ctx.save();
-        ctx.globalAlpha = 0.55 + Math.min(Math.abs(p2vel) * 0.04, 0.2);
-        ctx.shadowColor = '#ff2d78'; ctx.shadowBlur = outerBlur2;
-        ctx.fillStyle = '#ff2d78';
-        ctx.beginPath(); ctx.roundRect(px2, p2y, pw2, PH, PH/2); ctx.fill();
-        ctx.restore();
-        ctx.save();
-        ctx.shadowColor = '#ff2d78'; ctx.shadowBlur = innerBlur2;
-        ctx.fillStyle = '#ff2d78';
-        ctx.beginPath(); ctx.roundRect(px2, p2y, pw2, PH, PH/2); ctx.fill();
-        ctx.restore();
-      }
-      // Hit blink overlay
-      if (hitAlpha2 > 0) {
-        ctx.save();
-        ctx.globalAlpha = hitAlpha2;
-        ctx.shadowColor = '#ffffff'; ctx.shadowBlur = 12;
-        ctx.fillStyle = '#ffffff';
-        ctx.beginPath(); ctx.roundRect(px2, p2y, pw2, PH, PH/2); ctx.fill();
-        ctx.restore();
-      }
-    } else {
-      ctx.save();
-      ctx.shadowColor = '#ff2d78'; ctx.shadowBlur = 4;
-      ctx.fillStyle = 'rgba(255,45,120,0.3)';
-      ctx.beginPath(); ctx.roundRect(px2, p2y, pw2, PH, PH/2); ctx.fill();
-      ctx.restore();
-    }
-  }
+function drawPaddles(p1y, p2y) {
+  drawPaddle(p2x, p2y, p2vel, p2NitroWidth, p2HitFlash, p2NitroImpact, '#ff2d78');
+  drawPaddle(p1x, p1y, p1vel, p1NitroWidth, p1HitFlash, p1NitroImpact, '#00f5ff');
+}
 
-  // P1 paddle hit flash ring
-  if (p1HitFlash > 0) {
-    const p1ExtraWd = p1NitroWidth * PW * 0.35;
-    const pw1f = PW + p1ExtraWd;
-    const px1f = p1x - p1ExtraWd / 2;
-    ctx.save();
-    ctx.globalAlpha = p1HitFlash * 0.7;
-    ctx.shadowColor = '#00f5ff'; ctx.shadowBlur = 20 * p1HitFlash;
-    ctx.strokeStyle = '#ffffff';
-    ctx.lineWidth = 2;
-    const expand = (1 - p1HitFlash) * 8;
-    ctx.beginPath(); ctx.roundRect(px1f - expand, p1y - expand, pw1f + expand*2, PH + expand*2, PH/2 + expand); ctx.stroke();
-    ctx.restore();
-  }
-  // P1 paddle trail when moving - multi-step
-  if (Math.abs(p1vel) > 1.5) {
-    for (let ti = 3; ti >= 1; ti--) {
-      ctx.save();
-      ctx.globalAlpha = Math.min(0.25, Math.abs(p1vel)*0.03) * (ti/3);
-      ctx.shadowColor = '#00f5ff'; ctx.shadowBlur = 6;
-      ctx.fillStyle = '#00f5ff';
-      ctx.beginPath(); ctx.roundRect(p1x - p1vel*ti*0.4, p1y, PW, PH, PH/2); ctx.fill();
-      ctx.restore();
-    }
-  }
-  // P1 paddle
-  {
-    const p1NitroActive = bNitroTimer > 0 && bNitroColor === '#00f5ff';
-    const nitroFrac1 = bNitroTimer / NITRO_DURATION;
-    const isEnding1 = p1NitroActive && nitroFrac1 < 0.25;
-    const blinkOn1 = isEnding1 ? (Math.floor(colorTime * 8) % 2 === 0) : true;
-    const extraW1 = p1NitroWidth * PW * 0.35;
-    const pw1 = PW + extraW1;
-    const px1 = p1x - extraW1 / 2;
-    const velGlow1 = Math.min(Math.abs(p1vel) * 4, 18);
-    const nitroGlow1 = p1NitroWidth * 30;
-    const outerBlur1 = 18 + velGlow1 + nitroGlow1;
-    const innerBlur1 = 8 + velGlow1 * 0.5 + nitroGlow1 * 0.5;
-    const hitAlpha1 = p1HitFlash * 0.45;
-    if (blinkOn1) {
-      if (p1NitroActive) {
-        // Dark body
-        ctx.save();
-        ctx.shadowColor = '#00f5ff'; ctx.shadowBlur = innerBlur1;
-        ctx.fillStyle = `rgba(0,30,50,0.92)`;
-        ctx.beginPath(); ctx.roundRect(px1, p1y, pw1, PH, PH/2); ctx.fill();
-        ctx.restore();
-        // Side neon glow
-        const pulse1 = 0.6 + Math.sin(colorTime * 6) * 0.4;
-        const sideW = PH * 1.2;
-        ctx.save();
-        ctx.globalAlpha = 0.7 * pulse1;
-        ctx.shadowColor = '#00f5ff'; ctx.shadowBlur = 20;
-        ctx.fillStyle = '#00f5ff';
-        ctx.beginPath(); ctx.roundRect(px1, p1y, sideW, PH, PH/2); ctx.fill();
-        ctx.beginPath(); ctx.roundRect(px1 + pw1 - sideW, p1y, sideW, PH, PH/2); ctx.fill();
-        ctx.restore();
-        // Thin outline glow
-        ctx.save();
-        ctx.shadowColor = '#00f5ff'; ctx.shadowBlur = outerBlur1;
-        ctx.strokeStyle = '#00f5ff'; ctx.lineWidth = 1;
-        ctx.globalAlpha = 0.8;
-        ctx.beginPath(); ctx.roundRect(px1, p1y, pw1, PH, PH/2); ctx.stroke();
-        ctx.restore();
-      } else {
-        // Normal: outer glow + solid
-        ctx.save();
-        ctx.globalAlpha = 0.55 + Math.min(Math.abs(p1vel) * 0.04, 0.2);
-        ctx.shadowColor = '#00f5ff'; ctx.shadowBlur = outerBlur1;
-        ctx.fillStyle = '#00f5ff';
-        ctx.beginPath(); ctx.roundRect(px1, p1y, pw1, PH, PH/2); ctx.fill();
-        ctx.restore();
-        ctx.save();
-        ctx.shadowColor = '#00f5ff'; ctx.shadowBlur = innerBlur1;
-        ctx.fillStyle = '#00f5ff';
-        ctx.beginPath(); ctx.roundRect(px1, p1y, pw1, PH, PH/2); ctx.fill();
-        ctx.restore();
-      }
-      // Hit blink overlay
-      if (hitAlpha1 > 0) {
-        ctx.save();
-        ctx.globalAlpha = hitAlpha1;
-        ctx.shadowColor = '#ffffff'; ctx.shadowBlur = 12;
-        ctx.fillStyle = '#ffffff';
-        ctx.beginPath(); ctx.roundRect(px1, p1y, pw1, PH, PH/2); ctx.fill();
-        ctx.restore();
-      }
-    } else {
-      ctx.save();
-      ctx.shadowColor = '#00f5ff'; ctx.shadowBlur = 4;
-      ctx.fillStyle = 'rgba(0,245,255,0.3)';
-      ctx.beginPath(); ctx.roundRect(px1, p1y, pw1, PH, PH/2); ctx.fill();
-      ctx.restore();
-    }
-  }
-
+function drawBall(p1y, p2y) {
   // Ball (hidden during goal celebration start)
   if (state !== 'goal' || goalTimer < 90) {
     ctx.save();
@@ -1451,6 +1492,7 @@ function draw() {
     // decay trail
     nitroTrail.forEach(t => t.life -= 0.04);
     if (bNitroTimer <= 0) nitroTrail = [];
+    if (bNitroTimer > 0) ballTrail = []; // clear normal trail during nitro
 
     const nitroFracBall = bNitroTimer / NITRO_DURATION;
     const isEnding = bNitroTimer > 0 && nitroFracBall < 0.25;
@@ -1475,19 +1517,24 @@ function draw() {
         ctx.strokeStyle='rgba(255,255,255,0.5)'; ctx.lineWidth=0.8; ctx.stroke();
       }
     } else {
-      // Normal ball — nitro style with player color
-      const bc = cfg.ballColor || '#55ddaa';
-      ctx.globalAlpha = 0.07; ctx.fillStyle = bc;
-      ctx.beginPath(); ctx.arc(bx, by, ballR*1.35, 0, Math.PI*2); ctx.fill();
+      // Normal ball — motion trail + compact neon core
+      const bc = cfg.ballColor || '#c8a8f0';
+      const _spd = Math.sqrt(bvx*bvx + bvy*bvy);
+      const _minSpd = H * 0.003;
+      const _maxSpd = H * 0.016;
+      const _spdFrac = Math.min(1, Math.max(0, (_spd - _minSpd) / (_maxSpd - _minSpd)));
+
+      // Core with white center — no halo
       ctx.globalAlpha = 1;
-      ctx.shadowColor = bc; ctx.shadowBlur = 20;
-      const gn = ctx.createRadialGradient(bx-ballR*0.25, by-ballR*0.3, ballR*0.05, bx, by, ballR);
-      gn.addColorStop(0,'#fff'); gn.addColorStop(0.35,bc); gn.addColorStop(0.8,bc);
-      gn.addColorStop(1,'rgba(0,0,20,0.85)');
+      ctx.shadowBlur = 0;
+      const gn = ctx.createRadialGradient(bx - ballR*0.28, by - ballR*0.32, ballR*0.04, bx, by, ballR);
+      gn.addColorStop(0, '#ffffff');
+      gn.addColorStop(0.20, bc);
+      gn.addColorStop(1, bc);
       ctx.fillStyle = gn;
       ctx.beginPath(); ctx.arc(bx, by, ballR, 0, Math.PI*2); ctx.fill();
-      ctx.strokeStyle='rgba(255,255,255,0.5)'; ctx.lineWidth=0.8; ctx.stroke();
       ctx.shadowBlur = 0;
+      ctx.strokeStyle = 'rgba(255,255,255,0.22)'; ctx.lineWidth = 0.7; ctx.stroke();
     }
     ctx.restore();
   }
@@ -1504,7 +1551,58 @@ function draw() {
 
   // Labels
 }
+}
 
+function draw() {
+  const p1y = H - PH - Math.round(H*0.10);
+  const p2y = Math.round(H*0.04);
+  const fieldMid = (p2y + PH + p1y) / 2;
+
+  // Screen shake decay
+  if (shakeMag > 0.4) {
+    shakeX = (Math.random() - 0.5) * shakeMag;
+    shakeY = (Math.random() - 0.5) * shakeMag * 0.6;
+    shakeMag *= 0.76;
+  } else { shakeMag = 0; shakeX = 0; shakeY = 0; }
+
+  if (shakeX !== 0) { ctx.save(); ctx.translate(shakeX, shakeY); }
+
+  // === BACKGROUND ===
+  colorTime += 0.004;
+  ctx.save();
+  ctx.beginPath();
+  ctx.rect(0, 0, W, p1y + PH + Math.round(H*0.10));
+  ctx.clip();
+  drawBackground(bgStyle, fieldMid, p2y + PH, p1y);
+  ctx.restore();
+  ctx.fillStyle = '#06060e';
+  ctx.fillRect(0, p1y + PH + Math.round(H*0.10), W, H);
+
+  drawField(p1y, p2y, fieldMid);
+  drawHUD(p1y, p2y, fieldMid);
+  drawEffects(p1y, p2y);
+  drawPaddles(p1y, p2y);
+  drawBall(p1y, p2y);
+
+  // Nitro hit full-screen flash (on top of everything)
+  if (nitroHitFlash > 0) {
+    ctx.save();
+    ctx.globalAlpha = nitroHitFlash * 0.38;
+    ctx.fillStyle = nitroHitColor;
+    ctx.fillRect(0, 0, W, H);
+    // bright vignette ring at edges
+    const vg = ctx.createRadialGradient(W/2, H/2, H*0.2, W/2, H/2, H*0.85);
+    vg.addColorStop(0, 'rgba(0,0,0,0)');
+    vg.addColorStop(1, nitroHitColor);
+    ctx.globalAlpha = nitroHitFlash * 0.55;
+    ctx.fillStyle = vg;
+    ctx.fillRect(0, 0, W, H);
+    ctx.restore();
+    nitroHitFlash *= 0.80;
+    if (nitroHitFlash < 0.01) nitroHitFlash = 0;
+  }
+
+  if (shakeX !== 0) ctx.restore();
 }
 
 function rr(x,y,w,h,r){ ctx.beginPath(); ctx.roundRect(x,y,w,h,r); ctx.fill(); }
@@ -1543,33 +1641,40 @@ function endGame(scorer) {
 let paused = false;
 
 function togglePause() {
-  const anyRunning = running || arkRunning;
-  if (!anyRunning && !paused) return;
+  if (!running && !paused) return;
   paused = !paused;
   document.getElementById('pauseBtn').textContent = paused ? '▶' : '⏸';
   if (paused) {
     stopBgm();
     cancelAnimationFrame(animId);
-    cancelAnimationFrame(arkAnimId);
-    document.getElementById('pauseScore').textContent = currentGame === 'ark'
-      ? `Nivel ${arkLevel} · ${arkScore} pts`
-      : `${s1} — ${s2}`;
+    document.getElementById('pauseScore').textContent = `${s1} — ${s2}`;
+    // Sync sound button label
+    const psb = document.getElementById('pauseSoundBtn');
+    if (psb) psb.textContent = soundOn ? '🔊 Sonido: ON' : '🔇 Sonido: OFF';
     showOverlay('ovPause');
   } else {
     resumeGame();
   }
 }
 
+function centerPausePanel() {
+  const op = document.getElementById('ovPause');
+  const pw = op.offsetWidth  || 200;
+  const ph = op.offsetHeight || 180;
+  op.style.left = Math.round((W - pw) / 2) + 'px';
+  op.style.top  = Math.round((H - ph) / 2) + 'px';
+}
+
+function goToHome() {
+  window.location.href = '../../index.html';
+}
+
 function resumeGame() {
   paused = false;
   document.getElementById('pauseBtn').textContent = '⏸';
   hideOverlays();
-  if (currentGame === 'ark') {
-    arkAnimId = requestAnimationFrame(arkLoop);
-  } else {
-    startBgm();
-    animId = requestAnimationFrame(loop);
-  }
+  startBgm();
+  animId = requestAnimationFrame(loop);
 }
 
 function startSurvival() {
@@ -1582,27 +1687,32 @@ function startSurvival() {
 
 function showMenu() {
   stopBgm(); paused=false; survivalMode=false;
-  // Stop arkanoid if running
-  if (arkRunning) { arkRunning=false; if(arkAnimId) cancelAnimationFrame(arkAnimId); }
   hideOverlays();
-  // Reset to game selector
-  ['menuMain','menuArk','menuMode'].forEach(id=>{ const el=document.getElementById(id); if(el) el.style.display='none'; });
-  document.getElementById('menuGames').style.display='flex';
+  document.getElementById('menuMode').style.display='none';
+  document.getElementById('menuMain').style.display='flex';
   document.getElementById('menuSub').style.display='block';
-  document.getElementById('menuTitle').textContent='ARCADE';
-  document.getElementById('menuTitle').style.color='var(--cyan)';
-  document.getElementById('menuTitle').style.filter='drop-shadow(0 0 20px var(--cyan))';
   showOverlay('ovMenu');
   running=false;
   document.getElementById('pauseBtn').textContent='⏸';
   updateRecords();
 }
-function showOverlay(id){ ['ovMenu','ovEnd','ovPause'].forEach(o=>document.getElementById(o).classList.toggle('hidden',o!==id)); }
-function hideOverlays(){ ['ovMenu','ovEnd','ovPause'].forEach(o=>document.getElementById(o).classList.add('hidden')); }
+function showOverlay(id){
+  ['ovMenu','ovEnd'].forEach(o=>document.getElementById(o).classList.toggle('hidden',o!==id));
+  const op = document.getElementById('ovPause');
+  op.style.display = (id==='ovPause') ? 'flex' : 'none';
+  if (id!=='ovPause') return;
+  // also hide the full overlays
+  ['ovMenu','ovEnd'].forEach(o=>document.getElementById(o).classList.add('hidden'));
+  // centre the panel over the canvas
+  requestAnimationFrame(centerPausePanel);
+}
+function hideOverlays(){
+  ['ovMenu','ovEnd'].forEach(o=>document.getElementById(o).classList.add('hidden'));
+  document.getElementById('ovPause').style.display='none';
+}
 
 // ── TOUCH ──
 gc.addEventListener('touchstart', e=>{
-  if (arkRunning) return; // arkanoid handles its own touch
   try {
     if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
     if (audioCtx.state === 'suspended') audioCtx.resume();
@@ -1617,7 +1727,6 @@ gc.addEventListener('touchstart', e=>{
 },{passive:false});
 
 gc.addEventListener('touchmove', e=>{
-  if (arkRunning) return;
   e.preventDefault();
   const rect = gc.getBoundingClientRect();
   const scaleX = W/rect.width;
@@ -1634,7 +1743,14 @@ gc.addEventListener('touchmove', e=>{
 
 gc.addEventListener('touchend', e=>{ e.preventDefault(); },{passive:false});
 
-// Keyboard
+// Mouse — move P1 paddle (bottom) horizontally
+gc.addEventListener('mousemove', e => {
+  if (!running) return;
+  const rect = gc.getBoundingClientRect();
+  const tx = (e.clientX - rect.left) * (W / rect.width);
+  p1x = Math.max(0, Math.min(W - PW, tx - PW / 2));
+});
+
 document.addEventListener('mousedown', () => {
   try { if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume(); } catch(e){}
 });
@@ -1659,14 +1775,7 @@ function setNitroAt(idx) {
 }
 
 // ── MENU NAVIGATION ──
-let currentMode = 1; // 1, 2, 'surv', 'arkNormal', 'arkEndless'
-let currentGame = 'pong'; // 'pong' | 'ark'
-
-// Arkanoid config
-let arkCfg = { lives: 3, speed: 2, powerups: true, ballColor: '#ff5577' };
-let arkRecords = { classicBest: 0, endlessLevel: 0 };
-try { const r = JSON.parse(localStorage.getItem('arkRecords')||'{}'); Object.assign(arkRecords, r); } catch(e){}
-function saveArkRecords() { try { localStorage.setItem('arkRecords', JSON.stringify(arkRecords)); } catch(e){} }
+let currentMode = 1; // 1, 2, 'surv'
 
 function updateRecords() {
   const rd = document.getElementById('recordsDisplay');
@@ -1674,38 +1783,15 @@ function updateRecords() {
     const best = records.survivalBest > 0 ? `<br>⚡ Récord supervivencia: ${records.survivalBest}s` : '';
     rd.innerHTML = `🏆 Victorias: ${records.wins||0} &nbsp;|&nbsp; 🔥 Racha récord: ${records.maxRally||0}${best}`;
   }
-  const ar = document.getElementById('arkRecordsDisplay');
-  if (ar) ar.innerHTML = `🏆 Clásico: Nv ${arkRecords.classicBest||0} &nbsp;|&nbsp; ⚡ Sin fin: Nv ${arkRecords.endlessLevel||0}`;
 }
 
-function selectGame(game) {
-  currentGame = game;
-  document.getElementById('menuGames').style.display = 'none';
-  document.getElementById('menuSub').style.display = 'none';
-  if (game === 'pong') {
-    document.getElementById('menuMain').style.display = 'flex';
-  } else {
-    document.getElementById('menuArk').style.display = 'flex';
-  }
-  updateRecords();
-}
 
-function backToGames() {
-  document.getElementById('menuMain').style.display = 'none';
-  document.getElementById('menuArk').style.display = 'none';
-  document.getElementById('menuMode').style.display = 'none';
-  document.getElementById('menuGames').style.display = 'flex';
-  document.getElementById('menuSub').style.display = 'block';
-  document.getElementById('menuTitle').textContent = 'ARCADE';
-  document.getElementById('menuTitle').style.color = 'var(--cyan)';
-  document.getElementById('menuTitle').style.filter = 'drop-shadow(0 0 20px var(--cyan))';
-}
+
+
 
 function selectMode(m) {
   currentMode = m;
-  const isArk = m === 'arkNormal' || m === 'arkEndless';
   document.getElementById('menuMain').style.display = 'none';
-  document.getElementById('menuArk').style.display = 'none';
   document.getElementById('menuSub').style.display = 'none';
   document.getElementById('menuMode').style.display = 'flex';
 
@@ -1713,22 +1799,14 @@ function selectMode(m) {
   const isSurv = m === 'surv';
   const is1p = m === 1;
   const is2p = m === 2;
-  const isArkEndless = m === 'arkEndless';
 
-  if (isArk) {
-    titleEl.textContent = isArkEndless ? '⚡ SIN FIN' : '▶ CLÁSICO';
-    titleEl.style.color = isArkEndless ? '#ff2d78' : '#ffb400';
-  } else {
-    titleEl.textContent = isSurv ? '⚡ SUPERVIVENCIA' : (is1p ? '👤 1 JUGADOR' : '👥 2 JUGADORES');
-    titleEl.style.color = isSurv ? '#ffb400' : (is2p ? '#ff2d78' : 'var(--cyan)');
-  }
+  titleEl.textContent = isSurv ? '⚡ SUPERVIVENCIA' : (is1p ? '👤 1 JUGADOR' : '👥 2 JUGADORES');
+  titleEl.style.color = isSurv ? '#ffb400' : (is2p ? '#ff2d78' : 'var(--cyan)');
 
   // Nav pills
   const nav = document.getElementById('modeNav');
   let pills;
-  if (isArk) {
-    pills = [['jugar','▶ Jugar'],['gameplayArk','⚙️ Gameplay'],['estilo','🎨 Estilo']];
-  } else if (isSurv) {
+  if (isSurv) {
     pills = [['jugar','▶ Jugar'],['gameplay','⚙️ Gameplay'],['estilo','🎨 Estilo']];
   } else if (is1p) {
     pills = [['jugar','▶ Jugar'],['nivel','🎯 Nivel'],['gameplay','⚙️ Gameplay'],['estilo','🎨 Estilo']];
@@ -1739,30 +1817,27 @@ function selectMode(m) {
     `<button id="pill-${id}" onclick="showSection('${id}')" class="btn" style="padding:7px 14px;font-size:10px;background:rgba(0,245,255,0.05)">${label}</button>`
   ).join('');
 
-  // Blocks section visibility (pong only)
-  document.getElementById('blocksSection').style.display = (isSurv || isArk) ? 'none' : 'flex';
+  // Blocks section visibility
+  document.getElementById('blocksSection').style.display = isSurv ? 'none' : 'flex';
 
-  // Survival/ark record
+  // Survival record
   const sr = document.getElementById('survRecordSec');
   if (sr) {
     if (isSurv) { sr.style.display='block'; sr.textContent=records.survivalBest>0?`⚡ Tu récord: ${records.survivalBest}s`:'Sin récord aún'; }
-    else if (isArkEndless) { sr.style.display='block'; sr.textContent=arkRecords.endlessLevel>0?`⚡ Tu récord: Nv ${arkRecords.endlessLevel}`:'Sin récord aún'; }
-    else if (m==='arkNormal') { sr.style.display='block'; sr.textContent=arkRecords.classicBest>0?`🏆 Tu récord: Nv ${arkRecords.classicBest}`:'Sin récord aún'; }
     else sr.style.display='none';
   }
 
   // Jugar button style
   const bj = document.getElementById('btnJugar');
-  if (isSurv||isArkEndless) { bj.style.borderColor='#ffb400'; bj.style.background='rgba(255,180,0,0.1)'; bj.style.color='#ffb400'; }
+  if (isSurv) { bj.style.borderColor='#ffb400'; bj.style.background='rgba(255,180,0,0.1)'; bj.style.color='#ffb400'; }
   else if (is2p) { bj.style.borderColor='#ff2d78'; bj.style.background='rgba(255,45,120,0.1)'; bj.style.color='#ff2d78'; }
-  else if (m==='arkNormal') { bj.style.borderColor='#ffb400'; bj.style.background='rgba(255,180,0,0.1)'; bj.style.color='#ffb400'; }
   else { bj.style.borderColor='var(--cyan)'; bj.style.background='rgba(0,245,255,0.1)'; bj.style.color='var(--cyan)'; }
 
   showSection('jugar');
 }
 
 function showSection(id) {
-  ['secJugar','secNivel','secGameplay','secGameplayArk','secEstilo'].forEach(s => {
+  ['secJugar','secNivel','secGameplay','secEstilo'].forEach(s => {
     const el = document.getElementById(s); if (el) el.style.display = 'none';
   });
   const secEl = document.getElementById('sec' + id.charAt(0).toUpperCase() + id.slice(1));
@@ -1776,7 +1851,7 @@ function showSection(id) {
     document.querySelectorAll('#secEstilo .ball-swatch').forEach(s => {
       const c = s.getAttribute('data-color');
       const cv = s.querySelector('canvas');
-      const activeColor = currentGame === 'ark' ? arkCfg.ballColor : cfg.ballColor;
+      const activeColor = cfg.ballColor;
       if (cv) drawBallOnCanvas(cv, c, c === activeColor);
     });
     // Reflect current bg selection
@@ -1791,11 +1866,7 @@ function showSection(id) {
 
 function backToMain() {
   document.getElementById('menuMode').style.display = 'none';
-  if (currentGame === 'ark') {
-    document.getElementById('menuArk').style.display = 'flex';
-  } else {
-    document.getElementById('menuMain').style.display = 'flex';
-  }
+  document.getElementById('menuMain').style.display = 'flex';
   document.getElementById('menuSub').style.display = 'block';
   updateRecords();
 }
@@ -1811,13 +1882,11 @@ function setBg(n) {
 }
 
 function launchGame() {
-  if (currentGame === 'ark') { startArk(); return; }
   if (currentMode === 'surv') startSurvival();
   else startGame(currentMode);
 }
 
 function rematch() {
-  if (currentGame === 'ark') { startArk(); return; }
   if (currentMode === 'surv') startSurvival();
   else startGame(lastMode);
 }
@@ -1826,8 +1895,7 @@ function openSubMenu(id) { selectMode(id === '1p' ? 1 : id === '2p' ? 2 : 'surv'
 function closeSubMenu() { backToMain(); }
 
 function setBallColor(color, btn) {
-  if (currentGame === 'ark') { arkCfg.ballColor = color; }
-  else { cfg.ballColor = color; }
+  cfg.ballColor = color;
   document.querySelectorAll('#secEstilo .ball-swatch').forEach(b => {
     b.classList.remove('active');
     const c = b.getAttribute('data-color');
@@ -1981,6 +2049,62 @@ function playTone(freq, type, dur, vol, delay=0) {
 }
 
 function sndHit()  { playTone(320, 'square', 0.06, 0.35); }
+
+function sndNitroHit() {
+  if (!soundOn) return;
+  try {
+    const ac = getAudio();
+    const t = ac.currentTime;
+    // 1. Sub-bass shockwave (felt more than heard)
+    const sub = ac.createOscillator(); const subG = ac.createGain();
+    sub.connect(subG); subG.connect(ac.destination);
+    sub.type = 'sine';
+    sub.frequency.setValueAtTime(55, t);
+    sub.frequency.exponentialRampToValueAtTime(18, t + 0.28);
+    subG.gain.setValueAtTime(1.1, t);
+    subG.gain.exponentialRampToValueAtTime(0.001, t + 0.30);
+    sub.start(t); sub.stop(t + 0.32);
+    // 2. Heavy mid thud — paddle body impact
+    const thud = ac.createOscillator(); const thudG = ac.createGain();
+    thud.connect(thudG); thudG.connect(ac.destination);
+    thud.type = 'triangle';
+    thud.frequency.setValueAtTime(140, t);
+    thud.frequency.exponentialRampToValueAtTime(35, t + 0.14);
+    thudG.gain.setValueAtTime(0.85, t);
+    thudG.gain.exponentialRampToValueAtTime(0.001, t + 0.17);
+    thud.start(t); thud.stop(t + 0.18);
+    // 3. Shattering noise burst with exponential envelope (like breaking material)
+    const bufLen = Math.floor(ac.sampleRate * 0.22);
+    const buf = ac.createBuffer(1, bufLen, ac.sampleRate);
+    const data = buf.getChannelData(0);
+    for (let i = 0; i < bufLen; i++) {
+      data[i] = (Math.random() * 2 - 1) * Math.exp(-i / (bufLen * 0.06));
+    }
+    const crack = ac.createBufferSource(); const crackG = ac.createGain();
+    crack.buffer = buf; crack.connect(crackG); crackG.connect(ac.destination);
+    crackG.gain.setValueAtTime(0.9, t + 0.005);
+    crackG.gain.exponentialRampToValueAtTime(0.001, t + 0.24);
+    crack.start(t + 0.005);
+    // 4. Electric screech 900→120Hz — energy discharge
+    const zap = ac.createOscillator(); const zapG = ac.createGain();
+    zap.connect(zapG); zapG.connect(ac.destination);
+    zap.type = 'sawtooth';
+    zap.frequency.setValueAtTime(900, t + 0.01);
+    zap.frequency.exponentialRampToValueAtTime(120, t + 0.26);
+    zapG.gain.setValueAtTime(0.40, t + 0.01);
+    zapG.gain.exponentialRampToValueAtTime(0.001, t + 0.28);
+    zap.start(t + 0.01); zap.stop(t + 0.29);
+    // 5. Metallic high crack — fracture sound
+    const ping = ac.createOscillator(); const pingG = ac.createGain();
+    ping.connect(pingG); pingG.connect(ac.destination);
+    ping.type = 'square';
+    ping.frequency.setValueAtTime(1400, t + 0.008);
+    ping.frequency.exponentialRampToValueAtTime(380, t + 0.13);
+    pingG.gain.setValueAtTime(0.28, t + 0.008);
+    pingG.gain.exponentialRampToValueAtTime(0.001, t + 0.15);
+    ping.start(t + 0.008); ping.stop(t + 0.16);
+  } catch(e) {}
+}
 
 function sndNitroExplosion(color) {
   if (!soundOn) return;
@@ -2150,426 +2274,14 @@ function toggleSound() {
   document.getElementById('soundBtn').textContent = soundOn ? '🔊' : '🔇';
   const audio = document.getElementById('nitroAudio');
   if (audio) audio.volume = soundOn ? 0.8 : 0;
+  // Keep pause screen in sync
+  const psb = document.getElementById('pauseSoundBtn');
+  if (psb) psb.textContent = soundOn ? '🔊 Sonido: ON' : '🔇 Sonido: OFF';
 }
 
 window.addEventListener('resize', ()=>{ if(running){ resize(); }});
 resize();
 
-// ═══════════════════════════════════════════════
-// ── ARKANOID ENGINE ──
-// ═══════════════════════════════════════════════
-
-let arkRunning = false, arkPaused = false, arkAnimId = null;
-let arkPx, arkBx, arkBy, arkBvx, arkBvy;
-let arkLives, arkScore, arkLevel, arkCombo;
-let arkBricks = [], arkParticles = [], arkPowerUps = [], arkFloatingNums = [];
-let arkBallAttached = true;
-let arkPaddleVel = 0, arkPrevPx = 0;
-let arkExtraBalls = [];
-let arkPaddleWide = 0;
-let arkColorTime = 0;
-let arkGoalFlash = 0, arkGoalFlashColor = '#fff';
-
-const ARK_COLS = 8;
-const ARK_BRICK_COLORS = [
-  ['#ff3355','#ff6677'],
-  ['#ff6600','#ff8833'],
-  ['#ffcc00','#ffee55'],
-  ['#44cc22','#66ee44'],
-  ['#0088ff','#44aaff'],
-  ['#8833ff','#aa66ff'],
-];
-const ARK_POWERUP_TYPES = [
-  { id:'wide',  color:'#00f5ff', label:'▬' },
-  { id:'multi', color:'#ff2d78', label:'✦' },
-  { id:'slow',  color:'#ffcc00', label:'❄' },
-  { id:'life',  color:'#00ff88', label:'♥' },
-];
-
-function buildArkBricks(lv) {
-  arkBricks = [];
-  const bw = (W * 0.88) / ARK_COLS;
-  const bh = Math.round(H * 0.038);
-  const startX = W * 0.06;
-  const startY = H * 0.10;
-  const rows = Math.min(8, 3 + Math.floor(lv / 2));
-  for (let r = 0; r < rows; r++) {
-    const ci = r % ARK_BRICK_COLORS.length;
-    for (let c = 0; c < ARK_COLS; c++) {
-      const isHard = lv >= 3 && Math.random() < 0.15;
-      const isGold = lv >= 5 && Math.random() < 0.06;
-      arkBricks.push({
-        x: startX + c * bw, y: startY + r * (bh + 4),
-        w: bw - 3, h: bh,
-        hp: isGold ? 99 : (isHard ? 2 : 1),
-        maxHp: isGold ? 99 : (isHard ? 2 : 1),
-        color: isGold ? '#ffc740' : ARK_BRICK_COLORS[ci][0],
-        colorLight: isGold ? '#ffe080' : ARK_BRICK_COLORS[ci][1],
-        destroyed: false, flash: 0,
-        hasPowerUp: arkCfg.powerups && !isGold && Math.random() < 0.12
-      });
-    }
-  }
-}
-
-function startArk() {
-  resize(); initStars();
-  arkLives = arkCfg.lives; arkScore = 0; arkLevel = 1; arkCombo = 0;
-  arkExtraBalls = []; arkPowerUps = []; arkParticles = []; arkFloatingNums = [];
-  arkPaddleWide = 0; arkColorTime = 0;
-  arkPx = W/2 - PW/2; arkPrevPx = arkPx; arkPaddleVel = 0;
-  buildArkBricks(1);
-  arkResetBall();
-  hideOverlays();
-  arkRunning = true; arkPaused = false;
-  if (arkAnimId) cancelAnimationFrame(arkAnimId);
-  arkAnimId = requestAnimationFrame(arkLoop);
-}
-
-function arkResetBall() {
-  const epw = arkPaddleWide > 0 ? PW * 1.6 : PW;
-  arkBx = arkPx + epw/2;
-  arkBy = H - PH - Math.round(H*0.10) - BR - 2;
-  arkBvx = 0; arkBvy = 0;
-  arkBallAttached = true;
-}
-
-function arkLaunchBall() {
-  if (!arkBallAttached) return;
-  const spd = H * (0.004 + arkCfg.speed * 0.0015);
-  const angle = -Math.PI/2 + (Math.random()-0.5)*0.5;
-  arkBvx = Math.cos(angle)*spd;
-  arkBvy = Math.sin(angle)*spd;
-  arkBallAttached = false;
-}
-
-function arkLoop() {
-  if (!arkRunning || paused) return;
-  arkUpdate();
-  arkDraw();
-  arkAnimId = requestAnimationFrame(arkLoop);
-}
-
-function arkUpdate() {
-  arkColorTime += 0.003;
-  if (arkGoalFlash > 0) arkGoalFlash--;
-  arkPaddleVel = arkPx - arkPrevPx;
-  arkPrevPx = arkPx;
-  const epw = arkPaddleWide > 0 ? PW * 1.6 : PW;
-  if (arkPaddleWide > 0) arkPaddleWide--;
-  const p1y = H - PH - Math.round(H*0.10);
-
-  if (arkBallAttached) { arkBx = arkPx + epw/2; arkBy = p1y - BR - 2; return; }
-
-  arkBx += arkBvx; arkBy += arkBvy;
-  if (arkBx-BR < 0) { arkBx=BR; arkBvx=Math.abs(arkBvx); sndWall(); }
-  if (arkBx+BR > W) { arkBx=W-BR; arkBvx=-Math.abs(arkBvx); sndWall(); }
-  if (arkBy-BR < 0) { arkBy=BR; arkBvy=Math.abs(arkBvy); sndWall(); }
-
-  // Paddle hit
-  if (arkBvy>0 && arkBy+BR>=p1y && arkBy+BR<=p1y+PH+6 && arkBx>=arkPx-4 && arkBx<=arkPx+epw+4) {
-    const rel = (arkBx-(arkPx+epw/2))/(epw/2);
-    const spd = Math.sqrt(arkBvx*arkBvx+arkBvy*arkBvy);
-    const angle = rel*(Math.PI*0.38);
-    arkBvx = Math.sin(angle)*spd + arkPaddleVel*0.05;
-    arkBvy = -Math.cos(angle)*spd;
-    if (Math.abs(arkBvy)<spd*0.2) arkBvy=-spd*0.3;
-    arkBy = p1y-BR-1; arkCombo=0; sndHit();
-  }
-
-  // Extra balls
-  arkExtraBalls = arkExtraBalls.filter(eb => {
-    eb.x+=eb.vx; eb.y+=eb.vy;
-    if(eb.x-BR<0){eb.x=BR;eb.vx=Math.abs(eb.vx);}
-    if(eb.x+BR>W){eb.x=W-BR;eb.vx=-Math.abs(eb.vx);}
-    if(eb.y-BR<0){eb.y=BR;eb.vy=Math.abs(eb.vy);}
-    if(eb.y>H+BR*3) return false;
-    if(eb.vy>0&&eb.y+BR>=p1y&&eb.y+BR<=p1y+PH+6&&eb.x>=arkPx-4&&eb.x<=arkPx+epw+4){eb.vy=-Math.abs(eb.vy);eb.y=p1y-BR-1;}
-    arkCheckBrick(eb); return true;
-  });
-
-  arkCheckBrick({x:arkBx,y:arkBy,get vx(){return arkBvx;},set vx(v){arkBvx=v;},get vy(){return arkBvy;},set vy(v){arkBvy=v;}});
-
-  // Ball lost
-  if (arkBy > H+BR) {
-    if (arkExtraBalls.length > 0) {
-      const eb = arkExtraBalls.shift();
-      arkBx=eb.x; arkBy=eb.y; arkBvx=eb.vx; arkBvy=eb.vy;
-    } else {
-      arkLives--;
-      arkGoalFlash=10; arkGoalFlashColor='#ff2d78';
-      sndLose(); try{navigator.vibrate(200);}catch(e){}
-      if (arkLives <= 0) { setTimeout(()=>arkEndGame(false),800); return; }
-      arkExtraBalls=[]; arkPaddleWide=0; arkResetBall();
-    }
-  }
-
-  // Level clear
-  const rem = arkBricks.filter(b=>!b.destroyed&&b.hp<99).length;
-  if (rem === 0) {
-    arkLevel++; arkCombo=0;
-    arkGoalFlash=12; arkGoalFlashColor='#00f5ff';
-    sndGoal();
-    if (currentMode==='arkNormal' && arkLevel>7) { setTimeout(()=>arkEndGame(true),800); return; }
-    arkExtraBalls=[]; arkPowerUps=[]; arkPaddleWide=0;
-    buildArkBricks(arkLevel); arkResetBall();
-  }
-
-  // Power-ups
-  arkPowerUps = arkPowerUps.filter(pu => {
-    pu.y += H*0.003;
-    if (pu.y>H) return false;
-    const epw2 = arkPaddleWide>0?PW*1.6:PW;
-    if (pu.y+12>=p1y&&pu.y<=p1y+PH&&pu.x>=arkPx-4&&pu.x<=arkPx+epw2+4) {
-      arkApplyPowerUp(pu.type); return false;
-    }
-    return true;
-  });
-
-  arkFloatingNums = arkFloatingNums.filter(f=>{f.y-=1.5;f.life-=0.025;return f.life>0;});
-  arkBricks.forEach(b=>{if(b.flash>0)b.flash-=0.1;});
-  arkParticles = arkParticles.filter(p=>{p.x+=p.vx;p.y+=p.vy;p.vy+=0.08;p.life-=0.022;return p.life>0;});
-  stars.forEach(s=>{s.y+=s.vy;if(s.y>H){s.y=0;s.x=Math.random()*W;}});
-}
-
-function arkCheckBrick(ball) {
-  for (const b of arkBricks) {
-    if (b.destroyed||b.hp>=99) continue;
-    if (ball.x+BR>b.x&&ball.x-BR<b.x+b.w&&ball.y+BR>b.y&&ball.y-BR<b.y+b.h) {
-      const oL=ball.x+BR-b.x, oR=b.x+b.w-(ball.x-BR);
-      const oT=ball.y+BR-b.y, oB=b.y+b.h-(ball.y-BR);
-      const mH=Math.min(oL,oR), mV=Math.min(oT,oB);
-      if(mH<mV) ball.vx=(oL<oR)?-Math.abs(ball.vx):Math.abs(ball.vx);
-      else       ball.vy=(oT<oB)?-Math.abs(ball.vy):Math.abs(ball.vy);
-      b.hp--; b.flash=1;
-      if(b.hp<=0){
-        b.destroyed=true; arkCombo++;
-        const pts=10*arkCombo; arkScore+=pts;
-        for(let i=0;i<8;i++){const a=Math.random()*Math.PI*2,sp=1+Math.random()*3;arkParticles.push({x:b.x+b.w/2,y:b.y+b.h/2,vx:Math.cos(a)*sp,vy:Math.sin(a)*sp,life:1,color:b.color});}
-        arkFloatingNums.push({x:b.x+b.w/2,y:b.y,text:'+'+pts,life:1,color:b.color});
-        sndBrick();
-        if(b.hasPowerUp){const pt=ARK_POWERUP_TYPES[Math.floor(Math.random()*ARK_POWERUP_TYPES.length)];arkPowerUps.push({x:b.x+b.w/2,y:b.y+b.h/2,type:pt.id,color:pt.color,label:pt.label});}
-      } else sndHit();
-      break;
-    }
-  }
-}
-
-function arkApplyPowerUp(type) {
-  sndPowerUp();
-  const spd=Math.sqrt(arkBvx*arkBvx+arkBvy*arkBvy);
-  if(type==='wide') arkPaddleWide=400;
-  else if(type==='multi'){const a=Math.atan2(arkBvy,arkBvx);[-0.4,0.4].forEach(d=>arkExtraBalls.push({x:arkBx,y:arkBy,vx:Math.cos(a+d)*spd,vy:Math.sin(a+d)*spd}));}
-  else if(type==='slow'){const a=Math.atan2(arkBvy,arkBvx),s2=spd*0.7;arkBvx=Math.cos(a)*s2;arkBvy=Math.sin(a)*s2;}
-  else if(type==='life') arkLives=Math.min(arkLives+1,9);
-}
-
-function arkEndGame(win) {
-  arkRunning=false;
-  if(win&&currentMode==='arkNormal'&&arkLevel>(arkRecords.classicBest||0)){arkRecords.classicBest=arkLevel;saveArkRecords();}
-  if(currentMode==='arkEndless'&&arkLevel>(arkRecords.endlessLevel||0)){arkRecords.endlessLevel=arkLevel;saveArkRecords();}
-  const t=document.getElementById('endTitle');
-  t.textContent=win?'¡GANASTE!':'GAME OVER';
-  t.style.color=win?'var(--cyan)':'var(--pink)';
-  t.style.filter=`drop-shadow(0 0 20px ${win?'var(--cyan)':'var(--pink)'})`;
-  document.getElementById('endSub').textContent=`Nivel ${arkLevel} · ${arkScore} pts`;
-  document.getElementById('endRecords').innerHTML=`🏆 Clásico: Nv ${arkRecords.classicBest||0} &nbsp;|&nbsp; ⚡ Sin fin: Nv ${arkRecords.endlessLevel||0}`;
-  const rb=document.querySelector('#ovEnd .btn');
-  if(rb) rb.textContent='↺ Reintentar';
-  showOverlay('ovEnd');
-}
-
-function arkDraw() {
-  const p1y = H - PH - Math.round(H*0.10);
-  colorTime += 0.004;
-
-  // ── FULL SYNTHWAVE BACKGROUND (same as Pong) ──
-  const ct = colorTime;
-  const cycleT = ((ct*0.01)%1+1)%1;
-  const bPhases=[{h:320,s:70,l:6},{h:330,s:80,l:8},{h:200,s:65,l:7},{h:210,s:60,l:6},{h:195,s:55,l:5},{h:340,s:75,l:7},{h:300,s:70,l:6},{h:260,s:65,l:5}];
-  const stopCount=bPhases.length;
-  const stopIdx=Math.min(Math.floor(cycleT*stopCount),stopCount-1);
-  const stopFrac=(cycleT*stopCount)-stopIdx;
-  const pa=bPhases[stopIdx], pb=bPhases[(stopIdx+1)%stopCount];
-  const hue=pa.h+(pb.h-pa.h)*stopFrac;
-  const bgS=pa.s+(pb.s-pa.s)*stopFrac, bgL=pa.l+(pb.l-pa.l)*stopFrac;
-  ctx.fillStyle=`hsl(${hue},${bgS}%,${bgL}%)`; ctx.fillRect(0,0,W,H);
-
-  // Sky gradient
-  const skyG=ctx.createLinearGradient(0,0,0,H*0.5);
-  skyG.addColorStop(0,'rgba(20,0,40,0.9)'); skyG.addColorStop(0.5,'rgba(10,0,25,0.6)'); skyG.addColorStop(1,'rgba(0,0,0,0)');
-  ctx.fillStyle=skyG; ctx.fillRect(0,0,W,H);
-
-  // Subtle background grid — very faint, no blur
-  ctx.save();
-  ctx.strokeStyle = 'rgba(0,245,255,0.04)';
-  ctx.lineWidth = 0.5;
-  const gSpacing = Math.round(W / 9);
-  for (let gx = 0; gx <= W; gx += gSpacing) {
-    ctx.beginPath(); ctx.moveTo(gx, 0); ctx.lineTo(gx, H); ctx.stroke();
-  }
-  for (let gy = 0; gy <= H; gy += gSpacing) {
-    ctx.beginPath(); ctx.moveTo(0, gy); ctx.lineTo(W, gy); ctx.stroke();
-  }
-  ctx.restore();
-
-  // Stars
-  ctx.save();
-  stars.forEach(s=>{ctx.globalAlpha=s.brightness*0.7;ctx.fillStyle='#fff';ctx.fillRect(s.x,s.y,s.size,s.size);});
-  ctx.globalAlpha=1; ctx.restore();
-
-  // Scanlines
-  ctx.save();
-  for(let y=0;y<H;y+=3){ctx.fillStyle='rgba(0,0,0,0.07)';ctx.fillRect(0,y,W,1);}
-  ctx.restore();
-
-  // Vignette
-  const vig=ctx.createRadialGradient(W/2,H/2,H*0.3,W/2,H/2,H*0.75);
-  vig.addColorStop(0,'rgba(0,0,0,0)'); vig.addColorStop(1,'rgba(0,0,0,0.55)');
-  ctx.fillStyle=vig; ctx.fillRect(0,0,W,H);
-
-  // Goal flash
-  if(arkGoalFlash>0){ctx.save();ctx.globalAlpha=arkGoalFlash/12*0.5;ctx.fillStyle=arkGoalFlashColor;ctx.fillRect(0,0,W,H);ctx.restore();}
-
-  // ── BRICKS — no shadowBlur, fake glow with alpha rect underneath ──
-  arkBricks.forEach(b=>{
-    if(b.destroyed) return;
-    // Fake glow: semitransparent expanded rect, no blur
-    ctx.save();
-    ctx.globalAlpha = b.flash>0 ? 0.35 : 0.18;
-    ctx.fillStyle = b.flash>0 ? '#ffffff' : b.color;
-    ctx.beginPath(); ctx.roundRect(b.x-3,b.y-3,b.w+6,b.h+6,5); ctx.fill();
-    ctx.globalAlpha = 1;
-    // Main brick — crisp, no shadow
-    if(b.flash>0){
-      ctx.fillStyle='#ffffff'; ctx.globalAlpha=0.5+b.flash*0.5;
-    } else {
-      const grad=ctx.createLinearGradient(b.x,b.y,b.x,b.y+b.h);
-      grad.addColorStop(0,b.colorLight||b.color); grad.addColorStop(1,b.color);
-      ctx.fillStyle=grad;
-    }
-    ctx.beginPath(); ctx.roundRect(b.x,b.y,b.w,b.h,3); ctx.fill();
-    if(b.maxHp>=2&&b.hp>0){
-      ctx.globalAlpha=0.55; ctx.strokeStyle='rgba(255,255,255,0.6)'; ctx.lineWidth=1.5;
-      ctx.beginPath(); ctx.roundRect(b.x+2,b.y+2,b.w-4,b.h-4,2); ctx.stroke();
-    }
-    ctx.restore();
-  });
-
-  // Particles
-  arkParticles.forEach(p=>{
-    ctx.save(); ctx.globalAlpha=p.life; ctx.shadowColor=p.color; ctx.shadowBlur=6; ctx.fillStyle=p.color;
-    ctx.beginPath(); ctx.arc(p.x,p.y,2+p.life*2,0,Math.PI*2); ctx.fill();
-    ctx.shadowBlur=0; ctx.restore();
-  });
-
-  // Power-ups
-  const epw=arkPaddleWide>0?PW*1.6:PW;
-  arkPowerUps.forEach(pu=>{
-    ctx.save(); ctx.shadowColor=pu.color; ctx.shadowBlur=12;
-    ctx.strokeStyle=pu.color; ctx.lineWidth=1.5;
-    ctx.beginPath(); ctx.roundRect(pu.x-12,pu.y-8,24,16,4); ctx.stroke();
-    ctx.shadowBlur=0;
-    ctx.fillStyle=pu.color; ctx.font=`bold ${Math.round(W*0.035)}px Orbitron,monospace`;
-    ctx.textAlign='center'; ctx.textBaseline='middle';
-    ctx.fillText(pu.label,pu.x,pu.y); ctx.restore();
-  });
-
-  // Extra balls + main ball
-  arkExtraBalls.forEach(eb=>arkDrawBall(eb.x,eb.y));
-  if(arkRunning||paused) arkDrawBall(arkBx,arkBy);
-
-  // Paddle trail
-  if(Math.abs(arkPaddleVel)>1.5){
-    for(let ti=3;ti>=1;ti--){
-      ctx.save(); ctx.globalAlpha=Math.min(0.25,Math.abs(arkPaddleVel)*0.03)*(ti/3);
-      ctx.shadowColor='#00f5ff'; ctx.shadowBlur=6; ctx.fillStyle='#00f5ff';
-      ctx.beginPath(); ctx.roundRect(arkPx-arkPaddleVel*ti*0.4,p1y,epw,PH,PH/2); ctx.fill();
-      ctx.shadowBlur=0; ctx.restore();
-    }
-  }
-  // Paddle
-  ctx.save(); ctx.shadowColor='#00f5ff'; ctx.shadowBlur=14; ctx.fillStyle='#00f5ff';
-  ctx.beginPath(); ctx.roundRect(arkPx,p1y,epw,PH,PH/2); ctx.fill();
-  ctx.shadowBlur=0; ctx.restore();
-
-  // Floating numbers
-  arkFloatingNums.forEach(f=>{
-    ctx.save(); ctx.globalAlpha=f.life;
-    ctx.font=`bold ${Math.round(W*0.04)}px Orbitron,monospace`;
-    ctx.textAlign='center'; ctx.fillStyle=f.color; ctx.shadowColor=f.color; ctx.shadowBlur=8;
-    ctx.fillText(f.text,f.x,f.y); ctx.shadowBlur=0; ctx.restore();
-  });
-
-  // HUD
-  ctx.save();
-  ctx.font=`${Math.round(W*0.038)}px Orbitron,monospace`;
-  ctx.textAlign='left'; ctx.fillStyle='#00f5ff'; ctx.shadowColor='#00f5ff'; ctx.shadowBlur=6;
-  ctx.fillText(arkScore,14,30);
-  ctx.textAlign='center'; ctx.fillStyle='rgba(255,255,255,0.5)'; ctx.shadowBlur=0;
-  ctx.fillText(`Nv ${arkLevel}`,W/2,30);
-  ctx.textAlign='right'; ctx.fillStyle='#ff2d78'; ctx.shadowColor='#ff2d78'; ctx.shadowBlur=6;
-  ctx.fillText('♥'.repeat(arkLives),W-14,30);
-  ctx.shadowBlur=0; ctx.restore();
-
-  // Ball attached hint
-  if(arkBallAttached){
-    ctx.save(); ctx.globalAlpha=0.5+0.5*Math.sin(Date.now()*0.005);
-    ctx.strokeStyle='rgba(255,255,255,0.3)'; ctx.lineWidth=1; ctx.setLineDash([3,5]);
-    ctx.beginPath(); ctx.moveTo(arkBx,arkBy); ctx.lineTo(arkBx,arkBy-H*0.06); ctx.stroke();
-    ctx.setLineDash([]); ctx.restore();
-  }
-}
-function arkDrawBall(x, y) {
-  const bc = arkCfg.ballColor;
-  ctx.save();
-  ctx.globalAlpha=0.07;ctx.fillStyle=bc;
-  ctx.beginPath();ctx.arc(x,y,BR*1.35,0,Math.PI*2);ctx.fill();
-  ctx.globalAlpha=1;
-  ctx.shadowColor=bc;ctx.shadowBlur=20;
-  const g=ctx.createRadialGradient(x-BR*0.25,y-BR*0.3,BR*0.05,x,y,BR);
-  g.addColorStop(0,'#fff');g.addColorStop(0.35,bc);g.addColorStop(0.8,bc);
-  g.addColorStop(1,'rgba(0,0,20,0.85)');
-  ctx.fillStyle=g;ctx.beginPath();ctx.arc(x,y,BR,0,Math.PI*2);ctx.fill();
-  ctx.strokeStyle='rgba(255,255,255,0.5)';ctx.lineWidth=0.8;ctx.stroke();
-  ctx.shadowBlur=0;ctx.restore();
-}
-
-// Arkanoid touch
-let arkTouchActive = false;
-gc.addEventListener('touchstart', e=>{
-  e.preventDefault();
-  try{if(!audioCtx)audioCtx=new(window.AudioContext||window.webkitAudioContext)();if(audioCtx.state==='suspended')audioCtx.resume();}catch(err){}
-  if(arkRunning && arkBallAttached) arkLaunchBall();
-  if(arkRunning) arkTouchActive=true;
-},{passive:false,capture:false});
-
-gc.addEventListener('touchmove', e=>{
-  if(!arkRunning) return;
-  e.preventDefault();
-  const rect=gc.getBoundingClientRect();
-  const scaleX=W/rect.width;
-  const epw=arkPaddleWide>0?PW*1.6:PW;
-  Array.from(e.changedTouches).forEach(t=>{
-    const tx=(t.clientX-rect.left)*scaleX;
-    arkPx=Math.max(0,Math.min(W-epw,tx-epw/2));
-  });
-},{passive:false,capture:false});
-
-// Sound helpers used by arkanoid (reuse pong sounds)
-function sndBrick(){
-  if(!soundOn)return;
-  try{const a=getAudioCtx(),o=a.createOscillator(),g=a.createGain();
-  o.connect(g);g.connect(a.destination);o.frequency.value=440+Math.random()*200;o.type='sine';
-  g.gain.setValueAtTime(0.15,a.currentTime);g.gain.exponentialRampToValueAtTime(0.001,a.currentTime+0.08);
-  o.start();o.stop(a.currentTime+0.08);}catch(e){}
-}
-function sndPowerUp(){
-  if(!soundOn)return;
-  try{const a=getAudioCtx();
-  [[550,0],[770,0.06],[1100,0.12]].forEach(([f,d])=>{const o=a.createOscillator(),g=a.createGain();o.connect(g);g.connect(a.destination);o.frequency.value=f;o.type='sine';g.gain.setValueAtTime(0.2,a.currentTime+d);g.gain.exponentialRampToValueAtTime(0.001,a.currentTime+d+0.1);o.start(a.currentTime+d);o.stop(a.currentTime+d+0.1);});}catch(e){}
-}
-function getAudioCtx(){if(!audioCtx)audioCtx=new(window.AudioContext||window.webkitAudioContext)();if(audioCtx.state==='suspended')audioCtx.resume();return audioCtx;}
 
 </script>
 </body>
