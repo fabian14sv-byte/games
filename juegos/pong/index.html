@@ -1558,14 +1558,7 @@ function draw() {
   const p2y = Math.round(H*0.04);
   const fieldMid = (p2y + PH + p1y) / 2;
 
-  // Screen shake decay
-  if (shakeMag > 0.4) {
-    shakeX = (Math.random() - 0.5) * shakeMag;
-    shakeY = (Math.random() - 0.5) * shakeMag * 0.6;
-    shakeMag *= 0.76;
-  } else { shakeMag = 0; shakeX = 0; shakeY = 0; }
-
-  if (shakeX !== 0) { ctx.save(); ctx.translate(shakeX, shakeY); }
+  // (screen shake disabled — flash effect used instead)
 
   // === BACKGROUND ===
   colorTime += 0.004;
@@ -1602,7 +1595,6 @@ function draw() {
     if (nitroHitFlash < 0.01) nitroHitFlash = 0;
   }
 
-  if (shakeX !== 0) ctx.restore();
 }
 
 function rr(x,y,w,h,r){ ctx.beginPath(); ctx.roundRect(x,y,w,h,r); ctx.fill(); }
